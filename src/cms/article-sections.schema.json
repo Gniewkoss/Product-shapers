@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://productshapers.local/schemas/article-sections",
+  "title": "Article sections repeater",
+  "description": "Use as CMS array/repeater field on Article. Same items drive nav + body.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "required": ["id", "number", "label", "title", "content"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "description": "Stable slug for DOM id and anchors, e.g. kontekst"
+      },
+      "number": { "type": "string", "examples": ["01", "02"] },
+      "label": { "type": "string", "description": "Short uppercase-ish nav label, e.g. KONTEKST" },
+      "title": { "type": "string", "description": "Subtitle under number in nav, e.g. Problem Skalowania" },
+      "content": {
+        "type": "string",
+        "description": "Rich text / MDX / HTML depending on CMS (plain paragraphs or sanitized HTML)."
+      },
+      "contentFormat": {
+        "type": "string",
+        "enum": ["plain", "html"],
+        "default": "plain",
+        "description": "plain: newline-separated blocks; html: sanitize server-side before publish."
+      }
+    },
+    "additionalProperties": false
+  }
+}

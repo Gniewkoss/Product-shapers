@@ -1,0 +1,111 @@
+{
+  "globals": {
+    "navigation": {
+      "links": [
+        { "label": "Home", "path": "/" },
+        { "label": "Szkolenia", "path": "/szkolenia" },
+        { "label": "Hiring", "path": "/hiring" },
+        { "label": "Useme", "path": "/useme" },
+        { "label": "Artykuły", "path": "/artykuly" }
+      ],
+      "ctaLabel": "Umów Konsultację",
+      "ctaPath": "/#konsultacja"
+    },
+    "homepage": {
+      "heroHeadlinePrefix": "Odzyskaj kontrolę nad",
+      "heroHeadlineAccent": "RoadMapą!",
+      "heroSubheadline": "Pomagam firmom wyjść z pułapki »wiecznego backlogu« i\nwdrożyć systemową przewidywalność poprzez architekturę\nprocesów produktowych.",
+      "heroCtaLabel": "Umów się na 30’ spotkanie",
+      "heroCtaPath": "/#konsultacja"
+    },
+    "footer": {
+      "companyName": "Product Shapers Consulting",
+      "legalText": "© 2025 PRODUCT SHAPERS. WSZYSTKIE PRAWA ZASTRZEŻONE."
+    },
+    "seo-defaults": {
+      "siteName": "Product Shapers Consulting",
+      "defaultMetaTitle": "Product Shapers Consulting",
+      "defaultMetaDescription": "Konsulting produktowy, Shape Up, szkolenia."
+    }
+  },
+  "collections": {
+    "site-pages": [
+      {
+        "routeKey": "hiring",
+        "layout": [
+          {
+            "blockType": "heroBand",
+            "heroBand": {
+              "eyebrow": "Kariera w architekturze",
+              "title": "Dołącz do arbitrów doskonałości produktowej.",
+              "intro": "Nie zatrudniamy \"zasobów\". Współpracujemy z architektami wzrostu, którzy traktują zarządzanie produktem jako dyscyplinę naukową."
+            }
+          }
+        ]
+      },
+      {
+        "routeKey": "szkolenia",
+        "layout": [
+          {
+            "blockType": "heroBand",
+            "heroBand": {
+              "eyebrow": "Ekspercka Wiedza Produktowa",
+              "title": "Program Mentorski\n2024",
+              "intro": "Ekskluzywny, 12-tygodniowy proces transformacji."
+            }
+          }
+        ]
+      },
+      {
+        "routeKey": "useme",
+        "layout": [
+          {
+            "blockType": "heroBand",
+            "heroBand": {
+              "eyebrow": "Case study // redakcyjna analiza",
+              "title": "Skalowanie Useme.com: Architektoniczny Autorytet.",
+              "intro": "W jaki sposób Product Shapers zdefiniowali na nowo techniczny i strategiczny krajobraz Useme."
+            }
+          }
+        ]
+      },
+      {
+        "routeKey": "articles",
+        "layout": [
+          {
+            "blockType": "articlesHero",
+            "articlesHero": {
+              "eyebrow": "Artykuły i analizy",
+              "title": "Merytoryczny\nContent.",
+              "intro": "Głębokie nurkowanie w procesy produktowe i matematykę biznesu."
+            }
+          }
+        ]
+      }
+    ],
+    "articles": [
+      {
+        "title": "Shape Up a Scrum: Hybrydowy model dowożenia",
+        "slug": "shape-up-scrum",
+        "summary": "Analiza połączenia elastyczności Scruma z dyscypliną Basecampowego Shape Up.",
+        "excerpt": "Dlaczego tradycyjne podejście Agile często zawodzi przy skalowaniu.",
+        "categoryLabel": "Metodyka",
+        "categoryMeta": "12 minut czytania",
+        "readingTime": "12 min czytania",
+        "category": "methodology",
+        "tone": "light",
+        "status": "published",
+        "sections": [
+          {
+            "id": "kontekst",
+            "number": "01",
+            "label": "Kontekst",
+            "title": "Problem Skalowania",
+            "contentFormat": "plain",
+            "content": "W świecie consultingu produktowego najczęściej spotykamy dwa ekstrema."
+          }
+        ]
+      }
+    ]
+  }
+}
