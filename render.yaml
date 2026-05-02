@@ -20,8 +20,8 @@ services:
     region: frankfurt
     plan: free
     rootDir: cms
-    # Build bez żywego Postgresa (jak cms/Dockerfile): podczas fazy build na Renderze DB często nie jest osiągalna / push Drizzle się wyłoży.
-    buildCommand: npm ci && DATABASE_ADAPTER=sqlite DATABASE_URI=file:/tmp/render-build.sqlite PAYLOAD_SECRET=render-build-placeholder-minimum-32-characters-xx PAYLOAD_DATABASE_PUSH=false npm run build
+    # Build bez żywego Postgresa (jak cms/Dockerfile). Musi być sh -c — inaczej Render nie parsuje && i npm ci dostaje śmieciowe argumenty (npm help ci).
+    buildCommand: sh -c 'npm ci && DATABASE_ADAPTER=sqlite DATABASE_URI=file:/tmp/render-build.sqlite PAYLOAD_SECRET=render-build-placeholder-minimum-32-characters-xx PAYLOAD_DATABASE_PUSH=false npm run build'
     startCommand: npm start
     healthCheckPath: /api/content-version
     envVars:
