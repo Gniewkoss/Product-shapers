@@ -5,6 +5,9 @@ import { postRevalidate } from "../hooks/revalidateFrontend";
 
 export const SitePages: CollectionConfig = {
   slug: "site-pages",
+  access: {
+    read: () => true,
+  },
   labels: { singular: "Marketing page", plural: "Marketing pages" },
   admin: {
     useAsTitle: "routeKey",

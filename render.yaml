@@ -1,0 +1,42 @@
+# Render Blueprint: Postgres + Payload CMS z podkatalogu cms/
+# Dokładny flow: DEPLOY-NETLIFY.md → sekcja „Render (blueprint w repo)”
+#
+# Uwagi:
+# - Po utworzeniu z blueprintu Render poprosi o wartości zmiennych sync:false (URL Twojej strony Netlify).
+# - Pliki uploadów domyślnie są na dysku ephemeral — przy większej liczbie mediów dodaj Persistent Disk
+#   na mount np. …/cms/media (ścieżka robocza serwisu = rootDir cms).
+# - Jeśli plan `free` dla Postgres nie jest dostępny w regionie, zmień na np. basic-256mb.
+
+databases:
+  - name: payload-postgres
+    region: frankfurt
+    plan: free
+    databaseName: payload
+
+services:
+  - type: web
+    name: product-shapers-cms
+    runtime: node
+    region: frankfurt
+    plan: free
+    rootDir: cms
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/content-version
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_OPTIONS
+        value: --no-deprecation
+      - key: DATABASE_URI
+        fromDatabase:
+          name: payload-postgres
+          property: connectionString
+      - key: PAYLOAD_SECRET
+        generateValue: true
+      - key: PAYLOAD_PUBLIC_SERVER_URL
+        sync: false
+      - key: FRONTEND_ORIGINS
+        sync: false
+      - key: PAYLOAD_DATABASE_PUSH
+        value: "true"

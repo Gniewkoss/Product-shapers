@@ -1,0 +1,50 @@
+# Clone repo → skopiuj .env.example → docker compose up --build -d
+# Strona + CMS pod jednym portem (Caddy): http://localhost:8787 oraz http://localhost:8787/admin
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: payload
+      POSTGRES_PASSWORD: payload
+      POSTGRES_DB: payload
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payload -d payload"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  cms:
+    build:
+      context: ./cms
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URI: postgresql://payload:payload@postgres:5432/payload
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:-replace-with-openssl-rand-hex-32-chars-minimum}
+      PAYLOAD_PUBLIC_SERVER_URL: ${PUBLIC_URL:-http://localhost:8787}
+      FRONTEND_ORIGINS: ${PUBLIC_URL:-http://localhost:8787}
+      # Świeży Postgres bez migracji Drizzle w repo — Payload zsynchronizuje schemat przy starcie (bez promptu TTY).
+      PAYLOAD_DATABASE_PUSH: "true"
+      PORT: "3000"
+    volumes:
+      - cms_media:/app/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  edge:
+    build:
+      context: .
+      dockerfile: deploy/edge/Dockerfile
+      args:
+        CMS_ORIGIN: http://cms:3000
+    ports:
+      - "${PORT:-8787}:80"
+    depends_on:
+      - cms
+
+volumes:
+  pgdata:
+  cms_media:

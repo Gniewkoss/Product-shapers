@@ -1,10 +1,11 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import type { Article as PayloadArticle } from "@payload-types";
+import { ComparisonTableBlock } from "../components/articles/ComparisonTableBlock";
 import { ArticleNav, useArticleSectionTracker } from "../components/ArticleNav";
 import { ArticleSectionBody } from "../components/ArticleSectionBody";
 import { shapeUpScrumArticle } from "../content/articles/shape-up-scrum";
-import type { ArticleDocument } from "../content/articleTypes";
+import { articleSectionFromBlock, articleSectionsForNav, type ArticleDocument } from "../content/articleTypes";
 import { useSitePayload } from "../context/SitePayloadContext";
 import { getArticleBySlug, isAbortError, mediaUrl } from "../lib/payload/client";
 import { mapPayloadArticleToDocument, mapPayloadArticlesToRelated } from "../lib/payload/mapArticle";
@@ -141,6 +142,25 @@ export function ArticlePage() {
   const [article, setArticle] = useState<ArticleDocument | null>(null);
   const [payloadDoc, setPayloadDoc] = useState<PayloadArticle | null>(null);
   const [articleFetchPending, setArticleFetchPending] = useState(Boolean(slug));
+  /** Ponowny GET po powrocie na kartę / okno — polling content-version ma ~kilka sekund opóźnienia. */
+  const [visibilityRefetchNonce, setVisibilityRefetchNonce] = useState(0);
+  const lastVisibilityBumpRef = useRef(0);
+
+  useEffect(() => {
+    const bump = () => {
+      if (document.visibilityState !== "visible") return;
+      const now = Date.now();
+      if (now - lastVisibilityBumpRef.current < 750) return;
+      lastVisibilityBumpRef.current = now;
+      setVisibilityRefetchNonce((n) => n + 1);
+    };
+    window.addEventListener("focus", bump);
+    document.addEventListener("visibilitychange", bump);
+    return () => {
+      window.removeEventListener("focus", bump);
+      document.removeEventListener("visibilitychange", bump);
+    };
+  }, []);
 
   useEffect(() => {
     if (!slug) {
@@ -182,9 +202,12 @@ export function ArticlePage() {
       window.clearTimeout(tid);
       setArticleFetchPending(false);
     };
-  }, [slug, contentVersion]);
+  }, [slug, contentVersion, visibilityRefetchNonce]);
 
-  const sectionIds = useMemo(() => article?.sections.map((s) => s.id) ?? [], [article]);
+  const sectionIds = useMemo(
+    () => (article ? articleSectionsForNav(article.body).map((s) => s.id) : []),
+    [article],
+  );
 
   const relatedArticles = useMemo(() => {
     if (!article) return [];
@@ -305,24 +328,26 @@ export function ArticlePage() {
                   : undefined
                 }
               >
-                <ArticleNav sections={article.sections} activeId={activeId} onNavigate={scrollToSection} />
+                <ArticleNav sections={articleSectionsForNav(article.body)} activeId={activeId} onNavigate={scrollToSection} />
               </div>
             </div>
 
             <article className="order-1 min-w-0 w-full max-w-[662px] flex-1 lg:order-2" data-name="Article - Body Text">
-              {article.sections.map((section) => (
-                <section
-                  key={section.id}
-                  id={section.id}
-                  className="scroll-mt-[7.5rem]"
-                  aria-labelledby={`heading-${section.id}`}
-                >
-                  <h2 id={`heading-${section.id}`} className="sr-only">
-                    {section.label} — {section.title}
-                  </h2>
-                  <ArticleSectionBody section={section} />
-                </section>
-              ))}
+              {article.body.map((block, i) =>
+                block.blockType === "articleSection" ?
+                  <section
+                    key={block.id}
+                    id={block.id}
+                    className="scroll-mt-[7.5rem]"
+                    aria-labelledby={`heading-${block.id}`}
+                  >
+                    <h2 id={`heading-${block.id}`} className="sr-only">
+                      {block.label} — {block.title}
+                    </h2>
+                    <ArticleSectionBody section={articleSectionFromBlock(block)} />
+                  </section>
+                : <ComparisonTableBlock key={`article-body-table-${i}`} {...block} />,
+              )}
             </article>
 
             <div className="order-3 hidden min-h-0 w-full md:flex md:flex-col lg:order-3 lg:flex lg:h-full lg:min-h-0 lg:w-[265px] lg:max-w-[265px] lg:shrink-0">

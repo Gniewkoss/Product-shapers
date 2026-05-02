@@ -5,6 +5,10 @@ import { postRevalidate } from "../hooks/revalidateFrontend";
 export const SeoDefaults: GlobalConfig = {
   slug: "seo-defaults",
   label: "SEO defaults",
+  access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
   hooks: {
     afterChange: [async () => postRevalidate({ global: "seo-defaults" })],
   },

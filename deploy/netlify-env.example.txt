@@ -1,0 +1,4 @@
+# Wklej do Netlify: Site configuration → Environment variables
+# Wartość CMS_ORIGIN = publiczny URL serwisu Payload z Render ( „Copy URL” z dashboardu ), BEZ końcowego /
+
+CMS_ORIGIN=https://product-shapers-cms-xxxx.onrender.com

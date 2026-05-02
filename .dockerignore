@@ -1,0 +1,11 @@
+node_modules
+dist
+cms/node_modules
+cms/.next
+.git
+.cursor
+.env
+.env.*
+*.log
+cms/payload.local.db
+cms/payload.local.db-*

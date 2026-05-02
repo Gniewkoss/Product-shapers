@@ -41,14 +41,7 @@ async function seed() {
         tone: a.tone,
         status: "published",
         publishedAt: new Date().toISOString(),
-        sections: a.sections.map((s) => ({
-          id: s.id,
-          number: s.number,
-          label: s.label,
-          title: s.title,
-          contentFormat: s.contentFormat,
-          content: s.content,
-        })),
+        layout: a.layout ?? [],
       },
     });
   }

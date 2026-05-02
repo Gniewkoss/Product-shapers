@@ -1,0 +1,15 @@
+# Jeden entrypoint dla SPA + Payload: marketing na `/`, CMS na `/admin`, `/api`, `/media`
+:80 {
+	encode gzip
+
+	@cms path /api/* /admin /admin/* /media/*
+	handle @cms {
+		reverse_proxy cms:3000
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

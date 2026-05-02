@@ -1,0 +1,12 @@
+# Frontend: Vite React (marketing). CMS (Payload + Next.js) na osobnym hoście — patrz DEPLOY-NETLIFY.md
+[build]
+  command = "npm run build:netlify"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

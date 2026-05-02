@@ -14,6 +14,39 @@ export type ArticleSection = {
   contentFormat?: ArticleSectionContentFormat;
 };
 
+/** Komórka tabeli porównawczej z Payload (`comparisonTable`). */
+export type ArticleComparisonTableCell = {
+  value: string;
+  highlight?: boolean;
+};
+
+/** Blok `comparisonTable` z pola `layout` artykułu. */
+export type ArticleComparisonTableBlock = {
+  blockType: "comparisonTable";
+  title?: string;
+  columns: { label: string }[];
+  rows: {
+    name: string;
+    cells: ArticleComparisonTableCell[];
+  }[];
+};
+
+/** Sekcja jako blok w uporządkowanym `layout` Payload. */
+export type ArticleSectionBlock = { blockType: "articleSection" } & ArticleSection;
+
+/** Kolejność na stronie = kolejność w tablicy (sekcje i tabele przeplatane). */
+export type ArticleBodyBlock = ArticleSectionBlock | ArticleComparisonTableBlock;
+
+/** Sekcje z `body` — spójne z TOC (`ArticleNav`). */
+export function articleSectionsForNav(body: ArticleBodyBlock[]): ArticleSection[] {
+  return body.filter((b): b is ArticleSectionBlock => b.blockType === "articleSection").map(articleSectionFromBlock);
+}
+
+export function articleSectionFromBlock(block: ArticleSectionBlock): ArticleSection {
+  const { blockType: _t, ...section } = block;
+  return section;
+}
+
 export type ArticleDocument = {
   slug: string;
   title: string;
@@ -21,5 +54,6 @@ export type ArticleDocument = {
   categoryLabel: string;
   categoryMeta: string;
   readingTimeLabel: string;
-  sections: ArticleSection[];
+  /** Uporządkowana treść z CMS (`layout`): sekcje i tabele w dowolnej kolejności. */
+  body: ArticleBodyBlock[];
 };

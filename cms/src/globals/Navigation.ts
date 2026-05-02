@@ -5,6 +5,10 @@ import { postRevalidate } from "../hooks/revalidateFrontend";
 export const Navigation: GlobalConfig = {
   slug: "navigation",
   label: "Navigation",
+  access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
   hooks: {
     afterChange: [async () => postRevalidate({ global: "navigation" })],
   },

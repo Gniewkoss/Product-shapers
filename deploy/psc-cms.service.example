@@ -1,0 +1,25 @@
+# /etc/systemd/system/psc-cms.service
+# Dopasuj: User, WorkingDirectory, ścieżkę do cms/.env jeśli używasz EnvironmentFile=
+
+[Unit]
+Description=Payload CMS (Next.js)
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/product-shapers/cms
+
+# Uprawnienia zapisu do cms/media/uploadów — User musi mieć dostęp do katalogu cms/
+# Payload wczytuje cms/.env z kodu — nie commituj tego pliku.
+Environment=NODE_ENV=production
+Environment=NODE_OPTIONS=--no-deprecation
+
+# Ścieżkę dopasuj do serwera (po npm ci w cms/ istnieje node_modules/.bin/next).
+ExecStart=/var/www/product-shapers/cms/node_modules/.bin/next start -H 127.0.0.1 -p 3000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

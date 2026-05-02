@@ -167,7 +167,7 @@ export function SitePayloadProvider({ children }: { children: ReactNode }) {
       if (!cancelled) await tickContentVersion();
     })();
 
-    const pollMs = 8000;
+    const pollMs = 4000;
     const interval = window.setInterval(() => {
       if (cancelled || document.visibilityState !== "visible") return;
       void tickContentVersion();

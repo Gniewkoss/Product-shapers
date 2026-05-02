@@ -256,6 +256,79 @@ export interface Article {
     heading?: string | null;
     body?: string | null;
   };
+  /**
+   * Układ od góry do dołu: dodawaj „Sekcję artykułu” i „Tabelę porównawczą” w dowolnej kolejności — np. tabela między dwiema sekcjami. Przeciągnij bloki, by zmienić kolejność.
+   */
+  layout?:
+    | (
+        | {
+            /**
+             * Unikalna kotwica do TOC i URL (np. kontekst → #kontekst). Małe litery, bez spacji.
+             */
+            anchorId: string;
+            /**
+             * Numer w nawigacji, np. 01.
+             */
+            number?: string | null;
+            /**
+             * Krótka etykieta w TOC.
+             */
+            label?: string | null;
+            /**
+             * Tytuł sekcji.
+             */
+            title?: string | null;
+            contentFormat?: ('plain' | 'html') | null;
+            /**
+             * Plain: akapity oddzielone pustą linią; ## / ### nagłówki. HTML: zaufany markup z CMS.
+             */
+            content?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'articleSection';
+          }
+        | {
+            /**
+             * Opcjonalny nagłówek wyświetlany nad tabelą.
+             */
+            title?: string | null;
+            /**
+             * Nagłówki kolumn danych (np. „Skala”, „Biurokracja”). Pierwsza kolumna wierszy to zawsze nazwa wiersza.
+             */
+            columns?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            /**
+             * Dla każdego wiersza dodaj komórki w tej samej kolejności co kolumny powyżej. Możesz zaznaczyć „highlight” przy wybranej komórce.
+             */
+            rows?:
+              | {
+                  name: string;
+                  cells?:
+                    | {
+                        value: string;
+                        /**
+                         * Delikatne wyróżnienie tła komórki.
+                         */
+                        highlight?: boolean | null;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'comparisonTable';
+          }
+      )[]
+    | null;
+  /**
+   * Przestarzałe — nie używaj przy nowych artykułach; buduj treść w „Treść artykułu”. Zachowane dla starych rekordów bez bloków sekcji w layout.
+   */
   sections?:
     | {
         id: string;
@@ -891,6 +964,48 @@ export interface ArticlesSelect<T extends boolean = true> {
     | {
         heading?: T;
         body?: T;
+      };
+  layout?:
+    | T
+    | {
+        articleSection?:
+          | T
+          | {
+              anchorId?: T;
+              number?: T;
+              label?: T;
+              title?: T;
+              contentFormat?: T;
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        comparisonTable?:
+          | T
+          | {
+              title?: T;
+              columns?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              rows?:
+                | T
+                | {
+                    name?: T;
+                    cells?:
+                      | T
+                      | {
+                          value?: T;
+                          highlight?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
       };
   sections?:
     | T

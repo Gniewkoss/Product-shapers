@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Frontend build
+        run: |
+          npm ci
+          npm run build
+
+      - name: CMS build (transient SQLite, jak w Dockerfile)
+        env:
+          DATABASE_ADAPTER: sqlite
+          DATABASE_URI: file:/tmp/payload-ci.sqlite
+          PAYLOAD_SECRET: build-time-placeholder-minimum-32-characters-xx
+          PAYLOAD_DATABASE_PUSH: "false"
+        run: |
+          npm ci --prefix cms
+          npm run build --prefix cms

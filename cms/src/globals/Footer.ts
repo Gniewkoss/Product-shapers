@@ -5,6 +5,10 @@ import { postRevalidate } from "../hooks/revalidateFrontend";
 export const Footer: GlobalConfig = {
   slug: "footer",
   label: "Footer",
+  access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
   hooks: {
     afterChange: [async () => postRevalidate({ global: "footer" })],
   },

@@ -1,5 +1,8 @@
 node_modules/
 dist/
+
+# Generowane pod Netlify (CMS_ORIGIN); lokalnie może różnić się od produkcji
+public/_redirects
 cms/.next/
 cms/out/
 

@@ -6,6 +6,10 @@ import { postRevalidate } from "../hooks/revalidateFrontend";
 export const Homepage: GlobalConfig = {
   slug: "homepage",
   label: "Homepage",
+  access: {
+    read: () => true,
+    update: ({ req: { user } }) => Boolean(user),
+  },
   hooks: {
     afterChange: [async () => postRevalidate({ global: "homepage" })],
   },

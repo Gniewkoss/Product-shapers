@@ -42,6 +42,24 @@ function sqliteClientUrl(): string {
   return pathToFileURL(filePath).href;
 }
 
+/** Drizzle dev push pokazuje confirm w terminalu — bez TTY proces często wisi i `/admin` nie ładuje się wcale. */
+function schemaPushEnabled(): boolean {
+  const raw = process.env.PAYLOAD_DATABASE_PUSH?.trim().toLowerCase();
+  if (raw === "false" || raw === "0") return false;
+  if (raw === "true" || raw === "1") return true;
+  return Boolean(process.stdin?.isTTY);
+}
+
+/** CORS: wiele originów z env (Netlify prod + preview), rozdziel przecinkiem. */
+function frontendCorsOrigins(): string[] {
+  const multi = process.env.FRONTEND_ORIGINS?.split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const single = process.env.FRONTEND_ORIGIN?.trim();
+  const merged = [...(multi ?? []), ...(single ? [single] : []), "http://localhost:5173"];
+  return [...new Set(merged)];
+}
+
 function database() {
   const uri = process.env.DATABASE_URI?.trim() ?? "";
   const adapter = process.env.DATABASE_ADAPTER?.toLowerCase();
@@ -50,16 +68,18 @@ function database() {
     uri.length > 0 &&
     /^postgres(ql)?:/i.test(uri);
 
+  const pushEnabled = schemaPushEnabled();
+
   if (usePostgres) {
     return postgresAdapter({
       pool: { connectionString: uri },
-      push: true,
+      push: pushEnabled,
     });
   }
 
   return sqliteAdapter({
     client: { url: sqliteClientUrl() },
-    push: true,
+    push: pushEnabled,
   });
 }
 
@@ -70,7 +90,7 @@ export default buildConfig({
   },
   collections: [Users, Media, Authors, Articles, CaseStudies, SitePages],
   cors: [
-    process.env.FRONTEND_ORIGIN || "http://localhost:5173",
+    ...frontendCorsOrigins(),
     process.env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000",
   ].filter(Boolean),
   db: database(),

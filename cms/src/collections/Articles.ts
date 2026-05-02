@@ -1,9 +1,17 @@
 import type { CollectionConfig } from "payload";
 
+import { articleLayoutBlocks } from "../blocks/articleBlocks";
 import { postRevalidate } from "../hooks/revalidateFrontend";
 
 export const Articles: CollectionConfig = {
   slug: "articles",
+  /**
+   * SPA pobiera artykuły bez sesji Payload (domyślny read = tylko zalogowany).
+   * Goście widzą wybrane „published”; w panelu po zalogowaniu — pełny dostęp do odczytu.
+   */
+  access: {
+    read: ({ req: { user } }) => (user ? true : { status: { equals: "published" } }),
+  },
   admin: { useAsTitle: "title", defaultColumns: ["title", "slug", "status", "publishedAt"] },
   hooks: {
     afterChange: [
@@ -68,8 +76,23 @@ export const Articles: CollectionConfig = {
       ],
     },
     {
+      name: "layout",
+      type: "blocks",
+      labels: { singular: "Blok treści", plural: "Treść artykułu (kolejność)" },
+      blocks: articleLayoutBlocks,
+      admin: {
+        description:
+          "Układ od góry do dołu: dodawaj „Sekcję artykułu” i „Tabelę porównawczą” w dowolnej kolejności — np. tabela między dwiema sekcjami. Przeciągnij bloki, by zmienić kolejność.",
+      },
+    },
+    {
       name: "sections",
       type: "array",
+      admin: {
+        hidden: true,
+        description:
+          "Przestarzałe — nie używaj przy nowych artykułach; buduj treść w „Treść artykułu”. Zachowane dla starych rekordów bez bloków sekcji w layout.",
+      },
       fields: [
         { name: "id", type: "text", required: true },
         { name: "number", type: "text" },

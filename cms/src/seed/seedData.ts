@@ -375,7 +375,7 @@ export const seedSeo = {
 
 export const shapeUpScrumSections = [
   {
-    id: "kontekst",
+    anchorId: "kontekst",
     number: "01",
     label: "Kontekst",
     title: "Problem Skalowania",
@@ -383,7 +383,7 @@ export const shapeUpScrumSections = [
     content: `W świecie consultingu produktowego najczęściej spotykamy dwa ekstrema: zespoły, które "biegają w kółko" w nieskończonych sprintach Scruma bez wizji mety, oraz organizacje próbujące wdrożyć metodologię Basecampa (Shape Up) bez gotowości na tak radykalną autonomię. Hybrydowy model dowożenia, który wypracowaliśmy w Product Shapers, to odpowiedź na ten dylemat.`,
   },
   {
-    id: "architektura",
+    anchorId: "architektura",
     number: "02",
     label: "Architektura",
     title: "Struktura Hybrydy",
@@ -397,7 +397,7 @@ Scrum świetnie radzi sobie z utrzymaniem rytmu pracy, ale często gubi szeroki 
 (Treść w pliku Figma powtarza akapit demonstracyjny; pełna redakcja w źródle projektu.)`,
   },
   {
-    id: "wyniki",
+    anchorId: "wyniki",
     number: "03",
     label: "Wyniki",
     title: "Efektywność Zespołu",
@@ -419,7 +419,32 @@ export const seedArticleSummaries = [
     categoryMeta: "12 minut czytania",
     excerpt:
       "Dlaczego tradycyjne podejście Agile często zawodzi przy skalowaniu i jak połączenie dyscypliny Shape Up z rytmem Scruma zmienia reguły gry w budowaniu produktów.",
-    sections: shapeUpScrumSections,
+    layout: [
+      { blockType: "articleSection" as const, ...shapeUpScrumSections[0] },
+      {
+        blockType: "comparisonTable" as const,
+        title: "Porównanie podejść",
+        columns: [{ label: "Skala" }, { label: "Biurokracja" }],
+        rows: [
+          {
+            name: "Scrum",
+            cells: [
+              { value: "Typowo 5–9 osób", highlight: false },
+              { value: "Ceremonie, artefakty, SM/PO", highlight: false },
+            ],
+          },
+          {
+            name: "Shape Up",
+            cells: [
+              { value: "Małe zespoły, krótkie cykle", highlight: true },
+              { value: "Minimalna — appetite i shaping", highlight: false },
+            ],
+          },
+        ],
+      },
+      { blockType: "articleSection" as const, ...shapeUpScrumSections[1] },
+      { blockType: "articleSection" as const, ...shapeUpScrumSections[2] },
+    ],
   },
   {
     slug: "model-bettingu",
@@ -432,7 +457,7 @@ export const seedArticleSummaries = [
     categoryLabel: "Case Studies",
     categoryMeta: "15 min czytania",
     excerpt: "Placeholder — uzupełnij treść w Payload.",
-    sections: [],
+    layout: [],
   },
   {
     slug: "dobre-praktyki",
@@ -445,7 +470,7 @@ export const seedArticleSummaries = [
     categoryLabel: "Zarządzanie",
     categoryMeta: "10 min czytania",
     excerpt: "Placeholder — uzupełnij treść w Payload.",
-    sections: [],
+    layout: [],
   },
   {
     slug: "efektywnosc-zespolu",
@@ -458,7 +483,7 @@ export const seedArticleSummaries = [
     categoryLabel: "Zarządzanie",
     categoryMeta: "10 min czytania",
     excerpt: "Placeholder — uzupełnij treść w Payload.",
-    sections: [],
+    layout: [],
   },
   {
     slug: "discovery-architecture",
@@ -470,7 +495,7 @@ export const seedArticleSummaries = [
     categoryLabel: "Metodyka",
     categoryMeta: "9 min czytania",
     excerpt: "Placeholder — uzupełnij treść w Payload.",
-    sections: [],
+    layout: [],
   },
   {
     slug: "pricing-engine",
@@ -482,6 +507,6 @@ export const seedArticleSummaries = [
     categoryLabel: "Case Studies",
     categoryMeta: "11 min czytania",
     excerpt: "Placeholder — uzupełnij treść w Payload.",
-    sections: [],
+    layout: [],
   },
 ];
