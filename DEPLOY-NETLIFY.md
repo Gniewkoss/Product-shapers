@@ -26,6 +26,7 @@ Szablon zmiennych CMS (np. pod VPS lub debug): [`cms/.env.production.example`](.
 - **Cold start**: darmowy plan budzi usługę po uśpieniu — pierwsze żądanie bywa wolniejsze.
 - **Pliki `cms/media/`** na dysku kontenera mogą **zginąć przy redeploy**; pod dłuższą produkcję dodaj [Persistent Disk](https://render.com/docs/disks) zamontowany pod katalog uploadów lub zewnętrzny storage.
 - Jeśli blueprint odrzuci `plan: free` przy Postgresie w Twoim regionie, edytuj [`render.yaml`](./render.yaml) i ustaw np. `basic-256mb`.
+- **Web Service „deploy failed”**: wejdź w serwis → **Logs** i sprawdź kartę **Build**. Najczęściej padało łączenie Payload/Drizzle z Postgres _podczas_ `next build` — w repo [`render.yaml`](./render.yaml) build używa tymczasowego SQLite (jak Dockerfile CMS); zsynchronizuj blueprint po aktualizacji pliku z GitHuba. Jeśli build przejdzie, a nadal jest błąd przy **starcie**, sprawdź czy **`PAYLOAD_PUBLIC_SERVER_URL`** i **`FRONTEND_ORIGINS`** nie są puste (Environment serwisu na Renderze).
 
 ## 1. Backend CMS (Payload)
 
