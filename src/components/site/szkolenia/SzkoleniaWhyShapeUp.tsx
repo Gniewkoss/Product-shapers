@@ -17,6 +17,9 @@ export type SzkoleniaWhyShapeUpProps = {
   quoteLine3: string;
   darkCardTitle: string;
   darkCardBody: string;
+  /** CMS „accent tile” image (bottom-right); omit for mint placeholder. */
+  accentTileImageUrl?: string | null;
+  accentTileImageAlt?: string | null;
 };
 
 export function SzkoleniaWhyShapeUpFidelity(p: SzkoleniaWhyShapeUpProps) {
@@ -24,12 +27,12 @@ export function SzkoleniaWhyShapeUpFidelity(p: SzkoleniaWhyShapeUpProps) {
     <div className="w-full shrink-0 bg-[#f3f3f3]" data-node-id="1:209" data-name="Section - Dlaczego Shape Up">
       <div className="relative mx-auto flex w-full min-w-0 max-w-content flex-col items-start px-4 py-[96px] sm:px-6 md:px-10 lg:px-[61px]">
         <div
-          className="gap-x-[96px] gap-y-[96px] grid grid-cols-[repeat(2,minmax(0,1fr))] grid-rows-[_541px] relative shrink-0 w-full"
+          className="relative grid w-full grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-x-16 lg:gap-y-16 xl:gap-x-24"
           data-node-id="1:210"
           data-name="Container"
         >
           <div
-            className="col-1 content-stretch flex flex-col gap-[31.4px] items-start justify-self-stretch relative row-1 self-start shrink-0"
+            className="col-span-1 flex min-w-0 flex-col gap-[31.4px] items-start lg:justify-self-stretch"
             data-node-id="1:211"
             data-name="Container"
           >
@@ -75,7 +78,7 @@ export function SzkoleniaWhyShapeUpFidelity(p: SzkoleniaWhyShapeUpProps) {
                     data-name="Container"
                   >
                     <div
-                      className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[16px] tracking-[1.2px] whitespace-nowrap"
+                      className="min-w-0 flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[#1b1b1b] text-[16px] tracking-[1.2px] break-words"
                       data-node-id={bi === 0 ? "1:221" : bi === 1 ? "1:226" : "1:231"}
                     >
                       <p className="leading-[16px]">{label}</p>
@@ -86,17 +89,17 @@ export function SzkoleniaWhyShapeUpFidelity(p: SzkoleniaWhyShapeUpProps) {
             </div>
           </div>
           <div
-            className="col-2 gap-x-[16px] gap-y-[16px] grid grid-cols-[repeat(2,minmax(0,1fr))] grid-rows-[_496px] justify-self-stretch relative row-1 self-start shrink-0"
+            className="col-span-1 grid min-h-0 w-full grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-x-4 lg:gap-y-4"
             data-node-id="1:232"
             data-name="Container"
           >
             <div
-              className="col-1 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pb-[44px] pt-[48px] relative row-1 self-start shrink-0"
+              className="flex min-h-0 min-w-0 flex-col gap-[16px] items-start lg:pb-[44px] lg:pt-[48px]"
               data-node-id="1:233"
               data-name="Container"
             >
               <div
-                className="bg-[var(--light-blue,#0083fe)] content-stretch flex flex-col items-start justify-end pb-[32px] pt-[177px] px-[32px] relative shrink-0 w-full"
+                className="relative flex w-full min-w-0 shrink-0 flex-col items-start justify-end bg-[var(--light-blue,#0083fe)] px-6 pb-8 pt-24 sm:px-8 sm:pt-32 lg:px-[32px] lg:pb-[32px] lg:pt-[177px]"
                 data-node-id="1:234"
                 data-name="Background"
               >
@@ -131,7 +134,7 @@ export function SzkoleniaWhyShapeUpFidelity(p: SzkoleniaWhyShapeUpProps) {
               </div>
             </div>
             <div
-              className="col-2 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch relative row-1 self-start shrink-0"
+              className="flex min-h-0 min-w-0 flex-col gap-[16px] items-start lg:justify-self-stretch"
               data-node-id="1:242"
               data-name="Container"
             >
@@ -145,7 +148,7 @@ export function SzkoleniaWhyShapeUpFidelity(p: SzkoleniaWhyShapeUpProps) {
                 </div>
                 <div className="content-stretch flex flex-col items-start pt-[8px] relative shrink-0 w-full" data-node-id="1:245" data-name="Container">
                   <div
-                    className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#778cd8] text-[24px] w-[193px]"
+                    className="flex max-w-full flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[#778cd8] text-[24px] break-words"
                     data-node-id="1:246"
                   >
                     <p className="leading-[40px]">{p.darkCardTitle}</p>
@@ -161,11 +164,19 @@ export function SzkoleniaWhyShapeUpFidelity(p: SzkoleniaWhyShapeUpProps) {
                 </div>
               </div>
               <div
-                className="bg-[#7dfab6] content-stretch flex flex-col items-center justify-center px-[32px] py-[84px] relative rounded-tr-[80px] shrink-0 w-full"
+                className={`relative shrink-0 w-full overflow-hidden rounded-tr-[80px] ${p.accentTileImageUrl ? "min-h-[220px] bg-[#7dfab6]" : "bg-[#7dfab6] content-stretch flex flex-col items-center justify-center px-[32px] py-[84px]"}`}
                 data-node-id="1:249"
                 data-name="Background"
               >
-                <div className="bg-white max-w-[264px] mix-blend-multiply opacity-50 shrink-0 size-[96px]" data-node-id="1:250" data-name="Analytics" />
+                {p.accentTileImageUrl ?
+                  <img
+                    alt={p.accentTileImageAlt ?? ""}
+                    className="block h-full min-h-[220px] w-full object-cover"
+                    src={p.accentTileImageUrl}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                : <div className="bg-white max-w-[264px] mix-blend-multiply opacity-50 shrink-0 size-[96px]" data-node-id="1:250" data-name="Analytics" />}
               </div>
             </div>
           </div>

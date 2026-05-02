@@ -1,6 +1,20 @@
 /** Program bento parity with `SzkoleniaMain.tsx` (lines 51–232). */
 
+import type { ReactNode } from "react";
+
 const defaultFooterAsset = "https://www.figma.com/api/mcp/asset/f3b460a1-e46e-48d6-8719-40d762e6f75d";
+
+/** Zapobiega złamaniu „C-level” między „C-” a „level”. */
+function wrapNoBreakCLevel(text: string): ReactNode {
+  const parts = text.split(/(C-level)/gi);
+  return parts.map((part, i) =>
+    /^c-level$/i.test(part) ?
+      <span key={i} className="whitespace-nowrap">
+        {part}
+      </span>
+    : part,
+  );
+}
 
 export type SzkoleniaProgramBentoProps = {
   headingTitle: string;
@@ -191,61 +205,58 @@ export function SzkoleniaProgramBentoFidelity(p: SzkoleniaProgramBentoProps) {
             </div>
           </div>
           <div
-            className="bg-[#f3f3f3] content-stretch flex flex-col h-[400px] items-start min-h-[400px] p-[48px] relative shrink-0 w-[770.667px]"
+            className="relative flex min-h-[400px] min-w-0 w-full flex-[1_1_100%] flex-col bg-[#f3f3f3] p-8 lg:flex-[2_1_calc(66.666%-4px)] lg:p-[48px]"
             data-node-id="1:183"
             data-name="Module 4"
           >
-            <div className="content-stretch flex h-[303px] items-center justify-between relative shrink-0 w-full" data-node-id="1:184" data-name="Container">
-              <div className="content-stretch flex flex-col gap-[16px] h-full items-start relative shrink-0 w-[413.34px]" data-node-id="1:185" data-name="Container">
-                <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:186" data-name="Container">
+            <div className="flex w-full min-w-0 flex-col gap-8 xl:flex-row xl:items-center xl:gap-10" data-node-id="1:184" data-name="Container">
+              <div className="flex min-w-0 w-full flex-1 flex-col gap-[16px] items-start xl:min-w-0" data-node-id="1:185" data-name="Container">
+                <div className="flex w-full min-w-0 flex-col items-start" data-node-id="1:186" data-name="Container">
                   <div
-                    className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[rgba(117,118,130,0.78)] w-full"
+                    className="flex w-full min-w-0 flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic text-[36px] text-[rgba(117,118,130,0.78)]"
                     data-node-id="1:187"
                   >
                     <p className="leading-[40px]">04</p>
                   </div>
                 </div>
-                <div className="content-stretch flex flex-col items-start pt-[16px] relative shrink-0 w-full" data-node-id="1:188" data-name="Heading 3">
+                <div className="flex w-full min-w-0 flex-col items-start pt-[16px]" data-node-id="1:188" data-name="Heading 3">
                   <div
-                    className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[24px] w-full"
+                    className="flex w-full min-w-0 flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic text-[#000f3d] text-[24px]"
                     data-node-id="1:189"
                   >
                     <p className="leading-[40px]">{p.m04.title}</p>
                   </div>
                 </div>
-                <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:190" data-name="Container">
+                <div className="flex w-full min-w-0 flex-col items-start" data-node-id="1:190" data-name="Container">
                   <div
-                    className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[20px] w-[392px]"
+                    className="w-full min-w-0 max-w-prose text-[20px] font-normal leading-[25px] text-[#444651] text-pretty xl:max-w-none"
                     data-node-id="1:191"
                   >
-                    <p className="leading-[25px]">{p.m04.body}</p>
+                    <p className="leading-[27px] sm:leading-[28px]">{wrapNoBreakCLevel(p.m04.body)}</p>
                   </div>
                 </div>
               </div>
-              <div
-                className="bg-white border-[#005bb3] border-l-4 border-solid content-stretch flex flex-col h-[199px] items-start justify-center pl-[28px] pr-[24px] py-[24px] relative shrink-0 w-[231px]"
-                data-node-id="1:192"
-                data-name="Background+VerticalBorder"
-              >
-                <div className="relative shrink-0 w-full" data-node-id="1:193" data-name="Margin">
-                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pb-[8px] relative size-full">
-                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:194" data-name="Container">
-                      <div
-                        className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full"
-                        data-node-id="1:195"
-                      >
-                        <p className="leading-[16px]">{p.m04.asideEyebrow}</p>
+              <div className="flex w-full min-w-0 justify-center xl:flex-1 xl:justify-center">
+                <div
+                  className="flex w-full max-w-[320px] min-w-0 shrink-0 flex-col items-start justify-center border-l-4 border-solid border-[#005bb3] bg-white py-[24px] pl-[28px] pr-[24px] xl:w-[min(100%,288px)]"
+                  data-node-id="1:192"
+                  data-name="Background+VerticalBorder"
+                >
+                  <div className="relative w-full shrink-0" data-node-id="1:193" data-name="Margin">
+                    <div className="flex flex-col items-start pb-[8px]">
+                      <div className="flex w-full flex-col items-start" data-node-id="1:194" data-name="Container">
+                        <div
+                          className="flex w-full flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px]"
+                          data-node-id="1:195"
+                        >
+                          <p className="leading-[16px]">{p.m04.asideEyebrow}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="relative shrink-0 w-full" data-node-id="1:196" data-name="Container">
-                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
-                    <div
-                      className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[16px] w-[183px]"
-                      data-node-id="1:197"
-                    >
-                      <p className="leading-[25px] mb-0">{p.m04.asideQuoteLine1}</p>
+                  <div className="relative w-full min-w-0 shrink-0" data-node-id="1:196" data-name="Container">
+                    <div className="w-full min-w-0 text-[16px] leading-[25px] text-[#1b1b1b] text-pretty" data-node-id="1:197">
+                      <p className="mb-0 leading-[25px]">{p.m04.asideQuoteLine1}</p>
                       <p className="leading-[25px]">{p.m04.asideQuoteLine2}</p>
                     </div>
                   </div>
@@ -261,7 +272,7 @@ export function SzkoleniaProgramBentoFidelity(p: SzkoleniaProgramBentoProps) {
             <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:199" data-name="Container">
               <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:200" data-name="Container">
                 <div
-                  className="flex flex-col font-extrabold justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[rgba(0,33,17,0.44)] w-full"
+                  className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[rgba(0,33,17,0.44)] w-full"
                   data-node-id="1:201"
                 >
                   <p className="leading-[40px]">05</p>

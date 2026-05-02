@@ -67,7 +67,10 @@ const defaultItems: Item[] = [
             <p className="leading-[25px]">produktowego.</p>
           </div>
         </div>
-        <div className="content-stretch flex w-full flex-col items-start gap-[24px]" data-node-id="1:1028">
+        <div
+          className="content-stretch mt-10 flex w-full flex-col items-start gap-[24px] sm:mt-12"
+          data-node-id="1:1028"
+        >
           {[
             "Transformacja z Feature Factory na Product Operating Model",
             "Wdrożenie Shape Up - od teorii do praktyki",
@@ -233,7 +236,7 @@ function mapCmsExpertise(items: CmsExpertiseItem[]): Item[] {
               <p className="leading-[25px] whitespace-pre-line">{row.body || ""}</p>
             </div>
           </div>
-          <div className="content-stretch flex w-full flex-col items-start gap-[24px]" data-node-id="1:1028">
+          <div className="content-stretch mt-10 flex w-full flex-col items-start gap-[24px] sm:mt-12" data-node-id="1:1028">
             {(row.bullets ?? []).map((b, i) => (
               <div key={i} className="content-stretch flex w-full items-start gap-[20px]" data-node-id="1:1029">
                 <div className="content-stretch flex flex-col items-start pt-[4px]" data-node-id="1:1030">

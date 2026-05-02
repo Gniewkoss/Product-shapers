@@ -55,7 +55,7 @@ export function SiteFooter() {
       >
         <div className="relative w-full max-w-[1536px] shrink-0">
           <div className="relative flex size-full flex-col items-start max-w-[inherit]">
-            <div className="grid w-full grid-cols-2 gap-6 gap-y-8 md:grid-cols-4 md:gap-12 min-h-0">
+            <div className="grid min-h-0 w-full grid-cols-1 gap-8 sm:grid-cols-2 md:gap-10 lg:grid-cols-4 lg:gap-12">
               {columns.map((col) => (
                 <div key={col.title} className="col-span-1 flex flex-col items-start gap-[15px]">
                   <p className="w-full font-['Satoshi:Bold',sans-serif] text-[20px] leading-[25px] text-white">{col.title}</p>
@@ -85,8 +85,8 @@ export function SiteFooter() {
                   <img alt="" className="absolute inset-0 size-full max-w-none" src={imgLogoFooter3} />
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-4 text-[12px] font-sans font-medium uppercase tracking-[1.2px] text-white">
-                <span className="opacity-40">{legalLine}</span>
+              <div className="flex min-w-0 max-w-full flex-wrap items-center gap-4 text-[12px] font-sans font-medium uppercase tracking-[1.2px] text-white">
+                <span className="max-w-full break-words opacity-40">{legalLine}</span>
                 {footerLinksResolved.map((fl, i) => (
                   <span key={`${fl.label}-${i}`} className="inline-flex flex-wrap items-center gap-4">
                     <span className="opacity-20">|</span>

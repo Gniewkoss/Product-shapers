@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { useSitePayload } from "../../context/SitePayloadContext";
+import { HomeKnowledgeSection } from "../HomeKnowledgeSection";
 import { SzkoleniaFaqAccordion } from "../SzkoleniaFaqAccordion";
 import { SzkoleniaHeroFidelity } from "../site/szkolenia/SzkoleniaHeroFidelity";
 import { SzkoleniaProgramBentoFidelity, type SzkoleniaProgramBentoProps } from "../site/szkolenia/SzkoleniaProgramBento";
@@ -12,8 +14,9 @@ import {
   UsemeMeasurableFidelity,
   UsemeStrategyFidelity,
 } from "../site/useme/UsemeFidelity";
-import { getBlockFields, splitLines, splitParagraphs, type PayloadLayoutBlock } from "../../lib/payload/blockUtils";
-import { mediaUrl } from "../../lib/payload/client";
+import { fourLinesPad, getBlockFields, splitLines, splitParagraphs, type PayloadLayoutBlock } from "../../lib/payload/blockUtils";
+import { articleToKnowledgeCard, normalizeFeaturedArticles, type KnowledgeTeaserCardData } from "../../lib/payload/homeFeaturedArticles";
+import { isLegacyFounderSilhouetteAssetUrl, mediaUrl, uploadRefMedia } from "../../lib/payload/client";
 import { sanitizeCmsHtml } from "../../lib/sanitizeCmsHtml";
 
 /** Resolve CMS / Payload media paths (relative or absolute) for `<img src>` */
@@ -29,10 +32,7 @@ const imgIndustryPillarIcon0 = "https://www.figma.com/api/mcp/asset/57eb5300-0d1
 const imgIndustryPillarIcon1 = "https://www.figma.com/api/mcp/asset/2a0ccd0c-8aa6-4ea5-991c-72af2fde4c6e";
 /** `UsemeMain` hero / context image fallback when `richSplit.mediaUrl` empty */
 const USEME_CONTEXT_IMAGE_FALLBACK = "https://www.figma.com/api/mcp/asset/0eba44d5-9425-4c1e-a191-f61728ae2f23";
-const imgKnowledgeTeaserArrow = "https://www.figma.com/api/mcp/asset/95d4461c-3559-429a-9376-21f687653a48";
 const imgTestimonialLinkedIn = "https://www.figma.com/api/mcp/asset/01ff3667-cd79-4f08-902b-216735c2d283";
-const imgFounderPortraitOverlay = "https://www.figma.com/api/mcp/asset/3ba9cf8c-ddf2-4c37-87ed-e115260701a9";
-
 const METHOD_TILE_OUTER = [
   "bg-[#f9f9f9] border-[#022169] border-solid border-t-8 col-1 content-stretch flex h-auto min-h-[240px] flex-col gap-[16px] items-start justify-self-stretch pb-[68px] pt-[48px] px-[25px] relative row-1 self-start shrink-0 sm:row-auto lg:h-[276px]",
   "bg-[#f9f9f9] border-[#022169] border-solid border-t-8 col-3 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pb-[41px] pt-[48px] px-[25px] relative row-1 self-start shrink-0",
@@ -88,12 +88,6 @@ function padFourStats(raw: { value?: string; label?: string; description?: strin
   return [mapped[0]!, mapped[1]!, mapped[2]!, mapped[3]!];
 }
 
-function fourLines(body: unknown): [string, string, string, string] {
-  const L = splitLines(String(body ?? ""));
-  while (L.length < 4) L.push("");
-  return [L[0]!, L[1]!, L[2]!, L[3]!];
-}
-
 function programModulesToBento(block: Record<string, unknown>): SzkoleniaProgramBentoProps | null {
   const modules = block.modules as Record<string, unknown>[] | undefined;
   if (!modules || modules.length < 5) return null;
@@ -119,7 +113,7 @@ function programModulesToBento(block: Record<string, unknown>): SzkoleniaProgram
     },
     m03: {
       title: String(m2?.title ?? ""),
-      bodyLines: fourLines(m2?.body),
+      bodyLines: fourLinesPad(m2?.body),
       tagA: t2[0] ?? "",
       tagB: t2[1] ?? "",
     },
@@ -132,7 +126,7 @@ function programModulesToBento(block: Record<string, unknown>): SzkoleniaProgram
     },
     m05: {
       title: String(m4?.title ?? ""),
-      bodyLines: fourLines(m4?.body),
+      bodyLines: fourLinesPad(m4?.body),
       footerImageUrl: m4?.footerImageUrl ? cmsMedia(m4.footerImageUrl) || undefined : undefined,
     },
   };
@@ -212,6 +206,131 @@ function threeIntroLines(intro: string): [string, string, string] {
   const L = splitLines(intro);
   while (L.length < 3) L.push("");
   return [L[0]!, L[1]!, L[2]!];
+}
+
+function FounderSpotlightBlock({ f }: { f: Record<string, unknown> }) {
+  const { homepage } = useSitePayload();
+  const rawBlock = cmsMedia(f.portraitUrl);
+  const blockPortrait =
+    rawBlock && !isLegacyFounderSilhouetteAssetUrl(rawBlock) ? rawBlock : "";
+
+  const globalResolved = uploadRefMedia(
+    typeof homepage?.founderPortrait === "object" && homepage.founderPortrait ? homepage.founderPortrait : null,
+  );
+  const globalPortrait =
+    globalResolved.url && !isLegacyFounderSilhouetteAssetUrl(globalResolved.url) ? globalResolved.url : "";
+
+  const portraitUrl = blockPortrait || globalPortrait || "";
+  const nameTrim = String(f.name ?? "").trim();
+  const portraitAlt =
+    homepage?.founderPortraitAlt?.trim() || globalResolved.alt || (nameTrim ? `${nameTrim}, portret` : "");
+
+  const paras = splitParagraphs(String(f.bodyParagraphs ?? ""));
+  const stats = (f.stats as { value?: string; label?: string }[]) ?? [];
+  const s0 = stats[0];
+  const s1 = stats[1];
+
+  return (
+    <div className="w-full min-w-0 bg-white">
+      <div className="content-stretch mx-auto flex min-w-0 max-w-content flex-col items-start px-4 sm:px-6 md:px-10 lg:px-[61px] py-[96px] relative shrink-0 w-full">
+        <div className="relative grid w-full min-h-0 max-w-[1536px] grid-cols-1 grid-rows-[auto] gap-10 lg:grid-cols-[repeat(2,minmax(0,1fr))] lg:gap-x-20 lg:gap-y-16 lg:grid-rows-[minmax(0,auto)]">
+          <div className="col-1 content-stretch flex flex-col gap-[23.3px] items-start justify-self-stretch relative row-1 self-center shrink-0">
+            {f.eyebrow ?
+              <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full">
+                  <p className="leading-[16px]">{String(f.eyebrow)}</p>
+                </div>
+              </div>
+            : null}
+            <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+              <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full">
+                <p className="leading-[60px]">{String(f.name)}</p>
+              </div>
+            </div>
+            <div className="content-stretch flex flex-col gap-[23.375px] items-start pt-[16.065px] relative shrink-0 w-full">
+              {paras.map((para, pi) => {
+                const lines = splitLines(para);
+                return (
+                  <div key={pi} className="content-stretch flex flex-col items-start pb-[0.625px] relative shrink-0 w-full">
+                    <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[22px] w-full">
+                      {lines.map((line, li) => (
+                        <p key={li} className={`leading-[27.5px] ${li < lines.length - 1 ? "mb-0" : ""}`}>
+                          {line}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="content-stretch flex gap-[32px] items-start pt-[24.7px] relative shrink-0 w-full">
+              {s0 ?
+                <div className="content-stretch flex flex-col gap-[4px] items-center relative self-stretch shrink-0">
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[color:var(--dark-blue,#022169)] whitespace-nowrap">
+                      <p className="leading-[40px]">{String(s0.value)}</p>
+                    </div>
+                  </div>
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                    <div className="flex max-w-[14rem] flex-col justify-center leading-snug not-italic relative shrink-0 text-[#757682] text-[16px] break-words sm:max-w-none">
+                      <p className="leading-[25px]">{String(s0.label)}</p>
+                    </div>
+                  </div>
+                </div>
+              : null}
+              {s1 ?
+                <div className="content-stretch flex min-w-0 flex-1 flex-col gap-[4px] items-start relative self-stretch sm:flex-none sm:w-auto">
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[color:var(--dark-blue,#022169)] whitespace-nowrap">
+                      <p className="leading-[40px]">{String(s1.value)}</p>
+                    </div>
+                  </div>
+                  <div className="content-stretch flex flex-col items-center relative shrink-0 w-full">
+                    <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[#757682] text-[16px] text-center w-full">
+                      <p className="leading-[25px]">{String(s1.label)}</p>
+                    </div>
+                  </div>
+                </div>
+              : null}
+            </div>
+          </div>
+          <div
+            className={`aspect-square max-h-[90vw] min-h-[240px] w-full max-w-full shrink-0 col-2 row-1 flex flex-col items-start justify-center justify-self-stretch self-start overflow-hidden rounded-tr-[clamp(40px,10vw,80px)] lg:max-h-none lg:min-h-0 lg:self-center relative ${portraitUrl ? "bg-transparent" : "bg-[#e8e8e8]"}`}
+          >
+            {portraitUrl ?
+              <img
+                alt={portraitAlt}
+                src={portraitUrl}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                loading="lazy"
+                decoding="async"
+              />
+            : <div className="absolute inset-0 bg-[#e8e8e8]" aria-hidden />}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function KnowledgeTeasersBlockPayload({ f }: { f: Record<string, unknown> }) {
+  const { homepage } = useSitePayload();
+  const useHome = f.useHomepageFeaturedArticles !== false;
+  const featured = normalizeFeaturedArticles(homepage?.featuredKnowledgeArticles);
+  const legacyRaw = (f.cards as KnowledgeTeaserCardData[]) ?? [];
+  const legacyCards = legacyRaw.filter((c) => c.title);
+  const cards =
+    useHome && featured.length > 0 ? featured.map(articleToKnowledgeCard)
+    : legacyCards.length > 0 ? legacyCards
+    : [];
+
+  const eyebrow = f.eyebrow ? String(f.eyebrow) : undefined;
+  const heading = String(f.heading ?? "Baza wiedzy");
+  const subtitle = f.subtitle ? String(f.subtitle) : undefined;
+
+  if (!cards.length) return null;
+
+  return <HomeKnowledgeSection eyebrow={eyebrow} heading={heading} subtitle={subtitle} cards={cards} />;
 }
 
 function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
@@ -307,9 +426,10 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
     }
 
     case "szkoleniaWhyShapeUp": {
-      const introL = fourLines(f.intro);
+      const introL = fourLinesPad(f.intro);
       const quoteL = splitLines(String(f.quote ?? ""));
       while (quoteL.length < 3) quoteL.push("");
+      const accent = uploadRefMedia(f.accentTileImage);
       return (
         <SzkoleniaWhyShapeUpFidelity
           key={index}
@@ -326,6 +446,8 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
           quoteLine3={quoteL[2]!}
           darkCardTitle={String(f.darkCardTitle)}
           darkCardBody={String(f.darkCardBody)}
+          accentTileImageUrl={accent.url}
+          accentTileImageAlt={accent.alt}
         />
       );
     }
@@ -640,78 +762,61 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
       const ctaLabel = f.ctaLabel ? String(f.ctaLabel) : "Przeczytaj Case Study";
       return (
         <div key={index} className="flow-root w-full min-w-0 shrink-0 self-stretch bg-white">
-          <div className="content-stretch mx-auto flex min-w-0 max-w-content shrink-0 flex-col items-start self-stretch overflow-clip bg-white pb-[96px] relative w-full">
-            <div className="content-stretch flex w-full min-w-0 shrink-0 flex-col gap-[80px] items-start bg-white max-w-[1536px] px-4 sm:px-6 md:px-10 lg:px-[61px] relative">
-              <div className="bg-[var(--blue,#032796)] content-stretch flex flex-col items-start overflow-clip pb-[80px] pt-[96px] px-5 sm:px-10 lg:px-[80px] relative rounded-tr-[100px] shrink-0 w-full">
-                <div className="absolute bg-[rgba(0,91,179,0.1)] blur-[32px] right-[-80px] rounded-[12px] size-[256px] top-[-64px]" aria-hidden />
-                <div className="content-stretch flex gap-[64px] items-start relative shrink-0 w-full">
-                  <div className="content-stretch flex flex-col gap-[32px] items-start relative shrink-0 w-[659.95px]">
+          <div className="content-stretch relative mx-auto flex w-full min-w-0 max-w-content shrink-0 flex-col items-start self-stretch overflow-visible bg-white pb-[96px]">
+            <div className="content-stretch relative flex w-full min-w-0 shrink-0 flex-col gap-[80px] items-start bg-white max-w-[1536px] px-4 sm:px-6 md:px-10 lg:px-[61px]">
+              <div className="relative flex w-full min-w-0 shrink-0 flex-col items-stretch overflow-hidden rounded-tr-[clamp(48px,12vw,100px)] bg-[var(--blue,#032796)] px-5 pb-12 pt-16 sm:px-10 sm:pb-16 sm:pt-20 lg:px-[80px]">
+                <div className="pointer-events-none absolute right-[-80px] top-[-64px] size-[256px] rounded-[12px] bg-[rgba(0,91,179,0.1)] blur-[32px]" aria-hidden />
+                <div className="relative flex w-full min-w-0 flex-col gap-10 lg:flex-row lg:items-start lg:gap-16 xl:gap-24">
+                  <div className="flex min-w-0 w-full flex-1 flex-col items-start gap-8 lg:min-w-0 lg:pr-4 lg:max-w-[min(100%,42rem)]">
                     {f.badge ?
-                      <div className="border border-[#7dfab6] border-solid content-stretch flex items-start px-[17px] py-[5px] relative shrink-0">
-                        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[#7dfab6] text-[12px] text-center tracking-[1.2px]">
-                          <p className="leading-[16px]">{String(f.badge)}</p>
-                        </div>
+                      <div className="inline-flex items-start border border-solid border-[#7dfab6] px-[17px] py-[5px]">
+                        <p className="m-0 font-['Satoshi:Bold',sans-serif] text-[12px] leading-[16px] tracking-[1.2px] text-[#7dfab6]">{String(f.badge)}</p>
                       </div>
                     : null}
-                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                      <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-white w-full">
-                        <p className="leading-[40px] whitespace-pre-wrap">{String(f.title)}</p>
-                      </div>
-                    </div>
+                    <p
+                      lang="pl"
+                      className="m-0 max-w-full font-['Satoshi:Bold',sans-serif] text-[clamp(1.25rem,calc(0.72rem+2.65vw),2.25rem)] font-normal leading-[1.22] text-white text-balance break-words hyphens-auto whitespace-pre-wrap sm:leading-[1.2] lg:leading-[1.15]"
+                    >
+                      {String(f.title)}
+                    </p>
                     {ctaPath.startsWith("http") ?
                       <a
                         href={ctaPath}
-                        className="bg-white content-stretch flex gap-[16px] items-center px-[40px] py-[20px] relative rounded-[18px] shrink-0 no-underline"
+                        className="inline-flex max-w-full shrink-0 flex-wrap items-center justify-center gap-3 rounded-[18px] bg-white px-6 py-4 no-underline sm:inline-flex sm:justify-start sm:gap-4 sm:px-8 sm:py-5"
                       >
-                        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] w-[190px]">
-                          <p className="leading-[16px]">{ctaLabel}</p>
-                        </div>
-                        <div className="relative shrink-0 size-[16px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgCaseCtaArrow} />
-                        </div>
+                        <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] text-[#022169] sm:text-left sm:text-[16px]">{ctaLabel}</span>
+                        <span className="relative size-4 shrink-0">
+                          <img alt="" className="absolute inset-0 block size-full max-w-none" src={imgCaseCtaArrow} />
+                        </span>
                       </a>
                     : <Link
                         to={ctaPath}
-                        className="bg-white content-stretch flex gap-[16px] items-center px-[40px] py-[20px] relative rounded-[18px] shrink-0 no-underline"
+                        className="inline-flex max-w-full shrink-0 flex-wrap items-center justify-center gap-3 rounded-[18px] bg-white px-6 py-4 no-underline sm:inline-flex sm:justify-start sm:gap-4 sm:px-8 sm:py-5"
                       >
-                        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] w-[190px]">
-                          <p className="leading-[16px]">{ctaLabel}</p>
-                        </div>
-                        <div className="relative shrink-0 size-[16px]">
-                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgCaseCtaArrow} />
-                        </div>
+                        <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] text-[#022169] sm:text-left sm:text-[16px]">{ctaLabel}</span>
+                        <span className="relative size-4 shrink-0">
+                          <img alt="" className="absolute inset-0 block size-full max-w-none" src={imgCaseCtaArrow} />
+                        </span>
                       </Link>
                     }
                   </div>
-                  <div className="border-[rgba(255,255,255,0.1)] border-l border-solid content-stretch flex flex-col gap-[32px] h-[136px] items-start justify-center pl-[33px] relative shrink-0 w-[332.05px]">
+                  <div className="flex w-full min-w-0 flex-col items-center gap-8 border-t border-solid border-[rgba(255,255,255,0.12)] pt-8 text-center lg:max-w-md lg:flex-none lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0 xl:pl-16">
                     {m0 ?
-                      <div className="opacity-60 relative shrink-0 w-full">
-                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col gap-[8px] items-start relative size-full">
-                          <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                            <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white tracking-[1.2px] w-[299px]">
-                              <p className="leading-[16px]">{String(m0.label)}</p>
-                            </div>
-                          </div>
-                          <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                            <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white w-full">
-                              {whiteMetricValueLines(String(m0.value ?? ""))}
-                            </div>
+                      <div className="w-full min-w-0 max-w-md opacity-90">
+                        <div className="flex w-full min-w-0 flex-col items-center gap-2 text-center">
+                          <p className="m-0 font-['Satoshi:Bold',sans-serif] text-[12px] tracking-[1.2px] text-white">{String(m0.label)}</p>
+                          <div className="max-w-full break-words font-sans text-[16px] leading-[25px] text-white [overflow-wrap:anywhere]">
+                            {whiteMetricValueLines(String(m0.value ?? ""))}
                           </div>
                         </div>
                       </div>
                     : null}
                     {m1 ?
-                      <div className="opacity-60 relative shrink-0 w-full">
-                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col gap-[8px] items-start relative size-full">
-                          <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                            <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white tracking-[1.2px] w-full">
-                              <p className="leading-[16px]">{String(m1.label)}</p>
-                            </div>
-                          </div>
-                          <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                            <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white w-full">
-                              {whiteMetricValueLines(String(m1.value ?? ""))}
-                            </div>
+                      <div className="w-full min-w-0 max-w-md opacity-90">
+                        <div className="flex w-full min-w-0 flex-col items-center gap-2 text-center">
+                          <p className="m-0 font-['Satoshi:Bold',sans-serif] text-[12px] tracking-[1.2px] text-white">{String(m1.label)}</p>
+                          <div className="max-w-full break-words font-sans text-[16px] leading-[25px] text-white [overflow-wrap:anywhere]">
+                            {whiteMetricValueLines(String(m1.value ?? ""))}
                           </div>
                         </div>
                       </div>
@@ -772,183 +877,67 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
       );
     }
 
-    case "founderSpotlight": {
-      const paras = splitParagraphs(String(f.bodyParagraphs ?? ""));
-      const stats = (f.stats as { value?: string; label?: string }[]) ?? [];
-      const s0 = stats[0];
-      const s1 = stats[1];
-      const portraitUrl = cmsMedia(f.portraitUrl);
-      return (
-        <div key={index} className="w-full min-w-0 bg-white">
-          <div className="content-stretch mx-auto flex min-w-0 max-w-content flex-col items-start px-4 sm:px-6 md:px-10 lg:px-[61px] py-[96px] relative shrink-0 w-full">
-            <div className="grid w-full min-h-0 max-w-[1536px] grid-cols-1 grid-rows-[auto] gap-10 lg:grid-cols-[repeat(2,minmax(0,1fr))] lg:gap-x-20 lg:gap-y-20 lg:grid-rows-[_minmax(0,568px)] relative shrink-0">
-              <div className="col-1 content-stretch flex flex-col gap-[23.3px] items-start justify-self-stretch relative row-1 self-center shrink-0">
-                {f.eyebrow ?
-                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full">
-                      <p className="leading-[16px]">{String(f.eyebrow)}</p>
-                    </div>
-                  </div>
-                : null}
-                <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                  <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full">
-                    <p className="leading-[60px]">{String(f.name)}</p>
-                  </div>
-                </div>
-                <div className="content-stretch flex flex-col gap-[23.375px] items-start pt-[16.065px] relative shrink-0 w-full">
-                  {paras.map((para, pi) => {
-                    const lines = splitLines(para);
-                    return (
-                      <div key={pi} className="content-stretch flex flex-col items-start pb-[0.625px] relative shrink-0 w-full">
-                        <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[22px] w-full">
-                          {lines.map((line, li) => (
-                            <p key={li} className={`leading-[27.5px] ${li < lines.length - 1 ? "mb-0" : ""}`}>
-                              {line}
-                            </p>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="content-stretch flex gap-[32px] items-start pt-[24.7px] relative shrink-0 w-full">
-                  {s0 ?
-                    <div className="content-stretch flex flex-col gap-[4px] items-center relative self-stretch shrink-0">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[color:var(--dark-blue,#022169)] whitespace-nowrap">
-                          <p className="leading-[40px]">{String(s0.value)}</p>
-                        </div>
-                      </div>
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                        <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[#757682] text-[16px] whitespace-nowrap">
-                          <p className="leading-[25px]">{String(s0.label)}</p>
-                        </div>
-                      </div>
-                    </div>
-                  : null}
-                  {s1 ?
-                    <div className="content-stretch flex flex-col gap-[4px] items-start relative self-stretch shrink-0 w-[161px]">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[color:var(--dark-blue,#022169)] whitespace-nowrap">
-                          <p className="leading-[40px]">{String(s1.value)}</p>
-                        </div>
-                      </div>
-                      <div className="content-stretch flex flex-col items-center relative shrink-0 w-full">
-                        <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[#757682] text-[16px] text-center w-full">
-                          <p className="leading-[25px]">{String(s1.label)}</p>
-                        </div>
-                      </div>
-                    </div>
-                  : null}
-                </div>
-              </div>
-              <div className="aspect-square bg-[#e8e8e8] col-2 content-stretch flex flex-col items-start justify-center justify-self-stretch overflow-clip relative rounded-tr-[80px] row-1 self-center shrink-0">
-                {portraitUrl ?
-                  <>
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                      <img
-                        alt=""
-                        className="absolute h-full w-full max-w-none object-cover left-0 top-0"
-                        src={portraitUrl}
-                      />
-                    </div>
-                    <div className="absolute inset-0 mix-blend-multiply pointer-events-none z-[1]">
-                      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        <img
-                          alt=""
-                          className="absolute h-[139.57%] left-[-0.01%] max-w-none top-[0.1%] w-full"
-                          src={imgFounderPortraitOverlay}
-                        />
-                      </div>
-                    </div>
-                  </>
-                : (
-                  <>
-                    <div className="bg-white h-[568px] mix-blend-saturation shrink-0 w-full relative z-0" aria-hidden />
-                    <div className="absolute inset-0 mix-blend-multiply z-[1]">
-                      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        <img alt="" className="absolute h-[139.57%] left-[-0.01%] max-w-none top-[0.1%] w-full" src={imgFounderPortraitOverlay} />
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
+    case "founderSpotlight":
+      return <FounderSpotlightBlock key={index} f={f} />;
 
     case "testimonialsHome": {
       const items = (f.items as { quote?: string; authorName?: string; role?: string; avatarUrl?: string }[]) ?? [];
-      const roleColClass = ["w-[207.78px]", "w-[179px]", "w-[166px]"] as const;
-      const quotePbClass = ["pb-[104px]", "pb-[40px]", "pb-[72px]"] as const;
       return (
         <div key={index} className="w-full min-w-0 bg-[#f3f3f3]">
-          <div className="content-stretch mx-auto flex min-w-0 max-w-content flex-col items-start px-4 sm:px-6 md:px-10 lg:px-[61px] py-[96px] relative shrink-0 w-full">
+          <div className="content-stretch mx-auto flex min-w-0 max-w-content flex-col items-start px-4 py-[96px] sm:px-6 md:px-10 lg:px-[61px] relative shrink-0 w-full">
             <div className="content-stretch flex flex-col gap-[80px] items-start max-w-[1536px] relative shrink-0 w-full">
               {f.sectionTitle ?
                 <div className="content-stretch flex flex-col gap-[16px] items-center relative shrink-0 w-full">
                   <div className="h-[16px] shrink-0 w-full" aria-hidden />
-                  <div className="content-stretch flex flex-col items-center pb-[8px] relative shrink-0 w-full">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[48px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[48px] text-center w-[441.13px]">
-                      <p className="leading-[60px]">{String(f.sectionTitle)}</p>
+                  <div className="content-stretch flex flex-col items-center px-2 pb-[8px] relative shrink-0 w-full">
+                    <div className="w-full max-w-full text-center font-['Satoshi:Bold',sans-serif] text-[clamp(2rem,6vw,3rem)] leading-tight text-[#022169]">
+                      <p className="leading-tight">{String(f.sectionTitle)}</p>
                     </div>
                   </div>
                 </div>
               : null}
-              <div className="gap-x-[48px] gap-y-[48px] grid grid-cols-[repeat(3,minmax(0,1fr))] grid-rows-[_464px] relative shrink-0 w-full">
+              <div className="relative grid w-full min-w-0 grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-10 md:gap-y-12 lg:grid-cols-3 lg:gap-x-12">
                 {items.map((it, ii) => {
-                  const colN = ii === 0 ? "col-1" : ii === 1 ? "col-2" : "col-3";
                   const qLines = splitLines(String(it.quote ?? ""));
-                  const pbQuote = quotePbClass[Math.min(ii, 2)]!;
-                  const roleW = roleColClass[Math.min(ii, 2)]!;
                   const av = cmsMedia(it.avatarUrl);
+                  const spanThird = ii === 2 ? "md:col-span-2 lg:col-span-1" : "";
                   return (
                     <div
                       key={ii}
-                      className={`border-[rgba(2,33,105,0.1)] border-l border-solid ${colN} content-stretch flex flex-col items-start justify-between justify-self-stretch pl-[33px] relative row-1 self-start shrink-0`}
+                      className={`flex min-h-0 min-w-0 flex-col gap-8 border-[rgba(2,33,105,0.1)] border-l border-solid pl-6 sm:pl-8 ${spanThird}`}
                     >
-                      <div className="relative shrink-0 w-full">
-                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
-                          <div className={`bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start ${pbQuote} relative size-full`}>
-                            <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                              <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[22px] text-[rgba(2,33,105,0.8)] w-full">
-                                {qLines.map((line, qi) => (
-                                  <p key={qi} className={`leading-[27.5px] ${qi < qLines.length - 1 ? "mb-0" : ""}`}>
-                                    {line}
-                                  </p>
-                                ))}
-                              </div>
-                            </div>
+                      <div className="relative min-w-0 w-full shrink-0">
+                        <div className="flex flex-col items-start">
+                          <div className="flex min-w-0 flex-col justify-center leading-normal not-italic text-[22px] text-[rgba(2,33,105,0.8)] w-full [overflow-wrap:anywhere]">
+                            {qLines.map((line, qi) => (
+                              <p key={qi} className={`leading-[27.5px] ${qi < qLines.length - 1 ? "mb-0" : ""}`}>
+                                {line}
+                              </p>
+                            ))}
                           </div>
                         </div>
                       </div>
-                      <div className="relative shrink-0 w-full">
-                        <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
-                          <div className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full">
-                            <div className="bg-[rgba(2,33,105,0.05)] border border-[rgba(2,33,105,0.1)] border-solid content-stretch flex items-center justify-center overflow-clip p-px relative rounded-[12px] shrink-0 size-[40px]">
-                              <div className="h-[41px] relative shrink-0 w-[40px]">
-                                {av ?
-                                  <img alt="" className="absolute bg-clip-padding border-0 border-[transparent] border-solid inset-0 max-w-none object-cover pointer-events-none size-full" src={av} />
-                                : null}
+                      <div className="relative w-full min-w-0 shrink-0">
+                        <div className="flex gap-[16px] items-center w-full min-w-0">
+                          <div className="flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] border border-[rgba(2,33,105,0.1)] bg-[rgba(2,33,105,0.05)] p-px size-[40px]">
+                            <div className="relative h-[41px] w-[40px]">
+                              {av ?
+                                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={av} />
+                              : null}
+                            </div>
+                          </div>
+                          <div className="flex min-w-0 flex-1 flex-col gap-[2px] items-start">
+                            <div className="flex min-w-0 gap-[7px] items-center">
+                              <div className="min-w-0 font-['Satoshi:Bold',sans-serif] text-[16px] tracking-[1.2px] text-[#022169] break-words">
+                                <p className="leading-[16px] m-0">{String(it.authorName)}</p>
+                              </div>
+                              <div className="relative shrink-0 size-[13px]">
+                                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgTestimonialLinkedIn} />
                               </div>
                             </div>
-                            <div className={`content-stretch flex flex-col gap-[2px] items-start relative shrink-0 ${roleW}`}>
-                              <div className="content-stretch flex gap-[7px] items-center relative shrink-0 w-full">
-                                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] whitespace-nowrap">
-                                  <p className="leading-[16px]">{String(it.authorName)}</p>
-                                </div>
-                                <div className="relative shrink-0 size-[13px]">
-                                  <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgTestimonialLinkedIn} />
-                                </div>
-                              </div>
-                              <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase w-full">
-                                  <p className="leading-[13.5px]">{String(it.role)}</p>
-                                </div>
-                              </div>
-                            </div>
+                            <p className="m-0 font-['Satoshi:Bold',sans-serif] text-[9px] uppercase leading-[13.5px] tracking-[1.8px] text-[color:var(--light-blue,#0083fe)] break-words">
+                              {String(it.role)}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -962,59 +951,8 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
       );
     }
 
-    case "knowledgeTeasers": {
-      const cards = (f.cards as { categoryLabel?: string; title?: string; excerpt?: string; imageUrl?: string; href?: string; ctaLabel?: string }[]) ?? [];
-      const subtitleLines = f.subtitle ? splitLines(String(f.subtitle)) : [];
-      return (
-        <div key={index} className="w-full min-w-0 bg-white">
-          <div className="content-stretch mx-auto flex min-w-0 max-w-content flex-col items-start px-4 sm:px-6 md:px-10 lg:px-[61px] py-[91px] relative shrink-0 w-full">
-            <div className="content-stretch flex flex-col gap-[80px] items-start max-w-[1536px] relative shrink-0 w-full">
-              <div className="content-stretch flex flex-col gap-[24px] items-start relative shrink-0 w-full">
-                {f.eyebrow ?
-                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full">
-                      <p className="leading-[16px]">{String(f.eyebrow)}</p>
-                    </div>
-                  </div>
-                : null}
-                <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                  <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full">
-                    <p className="leading-[60px]">{String(f.heading)}</p>
-                  </div>
-                </div>
-                {subtitleLines.length > 0 ?
-                  <div className="content-stretch flex flex-col items-start pb-[16.625px] pt-[7.375px] relative shrink-0 w-full">
-                    <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[22px] w-full">
-                      {subtitleLines.map((line, li) => (
-                        <p key={li} className={`leading-[27.5px] ${li < subtitleLines.length - 1 ? "mb-0" : ""}`}>
-                          {line}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                : null}
-              </div>
-              <div
-                className={`bg-[#e2e8f0] border border-[#e2e8f0] border-solid gap-x-px gap-y-px grid grid-cols-[repeat(3,minmax(0,1fr))] overflow-clip p-px relative shrink-0 w-full ${
-                  cards.length === 3 ? "grid-rows-[__636px_minmax(0,1fr)] min-h-[637px]" : ""
-                }`}
-              >
-                {cards.map((c, ci) => {
-                  const rawHref = c.href ? String(c.href) : "/artykuly";
-                  const href = rawHref.startsWith("http") ? rawHref : rawHref;
-                  const colClass = cards.length === 3 ? (ci === 0 ? "col-1" : ci === 1 ? "col-2" : "col-3") + " row-1 self-start shrink-0" : "min-h-0";
-                  return (
-                    <div key={ci} className={`bg-white justify-self-stretch relative ${colClass}`}>
-                      <KnowledgeTeaserCard c={c} href={href} />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
+    case "knowledgeTeasers":
+      return <KnowledgeTeasersBlockPayload key={index} f={f} />;
 
     case "challengeBand": {
       const rawFeatures = (f.features as { number?: string; title?: string; body?: string }[]) ?? [];
@@ -1080,80 +1018,6 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
     default:
       return null;
   }
-}
-
-function KnowledgeTeaserCard({
-  c,
-  href,
-}: {
-  c: { categoryLabel?: string; title?: string; excerpt?: string; imageUrl?: string; ctaLabel?: string };
-  href: string;
-}) {
-  const teaserImgSrc = cmsMedia(c.imageUrl);
-  const ctaLabel = c.ctaLabel ?? "Dowiedz się więcej";
-  const ctaRow =
-    href.startsWith("http") ?
-      <a href={href} className="content-stretch flex gap-[16px] items-center relative shrink-0 no-underline">
-        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--dark-blue,#022169)] tracking-[1.2px] w-[165px]">
-          <p className="leading-[16px]">{ctaLabel}</p>
-        </div>
-        <div className="relative shrink-0 size-[12px]">
-          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgKnowledgeTeaserArrow} />
-        </div>
-      </a>
-    : <Link to={href} className="content-stretch flex gap-[16px] items-center relative shrink-0 no-underline">
-        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--dark-blue,#022169)] tracking-[1.2px] w-[165px]">
-          <p className="leading-[16px]">{ctaLabel}</p>
-        </div>
-        <div className="relative shrink-0 size-[12px]">
-          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgKnowledgeTeaserArrow} />
-        </div>
-      </Link>;
-
-  return (
-    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[inherit] size-full">
-      <div className="content-stretch flex flex-col h-[256px] items-start justify-center overflow-clip relative shrink-0 w-full">
-        <div className="flex-[1_0_0] min-h-px relative w-full">
-          {teaserImgSrc ?
-            <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-              <div className="absolute inset-0 overflow-hidden">
-                <img alt="" className="absolute h-[157.81%] left-0 max-w-none top-[-28.91%] w-full" src={teaserImgSrc} />
-              </div>
-              <div className="absolute bg-white inset-0 mix-blend-saturation" />
-            </div>
-          : null}
-        </div>
-      </div>
-      <div className="content-stretch flex flex-col h-[380px] items-start justify-between p-[48px] relative shrink-0 w-full">
-        <div className="content-stretch flex flex-col items-start pb-[32px] relative shrink-0 w-full">
-          <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full">
-            {c.categoryLabel ?
-              <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full">
-                  <p className="leading-[16px]">{String(c.categoryLabel)}</p>
-                </div>
-              </div>
-            : null}
-            <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-              <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[24px] w-full">
-                <p className="leading-[40px]">{String(c.title)}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="content-stretch flex flex-col items-start pb-[32px] relative shrink-0 w-full">
-          <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-            <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[20px] w-full">
-              <p className="leading-[25px]">{String(c.excerpt ?? "")}</p>
-            </div>
-          </div>
-        </div>
-        <div className="content-stretch flex flex-[1_0_0] flex-col items-start justify-end min-h-[28px] pt-[42.25px] relative w-full">
-          <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">{ctaRow}</div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export function PageBlocks({ layout }: { layout: PayloadLayoutBlock[] | null | undefined }) {

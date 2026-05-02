@@ -5,7 +5,6 @@ const LOREM_EXP =
 
 const IMG_PILLAR_FT = "https://www.figma.com/api/mcp/asset/57eb5300-0d15-4873-be8b-b29b2c84c025";
 const IMG_PILLAR_EC = "https://www.figma.com/api/mcp/asset/2a0ccd0c-8aa6-4ea5-991c-72af2fde4c6e";
-const IMG_PORTRAIT = "https://www.figma.com/api/mcp/asset/3ba9cf8c-ddf2-4c37-87ed-e115260701a9";
 const IMG_T_FILIP = "https://www.figma.com/api/mcp/asset/2717548e-54bd-4e3e-a05e-c1d097f5fa07";
 const IMG_T_AGN = "https://www.figma.com/api/mcp/asset/2aa1306d-2d93-4df8-9887-62987f5b63e7";
 const IMG_T_MARTA = "https://www.figma.com/api/mcp/asset/9c240abc-dbf1-4d29-bf1f-5a2785c16c8a";
@@ -120,7 +119,7 @@ export const seedHomeContinuationLayout = [
         { value: "10+", label: "Lat doświadczenia" },
         { value: "50+", label: "Zespołów produktowych" },
       ],
-      portraitUrl: IMG_PORTRAIT,
+      portraitUrl: "",
     },
   },
   {
@@ -155,6 +154,7 @@ export const seedHomeContinuationLayout = [
   {
     blockType: "knowledgeTeasers" as const,
     knowledgeTeasers: {
+      useHomepageFeaturedArticles: true,
       eyebrow: "Artykuły",
       heading: "Baza wiedzy",
       subtitle: "Eseje i artykuły",

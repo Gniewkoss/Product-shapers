@@ -12,6 +12,10 @@ html {
   }
 }
 
+#root {
+  min-width: 0;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -73,17 +77,24 @@ body {
 }
 
 @layer components {
-  /* Articles listing: cyclical editorial grid (12 columns from md+, stacked full width on mobile) */
+  /* Articles listing: 1-col mobile → 2-col tablet → 12-col bento desktop */
   .article-cycle-grid {
     display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
     grid-auto-flow: dense;
     gap: 24px;
     align-items: stretch;
   }
 
+  @media (min-width: 768px) {
+    .article-cycle-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   @media (min-width: 1024px) {
     .article-cycle-grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
       gap: 32px;
     }
   }

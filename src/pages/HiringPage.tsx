@@ -1,7 +1,3 @@
-import { PageBlocks } from "../components/cms/PageBlocks";
-import { useSitePayload } from "../context/SitePayloadContext";
-import type { PayloadLayoutBlock } from "../lib/payload/blockUtils";
-
 /** Hiring: Figma fallback lub layout z Payload (`site-pages` → hiring). */
 
 function HiringPageFallback() {
@@ -155,19 +151,5 @@ function HiringPageFallback() {
 }
 
 export function HiringPage() {
-  const { sitePagesByRoute } = useSitePayload();
-  const layout = sitePagesByRoute.hiring?.layout as PayloadLayoutBlock[] | undefined;
-  if (layout?.length) {
-    return (
-      <div className="w-full min-w-0">
-        <div
-          className="mx-auto flex w-full min-w-0 max-w-content flex-col items-start pb-24 pt-[110px]"
-          data-name="Hiring (Desktop) - Brand Strict"
-        >
-          <PageBlocks layout={layout} />
-        </div>
-      </div>
-    );
-  }
   return <HiringPageFallback />;
 }

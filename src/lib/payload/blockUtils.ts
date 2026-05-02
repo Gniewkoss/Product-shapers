@@ -35,3 +35,10 @@ export function splitParagraphs(text: string | null | undefined): string[] {
     .map((p) => p.trim())
     .filter(Boolean);
 }
+
+/** Exactly four lines for szkolenia „Why Shape Up” intro copy (pads with empty strings). */
+export function fourLinesPad(body: unknown): [string, string, string, string] {
+  const L = splitLines(String(body ?? ""));
+  while (L.length < 4) L.push("");
+  return [L[0]!, L[1]!, L[2]!, L[3]!];
+}

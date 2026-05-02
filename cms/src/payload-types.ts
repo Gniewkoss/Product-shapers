@@ -639,6 +639,10 @@ export interface SitePage {
             blockType: 'testimonialsHome';
           }
         | {
+            /**
+             * Włączone: karty z Globals → Homepage → Baza wiedzy (wybrane artykuły, max 3). Wyłączone: użyj ręcznych kart poniżej.
+             */
+            useHomepageFeaturedArticles?: boolean | null;
             eyebrow?: string | null;
             heading: string;
             subtitle?: string | null;
@@ -675,6 +679,10 @@ export interface SitePage {
             quote: string;
             darkCardTitle: string;
             darkCardBody: string;
+            /**
+             * Obraz w prawym dolnym kafelku (zamiast zielonego pola). Opcjonalny — bez pliku zostaje układ demonstracyjny.
+             */
+            accentTileImage?: (number | null) | Media;
             id?: string | null;
             blockName?: string | null;
             blockType: 'szkoleniaWhyShapeUp';
@@ -1257,6 +1265,7 @@ export interface SitePagesSelect<T extends boolean = true> {
         knowledgeTeasers?:
           | T
           | {
+              useHomepageFeaturedArticles?: T;
               eyebrow?: T;
               heading?: T;
               subtitle?: T;
@@ -1288,6 +1297,7 @@ export interface SitePagesSelect<T extends boolean = true> {
               quote?: T;
               darkCardTitle?: T;
               darkCardBody?: T;
+              accentTileImage?: T;
               id?: T;
               blockName?: T;
             };
@@ -1455,7 +1465,11 @@ export interface Homepage {
       }[]
     | null;
   /**
-   * Rotating background photos (URLs)
+   * Tła sekcji community (karuzela). Upload z biblioteki Media — gdy dodasz przynajmniej jedno zdjęcie, lista adresów URL poniżej jest pomijana.
+   */
+  communityBackgroundPhotos?: (number | Media)[] | null;
+  /**
+   * Opcjonalnie: zewnętrzne adresy URL obrazów (starszy sposób). Używane tylko gdy „Community background photos” jest puste.
    */
   communityBgUrls?:
     | {
@@ -1810,6 +1824,10 @@ export interface Homepage {
             blockType: 'testimonialsHome';
           }
         | {
+            /**
+             * Włączone: karty z Globals → Homepage → Baza wiedzy (wybrane artykuły, max 3). Wyłączone: użyj ręcznych kart poniżej.
+             */
+            useHomepageFeaturedArticles?: boolean | null;
             eyebrow?: string | null;
             heading: string;
             subtitle?: string | null;
@@ -1846,6 +1864,10 @@ export interface Homepage {
             quote: string;
             darkCardTitle: string;
             darkCardBody: string;
+            /**
+             * Obraz w prawym dolnym kafelku (zamiast zielonego pola). Opcjonalny — bez pliku zostaje układ demonstracyjny.
+             */
+            accentTileImage?: (number | null) | Media;
             id?: string | null;
             blockName?: string | null;
             blockType: 'szkoleniaWhyShapeUp';
@@ -2184,6 +2206,10 @@ export interface Homepage {
             blockType: 'testimonialsHome';
           }
         | {
+            /**
+             * Włączone: karty z Globals → Homepage → Baza wiedzy (wybrane artykuły, max 3). Wyłączone: użyj ręcznych kart poniżej.
+             */
+            useHomepageFeaturedArticles?: boolean | null;
             eyebrow?: string | null;
             heading: string;
             subtitle?: string | null;
@@ -2220,12 +2246,28 @@ export interface Homepage {
             quote: string;
             darkCardTitle: string;
             darkCardBody: string;
+            /**
+             * Obraz w prawym dolnym kafelku (zamiast zielonego pola). Opcjonalny — bez pliku zostaje układ demonstracyjny.
+             */
+            accentTileImage?: (number | null) | Media;
             id?: string | null;
             blockName?: string | null;
             blockType: 'szkoleniaWhyShapeUp';
           }
       )[]
     | null;
+  /**
+   * Portret w sekcji „Architekt projektu” / Dawid Jurand Szkiełka — zaokrąglony prawy górny róg nadal z CSS. Bez uploadu pokazywany jest domyślny obraz z layoutu.
+   */
+  founderPortrait?: (number | null) | Media;
+  /**
+   * Krótki opis dla a11y (np. Dawid Jurand Szkiełka, portret)
+   */
+  founderPortraitAlt?: string | null;
+  /**
+   * Maks. 3 opublikowane artykuły — kolejność tu = kolejność kafelków. Używane gdy blok „Knowledge teaser grid” ma włączone „Użyj wyboru ze strony głównej”, oraz na stronie głównej bez bloków CMS.
+   */
+  featuredKnowledgeArticles?: (number | Article)[] | null;
   contactEyebrow?: string | null;
   contactHeading?: string | null;
   contactIntro?: string | null;
@@ -2359,6 +2401,7 @@ export interface HomepageSelect<T extends boolean = true> {
         name?: T;
         id?: T;
       };
+  communityBackgroundPhotos?: T;
   communityBgUrls?:
     | T
     | {
@@ -2703,6 +2746,7 @@ export interface HomepageSelect<T extends boolean = true> {
         knowledgeTeasers?:
           | T
           | {
+              useHomepageFeaturedArticles?: T;
               eyebrow?: T;
               heading?: T;
               subtitle?: T;
@@ -2734,6 +2778,7 @@ export interface HomepageSelect<T extends boolean = true> {
               quote?: T;
               darkCardTitle?: T;
               darkCardBody?: T;
+              accentTileImage?: T;
               id?: T;
               blockName?: T;
             };
@@ -3067,6 +3112,7 @@ export interface HomepageSelect<T extends boolean = true> {
         knowledgeTeasers?:
           | T
           | {
+              useHomepageFeaturedArticles?: T;
               eyebrow?: T;
               heading?: T;
               subtitle?: T;
@@ -3098,10 +3144,14 @@ export interface HomepageSelect<T extends boolean = true> {
               quote?: T;
               darkCardTitle?: T;
               darkCardBody?: T;
+              accentTileImage?: T;
               id?: T;
               blockName?: T;
             };
       };
+  founderPortrait?: T;
+  founderPortraitAlt?: T;
+  featuredKnowledgeArticles?: T;
   contactEyebrow?: T;
   contactHeading?: T;
   contactIntro?: T;

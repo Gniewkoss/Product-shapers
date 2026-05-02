@@ -6,7 +6,7 @@ import { ArticleSectionBody } from "../components/ArticleSectionBody";
 import { shapeUpScrumArticle } from "../content/articles/shape-up-scrum";
 import type { ArticleDocument } from "../content/articleTypes";
 import { useSitePayload } from "../context/SitePayloadContext";
-import { getArticleBySlug, mediaUrl } from "../lib/payload/client";
+import { getArticleBySlug, isAbortError, mediaUrl } from "../lib/payload/client";
 import { mapPayloadArticleToDocument, mapPayloadArticlesToRelated } from "../lib/payload/mapArticle";
 import { articles as articlesCatalog, type Article } from "./ArticlesMain";
 
@@ -140,27 +140,47 @@ export function ArticlePage() {
 
   const [article, setArticle] = useState<ArticleDocument | null>(null);
   const [payloadDoc, setPayloadDoc] = useState<PayloadArticle | null>(null);
+  const [articleFetchPending, setArticleFetchPending] = useState(Boolean(slug));
 
   useEffect(() => {
     if (!slug) {
       setArticle(null);
       setPayloadDoc(null);
+      setArticleFetchPending(false);
       return;
     }
     let cancelled = false;
+    const ctrl = new AbortController();
+    const tid = window.setTimeout(() => ctrl.abort(), 25_000);
+    setArticleFetchPending(true);
     (async () => {
-      const doc = await getArticleBySlug(slug, 2);
-      if (cancelled) return;
-      if (doc) {
-        setPayloadDoc(doc);
-        setArticle(mapPayloadArticleToDocument(doc));
-      } else {
+      try {
+        const doc = await getArticleBySlug(slug, 2, ctrl.signal);
+        if (cancelled) return;
+        if (doc) {
+          setPayloadDoc(doc);
+          setArticle(mapPayloadArticleToDocument(doc));
+        } else {
+          setPayloadDoc(null);
+          setArticle(slug === "shape-up-scrum" ? shapeUpScrumArticle : null);
+        }
+      } catch (e) {
+        if (cancelled) return;
         setPayloadDoc(null);
         setArticle(slug === "shape-up-scrum" ? shapeUpScrumArticle : null);
+        if (import.meta.env.DEV && isAbortError(e)) {
+          console.warn("[ArticlePage] Article fetch aborted or timed out:", slug);
+        }
+      } finally {
+        window.clearTimeout(tid);
+        setArticleFetchPending(false);
       }
     })();
     return () => {
       cancelled = true;
+      ctrl.abort();
+      window.clearTimeout(tid);
+      setArticleFetchPending(false);
     };
   }, [slug, contentVersion]);
 
@@ -189,6 +209,14 @@ export function ArticlePage() {
 
   if (!slug) {
     return <Navigate to="/artykuly" replace />;
+  }
+
+  if (articleFetchPending) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-start gap-4 bg-white px-6 pb-24 pt-[140px]">
+        <p className="font-sans text-[#000f3d]">Ładowanie artykułu…</p>
+      </div>
+    );
   }
 
   if (!article) {

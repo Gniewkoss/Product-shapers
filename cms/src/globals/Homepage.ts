@@ -102,9 +102,22 @@ export const Homepage: GlobalConfig = {
           fields: [{ name: "name", type: "text", required: true }],
         },
         {
+          name: "communityBackgroundPhotos",
+          type: "relationship",
+          relationTo: "media",
+          hasMany: true,
+          admin: {
+            description:
+              "Tła sekcji community (karuzela). Upload z biblioteki Media — gdy dodasz przynajmniej jedno zdjęcie, lista adresów URL poniżej jest pomijana.",
+          },
+        },
+        {
           name: "communityBgUrls",
           type: "array",
-          admin: { description: "Rotating background photos (URLs)" },
+          admin: {
+            description:
+              "Opcjonalnie: zewnętrzne adresy URL obrazów (starszy sposób). Używane tylko gdy „Community background photos” jest puste.",
+          },
           fields: [{ name: "url", type: "text", required: true }],
         },
       ],
@@ -145,6 +158,48 @@ export const Homepage: GlobalConfig = {
         description:
           "Ordered sections from practice tiles through knowledge grid (method tiles, pillars, founder, testimonials, article teasers, etc.).",
       },
+    },
+    {
+      type: "collapsible",
+      label: "Kim jestem — zdjęcie (strona główna)",
+      fields: [
+        {
+          name: "founderPortrait",
+          type: "upload",
+          relationTo: "media",
+          admin: {
+            description:
+              "Portret w sekcji „Architekt projektu” / Dawid Jurand Szkiełka — zaokrąglony prawy górny róg nadal z CSS. Bez uploadu pokazywany jest domyślny obraz z layoutu.",
+          },
+        },
+        {
+          name: "founderPortraitAlt",
+          type: "text",
+          admin: { description: "Krótki opis dla a11y (np. Dawid Jurand Szkiełka, portret)" },
+        },
+      ],
+    },
+    {
+      type: "collapsible",
+      label: "Baza wiedzy (strona główna)",
+      fields: [
+        {
+          name: "featuredKnowledgeArticles",
+          type: "relationship",
+          relationTo: "articles",
+          hasMany: true,
+          maxRows: 3,
+          admin: {
+            description:
+              "Maks. 3 opublikowane artykuły — kolejność tu = kolejność kafelków. Używane gdy blok „Knowledge teaser grid” ma włączone „Użyj wyboru ze strony głównej”, oraz na stronie głównej bez bloków CMS.",
+          },
+          filterOptions: {
+            status: {
+              equals: "published",
+            },
+          },
+        },
+      ],
     },
     {
       type: "collapsible",

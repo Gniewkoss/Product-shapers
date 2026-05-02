@@ -147,6 +147,14 @@ export const szkoleniaWhyShapeUpBlock: Block = {
     { name: "quote", type: "textarea", required: true, admin: { description: "Three lines, newline-separated" } },
     { name: "darkCardTitle", type: "text", required: true },
     { name: "darkCardBody", type: "textarea", required: true },
+    {
+      name: "accentTileImage",
+      type: "upload",
+      relationTo: "media",
+      admin: {
+        description: "Obraz w prawym dolnym kafelku (zamiast zielonego pola). Opcjonalny — bez pliku zostaje układ demonstracyjny.",
+      },
+    },
   ],
 };
 
@@ -338,6 +346,15 @@ export const knowledgeTeasersBlock: Block = {
   slug: "knowledgeTeasers",
   labels: { singular: "Knowledge teaser grid", plural: "Knowledge teaser grids" },
   fields: [
+    {
+      name: "useHomepageFeaturedArticles",
+      type: "checkbox",
+      defaultValue: true,
+      admin: {
+        description:
+          "Włączone: karty z Globals → Homepage → Baza wiedzy (wybrane artykuły, max 3). Wyłączone: użyj ręcznych kart poniżej.",
+      },
+    },
     { name: "eyebrow", type: "text" },
     { name: "heading", type: "text", required: true },
     { name: "subtitle", type: "text" },

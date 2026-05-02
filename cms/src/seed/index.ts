@@ -53,6 +53,20 @@ async function seed() {
     });
   }
 
+  const picks = await payload.find({
+    collection: "articles",
+    limit: 3,
+    depth: 0,
+    sort: "-publishedAt",
+    where: { status: { equals: "published" } },
+  });
+  await payload.updateGlobal({
+    slug: "homepage",
+    data: {
+      featuredKnowledgeArticles: picks.docs.map((d) => d.id),
+    },
+  });
+
   console.info("[seed] Done — globals + articles created.");
 }
 

@@ -1,19 +1,72 @@
-import { PageBlocks } from "../components/cms/PageBlocks";
 import { SzkoleniaFaqAccordion } from "../components/SzkoleniaFaqAccordion";
+import { type SzkoleniaWhyShapeUpProps, SzkoleniaWhyShapeUpFidelity } from "../components/site/szkolenia/SzkoleniaWhyShapeUp";
 import { useSitePayload } from "../context/SitePayloadContext";
-import type { PayloadLayoutBlock } from "../lib/payload/blockUtils";
+import { fourLinesPad, getBlockFields, splitLines, type PayloadLayoutBlock } from "../lib/payload/blockUtils";
+import { uploadRefMedia } from "../lib/payload/client";
+
+const WHY_SHAPE_UP_FALLBACK: SzkoleniaWhyShapeUpProps = {
+  titleLine1: "Dlaczego",
+  titleLine2: "Shape Up?",
+  introLines: fourLinesPad(`Metodologia Shape Up to odpowiedź na chaos agile'owy.
+Zamiast dwutygodniowych sprintów, które nigdy się nie
+kończą, oferujemy system, który gwarantuje dowiezienie
+wartości w przewidywalnym czasie.`),
+  benefit1: "Eliminacja „sprint fatigue”",
+  benefit2: "Jasne granice (circuits)",
+  benefit3: "Realna autonomia zespołów",
+  statValue: "100%",
+  statLabel: "Focus on outcomes",
+  quoteLine1: `"Praca w 6-tygodniowych`,
+  quoteLine2: "cyklach zmieniła nasz sposób",
+  quoteLine3: `myślenia o produkcie."`,
+  darkCardTitle: "Precyzyjne modelowanie",
+  darkCardBody: "Stawianie na właściwe rzeczy we właściwym czasie.",
+};
+
+function whyShapeUpPropsFromLayout(layout: PayloadLayoutBlock[] | undefined): SzkoleniaWhyShapeUpProps {
+  const block = layout?.find((b) => b.blockType === "szkoleniaWhyShapeUp");
+  if (!block) return WHY_SHAPE_UP_FALLBACK;
+  const f = getBlockFields(block);
+  const quoteL = splitLines(String(f.quote ?? ""));
+  while (quoteL.length < 3) quoteL.push("");
+  const introLines = fourLinesPad(f.intro != null && String(f.intro).trim() !== "" ? f.intro : WHY_SHAPE_UP_FALLBACK.introLines.join("\n"));
+  const accent = uploadRefMedia(f.accentTileImage);
+  return {
+    titleLine1: f.titleLine1 != null && String(f.titleLine1).trim() !== "" ? String(f.titleLine1) : WHY_SHAPE_UP_FALLBACK.titleLine1,
+    titleLine2: f.titleLine2 != null && String(f.titleLine2).trim() !== "" ? String(f.titleLine2) : WHY_SHAPE_UP_FALLBACK.titleLine2,
+    introLines,
+    benefit1: f.benefit1 != null && String(f.benefit1).trim() !== "" ? String(f.benefit1) : WHY_SHAPE_UP_FALLBACK.benefit1,
+    benefit2: f.benefit2 != null && String(f.benefit2).trim() !== "" ? String(f.benefit2) : WHY_SHAPE_UP_FALLBACK.benefit2,
+    benefit3: f.benefit3 != null && String(f.benefit3).trim() !== "" ? String(f.benefit3) : WHY_SHAPE_UP_FALLBACK.benefit3,
+    statValue: f.statValue != null && String(f.statValue).trim() !== "" ? String(f.statValue) : WHY_SHAPE_UP_FALLBACK.statValue,
+    statLabel: f.statLabel != null && String(f.statLabel).trim() !== "" ? String(f.statLabel) : WHY_SHAPE_UP_FALLBACK.statLabel,
+    quoteLine1: quoteL[0] !== "" ? quoteL[0]! : WHY_SHAPE_UP_FALLBACK.quoteLine1,
+    quoteLine2: quoteL[1] !== "" ? quoteL[1]! : WHY_SHAPE_UP_FALLBACK.quoteLine2,
+    quoteLine3: quoteL[2] !== "" ? quoteL[2]! : WHY_SHAPE_UP_FALLBACK.quoteLine3,
+    darkCardTitle:
+      f.darkCardTitle != null && String(f.darkCardTitle).trim() !== "" ? String(f.darkCardTitle) : WHY_SHAPE_UP_FALLBACK.darkCardTitle,
+    darkCardBody:
+      f.darkCardBody != null && String(f.darkCardBody).trim() !== "" ? String(f.darkCardBody) : WHY_SHAPE_UP_FALLBACK.darkCardBody,
+    accentTileImageUrl: accent.url,
+    accentTileImageAlt: accent.alt,
+  };
+}
 
 const imgContainer = "https://www.figma.com/api/mcp/asset/f3b460a1-e46e-48d6-8719-40d762e6f75d";
-const imgContainer1 = "https://www.figma.com/api/mcp/asset/0857130b-81a6-4514-817e-27c32b4bfbda";
-const imgIcon = "https://www.figma.com/api/mcp/asset/e27b3d11-14c4-4f8f-882d-78150d0442eb";
-function SzkoleniaMainFallback() {
+function SzkoleniaMainFallback({
+  faqItems,
+  layout,
+}: {
+  faqItems?: { title: string; answer: string }[];
+  layout?: PayloadLayoutBlock[];
+}) {
   return (
     <div className="content-stretch relative size-full flex flex-col items-start bg-[#f9f9f9] pb-[3.66px]" data-node-id="1:126" data-name="Szkolenia (Desktop) - Brand Strict">
       <div className="content-stretch flex flex-col items-start pt-[110px] relative shrink-0 w-full max-md:pt-[96px]" data-node-id="1:127" data-name="Main">
         <div className="w-full min-w-0 bg-white">
         <div className="relative mx-auto w-full min-w-0 max-w-content shrink-0 bg-white px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:px-[61px] lg:py-[96px]" data-node-id="1:128" data-name="Hero Section">
           <div className="relative grid w-full grid-cols-[repeat(12,minmax(0,1fr))] grid-rows-[minmax(0,auto)] gap-x-8 gap-y-8 lg:grid-rows-[auto]">
-          <div className="border-[var(--dark-blue,#022169)] border-l-4 border-solid col-[1/span_8] content-stretch flex w-full min-w-0 max-w-full flex-col gap-[24px] items-start justify-self-start pl-8 pr-0 sm:pl-8 relative row-1 self-start shrink-0 lg:max-w-[821px]" data-node-id="1:129" data-name="Container">
+          <div className="border-[var(--dark-blue,#022169)] border-l-4 border-solid col-[1/span_12] lg:col-[1/span_8] content-stretch flex w-full min-w-0 max-w-full flex-col gap-[24px] items-start justify-self-start pl-8 pr-0 sm:pl-8 relative row-1 self-start shrink-0 lg:max-w-[821px]" data-node-id="1:129" data-name="Container">
             <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:130" data-name="Container">
               <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#005bb3] text-[16px] tracking-[1.2px] w-full" data-node-id="1:131">
                 <p className="leading-[16px]">Ekspercka Wiedza Produktowa</p>
@@ -26,11 +79,7 @@ function SzkoleniaMainFallback() {
               </div>
             </div>
             <div className="content-stretch flex w-full min-w-0 max-w-[672px] flex-col items-start pt-[7px] relative shrink-0" data-node-id="1:134" data-name="Container">
-              <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[22px] whitespace-nowrap" data-node-id="1:135">
-                <p className="leading-[27.5px] mb-0">Ekskluzywny, 12-tygodniowy proces transformacji dla Product</p>
-                <p className="leading-[27.5px] mb-0">Managerów i Leadów, którzy chcą wyjść poza ramy standardowego</p>
-                <p className="leading-[27.5px]">zarządzania i stać się architektami wartości biznesowej.</p>
-              </div>
+              <p className="not-italic text-[#444651] text-[22px] leading-[1.35] w-full m-0">Ekskluzywny, 12-tygodniowy proces transformacji dla Product Managerów i Leadów, którzy chcą wyjść poza ramy standardowego zarządzania i stać się architektami wartości biznesowej.</p>
             </div>
           </div>
           </div>
@@ -46,8 +95,8 @@ function SzkoleniaMainFallback() {
               <p className="leading-[16px]">06 MODUŁÓW / 12 TYGODNI</p>
             </div>
           </div>
-          <div className="content-start flex flex-wrap gap-[4px] items-start relative shrink-0 w-full" data-node-id="1:140" data-name="Container">
-            <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-between min-h-[400px] p-[48px] relative shrink-0 w-[383.333px]" data-node-id="1:141" data-name="Module 1">
+          <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 relative shrink-0" data-node-id="1:140" data-name="Container">
+            <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-between min-h-[400px] p-8 lg:p-[48px] relative" data-node-id="1:141" data-name="Module 1">
               <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:142" data-name="Container">
                 <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:143" data-name="Container">
                   <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[rgba(117,118,130,0.78)] w-full" data-node-id="1:144">
@@ -80,7 +129,7 @@ function SzkoleniaMainFallback() {
                 </div>
               </div>
             </div>
-            <div className="bg-[var(--font,#000f3d)] content-stretch flex flex-col items-start justify-between min-h-[400px] p-[48px] relative shrink-0 w-[383.333px]" data-node-id="1:155" data-name="Module 2">
+            <div className="bg-[var(--font,#000f3d)] content-stretch flex flex-col items-start justify-between min-h-[400px] p-8 lg:p-[48px] relative" data-node-id="1:155" data-name="Module 2">
               <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:156" data-name="Container">
                 <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:157" data-name="Container">
                   <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#757682] text-[36px] w-full" data-node-id="1:158">
@@ -113,7 +162,7 @@ function SzkoleniaMainFallback() {
                 </div>
               </div>
             </div>
-            <div className="bg-[#f3f3f3] content-stretch flex flex-col h-[405px] items-start justify-between min-h-[400px] p-[48px] relative shrink-0 w-[383.333px]" data-node-id="1:169" data-name="Module 6">
+            <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-between min-h-[400px] p-8 lg:p-[48px] relative" data-node-id="1:169" data-name="Module 6">
               <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:170" data-name="Container">
                 <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:171" data-name="Container">
                   <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[rgba(117,118,130,0.78)] w-full" data-node-id="1:172">
@@ -149,50 +198,58 @@ function SzkoleniaMainFallback() {
                 </div>
               </div>
             </div>
-            <div className="bg-[#f3f3f3] content-stretch flex flex-col h-[400px] items-start min-h-[400px] p-[48px] relative shrink-0 w-[770.667px]" data-node-id="1:183" data-name="Module 4">
-              <div className="content-stretch flex h-[303px] items-center justify-between relative shrink-0 w-full" data-node-id="1:184" data-name="Container">
-                <div className="content-stretch flex flex-col gap-[16px] h-full items-start relative shrink-0 w-[413.34px]" data-node-id="1:185" data-name="Container">
-                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:186" data-name="Container">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[rgba(117,118,130,0.78)] w-full" data-node-id="1:187">
+            <div className="relative flex min-h-[400px] min-w-0 flex-col items-start bg-[#f3f3f3] p-8 sm:col-span-2 lg:p-[48px]" data-node-id="1:183" data-name="Module 4">
+              <div className="flex w-full min-w-0 flex-col gap-8 xl:flex-row xl:items-center xl:gap-10" data-node-id="1:184" data-name="Container">
+                <div className="flex min-w-0 w-full flex-1 flex-col gap-[16px] items-start xl:min-w-0" data-node-id="1:185" data-name="Container">
+                  <div className="flex w-full min-w-0 flex-col items-start" data-node-id="1:186" data-name="Container">
+                    <div className="flex w-full min-w-0 flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic text-[36px] text-[rgba(117,118,130,0.78)]" data-node-id="1:187">
                       <p className="leading-[40px]">04</p>
                     </div>
                   </div>
-                  <div className="content-stretch flex flex-col items-start pt-[16px] relative shrink-0 w-full" data-node-id="1:188" data-name="Heading 3">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[24px] w-full" data-node-id="1:189">
+                  <div className="flex w-full min-w-0 flex-col items-start pt-[16px]" data-node-id="1:188" data-name="Heading 3">
+                    <div className="flex w-full min-w-0 flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic text-[#000f3d] text-[24px]" data-node-id="1:189">
                       <p className="leading-[40px]">{`Product authority `}</p>
                     </div>
                   </div>
-                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:190" data-name="Container">
-                    <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[20px] w-[392px]" data-node-id="1:191">
-                      <p className="leading-[25px]">Budowanie autorytetu w organizacji. Komunikacja z C-level, negocjacje zasobów i zarządzanie oczekiwaniami interesariuszy.</p>
+                  <div className="flex w-full min-w-0 flex-col items-start" data-node-id="1:190" data-name="Container">
+                    <div className="w-full min-w-0 max-w-prose text-[20px] font-normal leading-[25px] text-[#444651] text-pretty xl:max-w-none" data-node-id="1:191">
+                      <p className="leading-[27px] sm:leading-[28px]">
+                        Budowanie autorytetu w organizacji. Komunikacja z{" "}
+                        <span className="whitespace-nowrap">C-level</span>, negocjacje zasobów i zarządzanie oczekiwaniami interesariuszy.
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-white border-[#005bb3] border-l-4 border-solid content-stretch flex flex-col h-[199px] items-start justify-center pl-[28px] pr-[24px] py-[24px] relative shrink-0 w-[231px]" data-node-id="1:192" data-name="Background+VerticalBorder">
-                  <div className="relative shrink-0 w-full" data-node-id="1:193" data-name="Margin">
-                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pb-[8px] relative size-full">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:194" data-name="Container">
-                        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full" data-node-id="1:195">
-                          <p className="leading-[16px]">KEY TAKEAWAY</p>
+                <div className="flex w-full min-w-0 justify-center xl:flex-1 xl:justify-center" data-node-id="1:192-wrap">
+                  <div
+                    className="flex w-full max-w-[320px] min-w-0 shrink-0 flex-col items-start justify-center border-l-4 border-solid border-[#005bb3] bg-white py-[24px] pl-[28px] pr-[24px] xl:w-[min(100%,288px)]"
+                    data-node-id="1:192"
+                    data-name="Background+VerticalBorder"
+                  >
+                    <div className="relative shrink-0 w-full" data-node-id="1:193" data-name="Margin">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pb-[8px] relative size-full">
+                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:194" data-name="Container">
+                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full" data-node-id="1:195">
+                            <p className="leading-[16px]">KEY TAKEAWAY</p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="relative shrink-0 w-full" data-node-id="1:196" data-name="Container">
-                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
-                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[16px] w-[183px]" data-node-id="1:197">
-                        <p className="leading-[25px] mb-0">{`"Autorytet nie pochodzi z`}</p>
-                        <p className="leading-[25px]">{`roli, ale z jakości dostarczanych argumentów i danych."`}</p>
+                    <div className="relative shrink-0 w-full" data-node-id="1:196" data-name="Container">
+                      <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
+                        <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[16px] w-full" data-node-id="1:197">
+                          <p className="leading-[25px]">{`"Autorytet nie pochodzi z roli, ale z jakości dostarczanych argumentów i danych."`}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="bg-[#7dfab6] content-stretch flex flex-col items-start justify-between min-h-[400px] p-[48px] relative shrink-0 w-[383.333px]" data-node-id="1:198" data-name="Module 5">
+            <div className="bg-[#7dfab6] content-stretch flex flex-col items-start justify-between min-h-[400px] p-8 lg:p-[48px] relative" data-node-id="1:198" data-name="Module 5">
               <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:199" data-name="Container">
                 <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:200" data-name="Container">
-                  <div className="flex flex-col font-extrabold justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[rgba(0,33,17,0.44)] w-full" data-node-id="1:201">
+                  <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[rgba(0,33,17,0.44)] w-full" data-node-id="1:201">
                     <p className="leading-[40px]">05</p>
                   </div>
                 </div>
@@ -219,105 +276,7 @@ function SzkoleniaMainFallback() {
           </div>
         </div>
         </div>
-        <div className="w-full shrink-0 bg-[#f3f3f3]" data-node-id="1:209" data-name="Section - Dlaczego Shape Up">
-          <div className="relative mx-auto flex w-full min-w-0 max-w-content flex-col items-start px-4 py-[96px] sm:px-6 md:px-10 lg:px-[61px]">
-          <div className="gap-x-[96px] gap-y-[96px] grid grid-cols-[repeat(2,minmax(0,1fr))] grid-rows-[_541px] relative shrink-0 w-full" data-node-id="1:210" data-name="Container">
-            <div className="col-1 content-stretch flex flex-col gap-[31.4px] items-start justify-self-stretch relative row-1 self-start shrink-0" data-node-id="1:211" data-name="Container">
-              <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:212" data-name="Heading 2">
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full" data-node-id="1:213">
-                  <p className="leading-[60px] mb-0">Dlaczego</p>
-                  <p className="leading-[60px]">Shape Up?</p>
-                </div>
-              </div>
-              <div className="content-stretch flex flex-col items-start pb-[0.625px] relative shrink-0 w-full" data-node-id="1:214" data-name="Container">
-                <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[22px] w-full" data-node-id="1:215">
-                  <p className="leading-[27.5px] mb-0">{`Metodologia Shape Up to odpowiedź na chaos agile'owy.`}</p>
-                  <p className="leading-[27.5px] mb-0">Zamiast dwutygodniowych sprintów, które nigdy się nie</p>
-                  <p className="leading-[27.5px] mb-0">kończą, oferujemy system, który gwarantuje dowiezienie</p>
-                  <p className="leading-[27.5px]">wartości w przewidywalnym czasie.</p>
-                </div>
-              </div>
-              <div className="content-stretch flex flex-col gap-[16px] items-start pt-[16.6px] relative shrink-0 w-full" data-node-id="1:216" data-name="Container">
-                <div className="bg-[#e3e3e3] content-stretch flex gap-[24px] items-center p-[24px] relative shrink-0 w-full" data-node-id="1:217" data-name="Background">
-                  <div className="relative shrink-0 size-[20px]" data-node-id="1:218" data-name="Container">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer1} />
-                  </div>
-                  <div className="content-stretch flex flex-col items-start relative shrink-0" data-node-id="1:220" data-name="Container">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[16px] tracking-[1.2px] whitespace-nowrap" data-node-id="1:221">
-                      <p className="leading-[16px]">Eliminacja „sprint fatigue”</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-[#e3e3e3] content-stretch flex gap-[24px] items-center p-[24px] relative shrink-0 w-full" data-node-id="1:222" data-name="Background">
-                  <div className="relative shrink-0 size-[20px]" data-node-id="1:223" data-name="Container">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer1} />
-                  </div>
-                  <div className="content-stretch flex flex-col items-start relative shrink-0" data-node-id="1:225" data-name="Container">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[16px] tracking-[1.2px] whitespace-nowrap" data-node-id="1:226">
-                      <p className="leading-[16px]">Jasne granice (circuits)</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-[#e3e3e3] content-stretch flex gap-[24px] items-center p-[24px] relative shrink-0 w-full" data-node-id="1:227" data-name="Background">
-                  <div className="relative shrink-0 size-[20px]" data-node-id="1:228" data-name="Container">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer1} />
-                  </div>
-                  <div className="content-stretch flex flex-col items-start relative shrink-0" data-node-id="1:230" data-name="Container">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[16px] tracking-[1.2px] whitespace-nowrap" data-node-id="1:231">
-                      <p className="leading-[16px]">Realna autonomia zespołów</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-2 gap-x-[16px] gap-y-[16px] grid grid-cols-[repeat(2,minmax(0,1fr))] grid-rows-[_496px] justify-self-stretch relative row-1 self-start shrink-0" data-node-id="1:232" data-name="Container">
-              <div className="col-1 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pb-[44px] pt-[48px] relative row-1 self-start shrink-0" data-node-id="1:233" data-name="Container">
-                <div className="bg-[var(--light-blue,#0083fe)] content-stretch flex flex-col items-start justify-end pb-[32px] pt-[177px] px-[32px] relative shrink-0 w-full" data-node-id="1:234" data-name="Background">
-                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:235" data-name="Container">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[color:var(--white,white)] w-full" data-node-id="1:236">
-                      <p className="leading-[40px]">100%</p>
-                    </div>
-                  </div>
-                  <div className="content-stretch flex flex-col items-start opacity-70 relative shrink-0 w-full" data-node-id="1:237" data-name="Container">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[color:var(--white,white)] tracking-[1.2px] w-full" data-node-id="1:238">
-                      <p className="leading-[16px]">Focus on outcomes</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-[#e3e3e3] content-stretch flex flex-col items-start p-[32px] relative shrink-0 w-full" data-node-id="1:239" data-name="Background">
-                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:240" data-name="Container">
-                    <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--font,#000f3d)] w-full" data-node-id="1:241">
-                      <p className="leading-[25px] mb-0">{`"Praca w 6-tygodniowych`}</p>
-                      <p className="leading-[25px] mb-0">cyklach zmieniła nasz sposób</p>
-                      <p className="leading-[25px]">{`myślenia o produkcie."`}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-2 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch relative row-1 self-start shrink-0" data-node-id="1:242" data-name="Container">
-                <div className="bg-[#022169] content-stretch flex flex-col gap-[8px] items-start p-[32px] relative shrink-0 w-full" data-node-id="1:243" data-name="Background">
-                  <div className="h-[27px] relative shrink-0 w-[16.5px]" data-node-id="1:244" data-name="Icon">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon} />
-                  </div>
-                  <div className="content-stretch flex flex-col items-start pt-[8px] relative shrink-0 w-full" data-node-id="1:245" data-name="Container">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#778cd8] text-[24px] w-[193px]" data-node-id="1:246">
-                      <p className="leading-[40px]">Precyzyjne modelowanie</p>
-                    </div>
-                  </div>
-                  <div className="content-stretch flex flex-col items-start opacity-60 relative shrink-0 w-full" data-node-id="1:247" data-name="Container">
-                    <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#778cd8] text-[16px] w-full" data-node-id="1:248">
-                      <p className="leading-[25px]">Stawianie na właściwe rzeczy we właściwym czasie.</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-[#7dfab6] content-stretch flex flex-col items-center justify-center px-[32px] py-[84px] relative rounded-tr-[80px] shrink-0 w-full" data-node-id="1:249" data-name="Background">
-                  <div className="bg-white max-w-[264px] mix-blend-multiply opacity-50 shrink-0 size-[96px]" data-node-id="1:250" data-name="Analytics" />
-                </div>
-              </div>
-            </div>
-          </div>
-          </div>
-        </div>
+        <SzkoleniaWhyShapeUpFidelity {...whyShapeUpPropsFromLayout(layout)} />
         <div className="w-full min-w-0 bg-white">
         <div
           className="content-stretch mx-auto flex min-w-0 max-w-content flex-col items-center px-4 pb-[192px] pt-[96px] sm:px-6 md:px-10 lg:px-[61px] relative shrink-0 w-full"
@@ -332,7 +291,7 @@ function SzkoleniaMainFallback() {
             <div className="content-stretch flex w-full flex-col gap-[16px] items-center relative shrink-0" data-node-id="1:253" data-name="Container">
               <div className="content-stretch flex w-full flex-col items-center relative shrink-0" data-node-id="1:254" data-name="Heading 2">
                 <div
-                  className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] text-center"
+                  className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[32px] md:text-[48px] text-center w-full"
                   data-node-id="1:255"
                 >
                   <p className="leading-[60px]">Najczęściej zadawane pytania</p>
@@ -347,7 +306,7 @@ function SzkoleniaMainFallback() {
                 </div>
               </div>
             </div>
-            <SzkoleniaFaqAccordion />
+            <SzkoleniaFaqAccordion items={faqItems} />
           </div>
         </div>
         </div>
@@ -359,14 +318,13 @@ function SzkoleniaMainFallback() {
 export function SzkoleniaMain() {
   const { sitePagesByRoute } = useSitePayload();
   const layout = sitePagesByRoute.szkolenia?.layout as PayloadLayoutBlock[] | undefined;
-  if (layout?.length) {
-    return (
-      <div className="content-stretch relative size-full flex flex-col items-start bg-[#f9f9f9] pb-[3.66px]">
-        <div className="content-stretch flex w-full flex-col items-start pt-[110px] relative shrink-0 max-md:pt-[96px]">
-          <PageBlocks layout={layout} />
-        </div>
-      </div>
-    );
-  }
-  return <SzkoleniaMainFallback />;
+
+  const faqBlock = layout?.find((b) => b.blockType === "faqList");
+  const faqItems = faqBlock
+    ? (getBlockFields(faqBlock).items as { question?: string; answer?: string }[] | undefined)
+        ?.filter((x) => x.question && x.answer)
+        .map((x) => ({ title: String(x.question), answer: String(x.answer) }))
+    : undefined;
+
+  return <SzkoleniaMainFallback faqItems={faqItems} layout={layout} />;
 }

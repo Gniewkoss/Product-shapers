@@ -37,9 +37,13 @@ export function NavBar() {
   const ctaIsKonsultacja = ctaPath.includes("konsultacja");
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-[#c9c9c9]/30 bg-[rgba(248,250,252,0.8)] shadow-sm backdrop-blur-md">
-      <div className="mx-auto flex w-full min-w-0 max-w-content items-center justify-between gap-4 px-4 py-[22px] md:px-[61px] md:py-[30px]">
-        <Link to="/" className="relative h-[50px] w-[205px] shrink-0" onClick={() => setOpen(false)}>
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-[#c9c9c9]/30 bg-[rgba(248,250,252,0.85)] shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-[rgba(248,250,252,0.72)]">
+      <div className="mx-auto flex w-full min-w-0 max-w-content items-center justify-between gap-3 px-4 py-4 sm:gap-4 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center md:justify-items-stretch md:gap-x-6 md:px-[61px] md:py-[30px] lg:gap-x-8">
+        <Link
+          to="/"
+          className="relative h-[50px] min-h-[44px] w-[205px] max-w-[calc(100%-3.75rem)] shrink-0 justify-self-start sm:max-w-none md:max-w-none"
+          onClick={() => setOpen(false)}
+        >
           <span className="absolute inset-[5%_-0.21%_1%_29.85%] text-left font-['Satoshi:Bold',sans-serif] text-[18.571px] leading-[23.214px] text-[#032796] whitespace-nowrap">
             Product Shapers<br />Consulting
           </span>
@@ -54,14 +58,17 @@ export function NavBar() {
           </span>
         </Link>
 
-        <nav className="hidden h-[26px] flex-[0_0_auto] items-center justify-between gap-2 md:flex md:min-w-[400px] md:max-w-[551px] md:flex-[1] lg:gap-0">
+        <nav
+          className="hidden min-w-0 items-center justify-center justify-self-center gap-x-4 gap-y-2 md:flex lg:gap-x-6 xl:gap-x-8"
+          aria-label="Główna nawigacja"
+        >
           {links.map(({ to, label }) => {
             const active = navMatch(pathname, to);
             return (
               <Link
                 key={`${to}-${label}`}
                 to={to}
-                className={`shrink-0 text-center text-[16px] font-sans font-bold tracking-[1.2px] ${
+                className={`min-h-[44px] shrink-0 content-center text-center text-[15px] font-sans font-bold tracking-[1.2px] lg:text-[16px] ${
                   active ? "text-[#022169] underline decoration-solid [text-decoration-skip-ink:none]" : "text-black"
                 } `}
               >
@@ -71,14 +78,14 @@ export function NavBar() {
           })}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden shrink-0 justify-self-end md:block">
           {ctaIsKonsultacja ?
-            <KonsultacjaScrollLink className="inline-flex h-[50px] flex-col items-center justify-center rounded-[18px] bg-[#022169] px-8 py-3 text-center text-[16px] font-sans font-medium capitalize tracking-[1.2px] text-white no-underline">
+            <KonsultacjaScrollLink className="inline-flex min-h-[48px] flex-col items-center justify-center rounded-[18px] bg-[#022169] px-6 py-3 text-center text-[15px] font-sans font-medium capitalize tracking-[1.2px] text-white no-underline lg:px-8 lg:text-[16px]">
               {ctaLabel}
             </KonsultacjaScrollLink>
           : <Link
               to={ctaPath}
-              className="inline-flex h-[50px] flex-col items-center justify-center rounded-[18px] bg-[#022169] px-8 py-3 text-center text-[16px] font-sans font-medium capitalize tracking-[1.2px] text-white no-underline"
+              className="inline-flex min-h-[48px] flex-col items-center justify-center rounded-[18px] bg-[#022169] px-6 py-3 text-center text-[15px] font-sans font-medium capitalize tracking-[1.2px] text-white no-underline lg:px-8 lg:text-[16px]"
             >
               {ctaLabel}
             </Link>
@@ -87,22 +94,32 @@ export function NavBar() {
 
         <button
           type="button"
-          className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#c9c9c9] md:hidden"
-          aria-label="Menu"
+          className="flex h-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[#c9c9c9] md:hidden"
+          aria-label={open ? "Zamknij menu" : "Otwórz menu"}
+          aria-expanded={open}
+          aria-controls="mobile-nav-menu"
           onClick={() => setOpen((o) => !o)}
         >
-          <span className="text-xl leading-none">☰</span>
+          <span className="text-xl leading-none" aria-hidden>
+            {open ? "✕" : "☰"}
+          </span>
         </button>
       </div>
 
-      {open && (
-        <div className="border-t border-[#c9c9c9]/30 bg-[rgba(248,250,252,0.98)] px-4 py-4 md:hidden">
-          <div className="flex flex-col gap-3">
+      {open ?
+        <div
+          id="mobile-nav-menu"
+          className="max-h-[min(70vh,calc(100dvh-5rem))] overflow-y-auto overscroll-contain border-t border-[#c9c9c9]/30 bg-[rgba(248,250,252,0.98)] px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:hidden"
+          role="dialog"
+          aria-modal="false"
+          aria-label="Menu mobilne"
+        >
+          <div className="flex flex-col gap-1">
             {links.map(({ to, label }) => (
               <Link
                 key={`${to}-${label}-m`}
                 to={to}
-                className="py-2 text-[16px] font-sans font-bold tracking-[1.2px] text-[#000f3d]"
+                className="flex min-h-[48px] items-center rounded-lg px-2 text-[16px] font-sans font-bold tracking-[1.2px] text-[#000f3d] active:bg-black/[0.04]"
                 onClick={() => setOpen(false)}
               >
                 {label}
@@ -110,14 +127,14 @@ export function NavBar() {
             ))}
             {ctaIsKonsultacja ?
               <KonsultacjaScrollLink
-                className="mt-2 inline-flex h-[50px] items-center justify-center rounded-[18px] bg-[#022169] text-[16px] font-sans font-medium text-white no-underline"
+                className="mt-3 inline-flex min-h-[48px] w-full items-center justify-center rounded-[18px] bg-[#022169] px-4 py-3 text-[16px] font-sans font-medium text-white no-underline"
                 onClick={() => setOpen(false)}
               >
                 {ctaLabel}
               </KonsultacjaScrollLink>
             : <Link
                 to={ctaPath}
-                className="mt-2 inline-flex h-[50px] items-center justify-center rounded-[18px] bg-[#022169] text-[16px] font-sans font-medium text-white no-underline"
+                className="mt-3 inline-flex min-h-[48px] w-full items-center justify-center rounded-[18px] bg-[#022169] px-4 py-3 text-[16px] font-sans font-medium text-white no-underline"
                 onClick={() => setOpen(false)}
               >
                 {ctaLabel}
@@ -125,7 +142,7 @@ export function NavBar() {
             }
           </div>
         </div>
-      )}
+      : null}
     </header>
   );
 }

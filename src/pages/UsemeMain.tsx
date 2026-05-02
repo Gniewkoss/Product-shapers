@@ -1,8 +1,4 @@
-﻿import { PageBlocks } from "../components/cms/PageBlocks";
-import { useSitePayload } from "../context/SitePayloadContext";
-import type { PayloadLayoutBlock } from "../lib/payload/blockUtils";
-
-const imgFinancialTechnologyInterface = "https://www.figma.com/api/mcp/asset/0eba44d5-9425-4c1e-a191-f61728ae2f23";
+﻿const imgFinancialTechnologyInterface = "https://www.figma.com/api/mcp/asset/0eba44d5-9425-4c1e-a191-f61728ae2f23";
 const imgIcon = "https://www.figma.com/api/mcp/asset/7b0a516d-1b7f-47ea-afed-2a28c4aa4b40";
 const imgIcon1 = "https://www.figma.com/api/mcp/asset/a24b3a10-b6b2-4347-b771-080662d2cf25";
 const imgIcon2 = "https://www.figma.com/api/mcp/asset/112fb91d-7308-45fb-a626-f6e72281650f";
@@ -92,10 +88,10 @@ function UsemeMainFallback() {
         </div>
         <div className="bg-[var(--dark-blue,#022169)] content-stretch flex flex-col items-start overflow-clip py-[96px] relative shrink-0 w-full" data-node-id="1:546" data-name="Section - Challenge: The Asymmetric Layout">
           <div className="mx-auto w-full min-w-0 max-w-content px-4 sm:px-6 md:px-10 lg:px-[61px]">
-          <div className="gap-x-[96px] gap-y-[96px] grid grid-cols-[repeat(2,minmax(0,1fr))] grid-rows-[_492px] relative shrink-0 w-full" data-node-id="1:547" data-name="Container">
-            <div className="col-1 content-stretch flex flex-col gap-[48px] items-start justify-self-stretch relative row-1 self-center shrink-0" data-node-id="1:548" data-name="Container">
+          <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-2 lg:gap-x-[96px] relative shrink-0 w-full" data-node-id="1:547" data-name="Container">
+            <div className="content-stretch flex flex-col gap-[48px] items-start relative self-start shrink-0 w-full" data-node-id="1:548" data-name="Container">
               <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:549" data-name="Heading 2">
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[48px] text-white w-full" data-node-id="1:550">
+                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[32px] md:text-[48px] text-white w-full" data-node-id="1:550">
                   <p className="leading-[60px] mb-0">The Structural</p>
                   <p className="leading-[60px]">Challenge</p>
                 </div>
@@ -107,16 +103,15 @@ function UsemeMainFallback() {
                       <p className="leading-[40px]">01</p>
                     </div>
                   </div>
-                  <div className="content-stretch flex flex-col gap-[8px] items-start relative self-stretch shrink-0" data-node-id="1:555" data-name="Container">
+                  <div className="content-stretch flex flex-col gap-[8px] items-start relative self-stretch shrink-0 min-w-0 flex-1" data-node-id="1:555" data-name="Container">
                     <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:556" data-name="Heading 3">
-                      <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[24px] text-white whitespace-nowrap" data-node-id="1:557">
+                      <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[24px] text-white w-full" data-node-id="1:557">
                         <p className="leading-[40px]">Technical Debt Debt</p>
                       </div>
                     </div>
                     <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:558" data-name="Container">
-                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#778cd8] text-[20px] whitespace-nowrap" data-node-id="1:559">
-                        <p className="leading-[25px] mb-0">Legacy architectures preventing the rapid deployment of new</p>
-                        <p className="leading-[25px]">payment gateways and regional compliance tools.</p>
+                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#778cd8] text-[20px] w-full" data-node-id="1:559">
+                        <p className="leading-[25px]">Legacy architectures preventing the rapid deployment of new payment gateways and regional compliance tools.</p>
                       </div>
                     </div>
                   </div>
@@ -127,16 +122,15 @@ function UsemeMainFallback() {
                       <p className="leading-[40px]">02</p>
                     </div>
                   </div>
-                  <div className="content-stretch flex flex-col gap-[8px] items-start relative self-stretch shrink-0" data-node-id="1:563" data-name="Container">
+                  <div className="content-stretch flex flex-col gap-[8px] items-start relative self-stretch shrink-0 min-w-0 flex-1" data-node-id="1:563" data-name="Container">
                     <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:564" data-name="Heading 3">
-                      <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[24px] text-white whitespace-nowrap" data-node-id="1:565">
+                      <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[24px] text-white w-full" data-node-id="1:565">
                         <p className="leading-[40px]">Process Silos</p>
                       </div>
                     </div>
                     <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:566" data-name="Container">
-                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#778cd8] text-[20px] whitespace-nowrap" data-node-id="1:567">
-                        <p className="leading-[25px] mb-0">Product, Design, and Engineering were operating as hand-off</p>
-                        <p className="leading-[25px]">departments rather than a unified strategic trio.</p>
+                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#778cd8] text-[20px] w-full" data-node-id="1:567">
+                        <p className="leading-[25px]">Product, Design, and Engineering were operating as hand-off departments rather than a unified strategic trio.</p>
                       </div>
                     </div>
                   </div>
@@ -147,23 +141,22 @@ function UsemeMainFallback() {
                       <p className="leading-[40px]">03</p>
                     </div>
                   </div>
-                  <div className="content-stretch flex flex-col gap-[8px] items-start relative self-stretch shrink-0" data-node-id="1:571" data-name="Container">
+                  <div className="content-stretch flex flex-col gap-[8px] items-start relative self-stretch shrink-0 min-w-0 flex-1" data-node-id="1:571" data-name="Container">
                     <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:572" data-name="Heading 3">
-                      <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[24px] text-white whitespace-nowrap" data-node-id="1:573">
+                      <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[24px] text-white w-full" data-node-id="1:573">
                         <p className="leading-[40px]">Outcome Uncertainty</p>
                       </div>
                     </div>
                     <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:574" data-name="Container">
-                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#778cd8] text-[20px] whitespace-nowrap" data-node-id="1:575">
-                        <p className="leading-[25px] mb-0">Difficulties in predicting the ROI of major infrastructure</p>
-                        <p className="leading-[25px]">investments vs. front-end features.</p>
+                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#778cd8] text-[20px] w-full" data-node-id="1:575">
+                        <p className="leading-[25px]">Difficulties in predicting the ROI of major infrastructure investments vs. front-end features.</p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-2 content-stretch flex flex-col items-start justify-self-stretch relative row-1 self-center shrink-0" data-node-id="1:576" data-name="Container">
+            <div className="content-stretch flex flex-col items-start relative self-start shrink-0 w-full" data-node-id="1:576" data-name="Container">
               <div className="bg-[var(--blue,#032796)] border-[var(--green,#82ffba)] border-l-8 border-solid content-stretch flex flex-col gap-[20px] items-start pl-[56px] pr-[48px] py-[48px] relative shrink-0 w-full" data-node-id="1:577" data-name="Background+VerticalBorder">
                 <div className="relative shrink-0 w-full" data-node-id="1:578" data-name="Heading 4">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
@@ -194,18 +187,18 @@ function UsemeMainFallback() {
           <div className="content-stretch flex w-full max-w-[1158px] flex-col gap-[96px] items-center mx-auto pt-[32px] relative shrink-0" data-node-id="1:585" data-name="Section - Solution: Shape Up & Trio">
             <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:586" data-name="Container">
               <div className="content-stretch flex flex-col items-center relative shrink-0 w-full" data-node-id="1:587" data-name="Heading 2">
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] text-center whitespace-nowrap" data-node-id="1:588">
+                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[32px] md:text-[48px] text-center w-full" data-node-id="1:588">
                   <p className="leading-[60px]">The Strategy: Shape Up</p>
                 </div>
               </div>
               <div className="content-stretch flex flex-col items-center relative shrink-0 w-full" data-node-id="1:589" data-name="Container">
-                <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#757682] text-[22px] text-center whitespace-nowrap" data-node-id="1:590">
+                <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#757682] text-[22px] text-center w-full" data-node-id="1:590">
                   <p className="leading-[27.5px]">A radical shift in delivery architecture</p>
                 </div>
               </div>
             </div>
-            <div className="gap-x-[32px] gap-y-[32px] grid grid-cols-[repeat(3,minmax(0,1fr))] grid-rows-[_288px] relative shrink-0 w-full" data-node-id="1:591" data-name="Container">
-              <div className="bg-[#f3f3f3] col-1 content-stretch flex flex-col items-start justify-self-stretch p-[40px] relative row-1 self-start shrink-0" data-node-id="1:592" data-name="Column 1">
+            <div className="gap-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 relative shrink-0 w-full" data-node-id="1:591" data-name="Container">
+              <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-self-stretch p-[40px] relative self-start shrink-0" data-node-id="1:592" data-name="Column 1">
                 <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:593" data-name="Container">
                   <div className="h-[27px] relative shrink-0 w-[16.5px]" data-node-id="1:594" data-name="Icon">
                     <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon} />
@@ -225,7 +218,7 @@ function UsemeMainFallback() {
                   </div>
                 </div>
               </div>
-              <div className="bg-[#f3f3f3] col-2 content-stretch flex flex-col items-start justify-self-stretch p-[40px] relative row-1 self-start shrink-0" data-node-id="1:599" data-name="Column 2">
+              <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-self-stretch p-[40px] relative self-start shrink-0" data-node-id="1:599" data-name="Column 2">
                 <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:600" data-name="Container">
                   <div className="h-[31.5px] relative shrink-0 w-[27px]" data-node-id="1:601" data-name="Icon">
                     <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon1} />
@@ -245,7 +238,7 @@ function UsemeMainFallback() {
                   </div>
                 </div>
               </div>
-              <div className="bg-[#f3f3f3] col-3 content-stretch flex flex-col items-start justify-self-stretch pb-[64px] pt-[40px] px-[40px] relative row-1 self-start shrink-0" data-node-id="1:606" data-name="Column 3">
+              <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-self-stretch pb-[64px] pt-[40px] px-[40px] relative self-start shrink-0" data-node-id="1:606" data-name="Column 3">
                 <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:607" data-name="Container">
                   <div className="relative shrink-0 size-[33px]" data-node-id="1:608" data-name="Icon">
                     <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon2} />
@@ -304,9 +297,9 @@ function UsemeMainFallback() {
               </div>
             </div>
             <div className="bg-[var(--dark-blue,#022169)] content-stretch flex min-h-[293px] w-full min-w-0 flex-col items-start justify-between self-stretch p-[48px] relative shrink-0 md:col-span-2 md:row-start-1" data-node-id="1:628" data-name="Agnieszka">
-              <div className="h-[137px] relative shrink-0 w-full" data-node-id="1:629" data-name="Margin">
-                <div className="absolute content-stretch flex flex-col items-start left-0 right-[0.01px] top-[-1px]" data-node-id="1:630" data-name="Container">
-                  <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[22px] text-white md:whitespace-nowrap" data-node-id="1:631">
+              <div className="relative shrink-0 w-full" data-node-id="1:629" data-name="Margin">
+                <div className="content-stretch flex flex-col items-start w-full" data-node-id="1:630" data-name="Container">
+                  <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[22px] text-white w-full" data-node-id="1:631">
                     <p className="leading-[27.5px] mb-0">{`"The six-week cycle allowed`}</p>
                     <p className="leading-[27.5px] mb-0">our designers to breathe and</p>
                     <p className="leading-[27.5px] mb-0">actually solve the user</p>
@@ -338,9 +331,9 @@ function UsemeMainFallback() {
               </div>
             </div>
             <div className="bg-[var(--dark-blue,#022169)] content-stretch flex min-h-[293px] w-full min-w-0 flex-col items-start justify-between self-stretch p-[48px] relative shrink-0 md:col-span-2 md:row-start-2 md:col-start-1" data-node-id="1:641" data-name="Agnieszka">
-              <div className="relative min-h-[137px] shrink-0 w-full" data-node-id="1:642" data-name="Margin">
-                <div className="absolute content-stretch flex flex-col items-start left-0 right-[0.01px] top-[-1px]" data-node-id="1:643" data-name="Container">
-                  <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[22px] text-white md:whitespace-nowrap" data-node-id="1:644">
+              <div className="relative shrink-0 w-full" data-node-id="1:642" data-name="Margin">
+                <div className="content-stretch flex flex-col items-start w-full" data-node-id="1:643" data-name="Container">
+                  <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[22px] text-white w-full" data-node-id="1:644">
                     <p className="leading-[27.5px] mb-0">{`"Finally, technical debt is`}</p>
                     <p className="leading-[27.5px] mb-0">viewed as a strategic decision,</p>
                     <p className="leading-[27.5px] mb-0">not just a nuisance in the</p>
@@ -389,18 +382,18 @@ function UsemeMainFallback() {
           </div>
         </div>
       </div>
-      <div className="content-stretch relative mx-auto flex w-full max-w-content min-w-0 shrink-0 flex-col items-center px-6 pb-[192px] pt-[96px] sm:px-10 md:px-14 lg:px-[72px]" data-node-id="1:660">
+      <div className="content-stretch relative mx-auto flex w-full max-w-content min-w-0 shrink-0 flex-col items-center px-4 pb-[192px] pt-[96px] sm:px-6 md:px-10 lg:px-[61px]" data-node-id="1:660">
         <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-[96px] items-start" data-node-id="1:661" data-name="Section - Measurable Results">
-          <div className="content-stretch flex font-['Satoshi:Bold',sans-serif] items-baseline justify-between leading-[0] not-italic relative shrink-0 w-full whitespace-nowrap" data-node-id="1:662" data-name="Paragraph">
-            <div className="flex flex-col justify-center relative shrink-0 text-[#000f3d] text-[48px]" data-node-id="1:663">
+          <div className="content-stretch flex flex-wrap font-['Satoshi:Bold',sans-serif] items-baseline justify-between gap-4 leading-[0] not-italic relative shrink-0 w-full" data-node-id="1:662" data-name="Paragraph">
+            <div className="flex flex-col justify-center relative shrink-0 text-[#000f3d] text-[32px] md:text-[48px]" data-node-id="1:663">
               <p className="leading-[60px]">Measurable Authority.</p>
             </div>
             <div className="flex flex-col justify-center relative shrink-0 text-[#757682] text-[16px] tracking-[1.2px]" data-node-id="1:664">
               <p className="leading-[16px]">The Hard Numbers</p>
             </div>
           </div>
-          <div className="gap-x-[16px] gap-y-[16px] grid grid-cols-[repeat(4,minmax(0,1fr))] grid-rows-[_189px] relative shrink-0 w-full" data-node-id="1:665" data-name="Container">
-            <div className="border-[#c5c5d2] border-solid border-t col-1 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pt-[33px] relative row-1 self-start shrink-0" data-node-id="1:666" data-name="HorizontalBorder">
+          <div className="gap-4 grid grid-cols-2 lg:grid-cols-4 relative shrink-0 w-full" data-node-id="1:665" data-name="Container">
+            <div className="border-[#c5c5d2] border-solid border-t content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pt-[33px] relative self-start shrink-0" data-node-id="1:666" data-name="HorizontalBorder">
               <div className="relative shrink-0 w-full" data-node-id="1:667" data-name="Container">
                 <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
                   <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full" data-node-id="1:668">
@@ -424,7 +417,7 @@ function UsemeMainFallback() {
                 </div>
               </div>
             </div>
-            <div className="border-[#c5c5d2] border-solid border-t col-2 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pt-[33px] relative row-1 self-start shrink-0" data-node-id="1:673" data-name="HorizontalBorder">
+            <div className="border-[#c5c5d2] border-solid border-t content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pt-[33px] relative self-start shrink-0" data-node-id="1:673" data-name="HorizontalBorder">
               <div className="relative shrink-0 w-full" data-node-id="1:674" data-name="Container">
                 <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
                   <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full" data-node-id="1:675">
@@ -448,7 +441,7 @@ function UsemeMainFallback() {
                 </div>
               </div>
             </div>
-            <div className="border-[#c5c5d2] border-solid border-t col-3 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pt-[33px] relative row-1 self-start shrink-0" data-node-id="1:680" data-name="HorizontalBorder">
+            <div className="border-[#c5c5d2] border-solid border-t content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pt-[33px] relative self-start shrink-0" data-node-id="1:680" data-name="HorizontalBorder">
               <div className="relative shrink-0 w-full" data-node-id="1:681" data-name="Container">
                 <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
                   <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full" data-node-id="1:682">
@@ -471,7 +464,7 @@ function UsemeMainFallback() {
                 </div>
               </div>
             </div>
-            <div className="border-[#c5c5d2] border-solid border-t col-4 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pt-[33px] relative row-1 self-start shrink-0" data-node-id="1:687" data-name="HorizontalBorder">
+            <div className="border-[#c5c5d2] border-solid border-t content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pt-[33px] relative self-start shrink-0" data-node-id="1:687" data-name="HorizontalBorder">
               <div className="relative shrink-0 w-full" data-node-id="1:688" data-name="Container">
                 <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
                   <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full" data-node-id="1:689">
@@ -503,16 +496,5 @@ function UsemeMainFallback() {
 }
 
 export function UsemeMain() {
-  const { sitePagesByRoute } = useSitePayload();
-  const layout = sitePagesByRoute.useme?.layout as PayloadLayoutBlock[] | undefined;
-  if (layout?.length) {
-    return (
-      <div className="content-stretch relative size-full flex flex-col items-center bg-[#f9f9f9] pb-[3.66px]">
-        <div className="content-stretch flex w-full flex-col items-center pt-[110px] relative shrink-0">
-          <PageBlocks layout={layout} />
-        </div>
-      </div>
-    );
-  }
   return <UsemeMainFallback />;
 }

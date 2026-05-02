@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { PageBlocks } from "../components/cms/PageBlocks";
 import { useSitePayload } from "../context/SitePayloadContext";
-import type { PayloadLayoutBlock } from "../lib/payload/blockUtils";
 import { mapPayloadArticleToListingCard } from "../lib/payload/mapArticle";
 
 /** Hero wireframe images from Figma MCP asset URLs */
@@ -122,22 +120,22 @@ function patternSpanForIndex(index: number): number {
   return SPAN_CYCLE[index % SPAN_CYCLE.length];
 }
 
-function mdColSpanClass(span: number): string {
+function lgColSpanClass(span: number): string {
   const map: Record<number, string> = {
-    1: "md:col-span-1",
-    2: "md:col-span-2",
-    3: "md:col-span-3",
-    4: "md:col-span-4",
-    5: "md:col-span-5",
-    6: "md:col-span-6",
-    7: "md:col-span-7",
-    8: "md:col-span-8",
-    9: "md:col-span-9",
-    10: "md:col-span-10",
-    11: "md:col-span-11",
-    12: "md:col-span-12",
+    1: "lg:col-span-1",
+    2: "lg:col-span-2",
+    3: "lg:col-span-3",
+    4: "lg:col-span-4",
+    5: "lg:col-span-5",
+    6: "lg:col-span-6",
+    7: "lg:col-span-7",
+    8: "lg:col-span-8",
+    9: "lg:col-span-9",
+    10: "lg:col-span-10",
+    11: "lg:col-span-11",
+    12: "lg:col-span-12",
   };
-  return map[span] ?? "md:col-span-12";
+  return map[span] ?? "lg:col-span-12";
 }
 
 function ArticleCard({ article, colSpan }: { article: Article; colSpan: number }) {
@@ -149,10 +147,10 @@ function ArticleCard({ article, colSpan }: { article: Article; colSpan: number }
         ? "article-card--accent"
         : "article-card--light";
   const categoryLabel = CATEGORY_LABELS[article.category];
-  const spanClass = mdColSpanClass(colSpan);
+  const spanClass = lgColSpanClass(colSpan);
 
   return (
-    <article className={`article-card ${toneClasses} col-span-12 ${spanClass}`}>
+    <article className={`article-card ${toneClasses} col-span-1 ${spanClass}`}>
       <div className="article-card__media-wrap">
         {article.image ? (
           <img
@@ -189,8 +187,7 @@ function ArticleCard({ article, colSpan }: { article: Article; colSpan: number }
 
 export function ArticlesMain() {
   const [activeFilter, setActiveFilter] = useState<FilterValue>(FILTER_ALL);
-  const { articles: cmsArticles, sitePagesByRoute } = useSitePayload();
-  const articlesLayout = sitePagesByRoute.articles?.layout as PayloadLayoutBlock[] | undefined;
+  const { articles: cmsArticles } = useSitePayload();
 
   const catalogArticles = useMemo(() => {
     if (!cmsArticles?.length) return articles;
@@ -227,24 +224,20 @@ export function ArticlesMain() {
     <div className="content-stretch relative size-full flex flex-col items-start bg-white pb-[3.66px]" data-name="Articles(Desktop) - Brand Strict">
       <div className="content-stretch relative flex w-full shrink-0 flex-col items-start pt-[110px]" data-name="Main">
         <div className="w-full min-w-0 bg-white">
-          <div className="relative mx-auto flex w-full min-w-0 max-w-content shrink-0 flex-col items-start bg-white px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:px-[61px] lg:py-[96px]" data-name="Hero Section">
+          <div className="relative mx-auto w-full min-w-0 max-w-content bg-white px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:px-[61px] lg:py-[96px]" data-name="Hero Section">
             <div className="relative grid w-full shrink-0 grid-cols-[repeat(12,minmax(0,1fr))] gap-x-8 gap-y-8">
-              {articlesLayout?.length ?
-                <PageBlocks layout={articlesLayout} />
-              : <div className="col-span-12 flex min-h-0 shrink-0 flex-col items-start gap-6 border-l-4 border-[var(--dark-blue,#022169)] pl-8 pr-0 sm:pl-8 lg:col-span-8 lg:max-w-[872px]">
-                  <div className="w-full font-['Satoshi:Bold',sans-serif] text-[16px] tracking-[1.2px] text-[#005bb3]">
-                    <p className="leading-[16px]">Artykuły i analizy</p>
-                  </div>
-                  <div className="w-full max-w-[872px] font-['Satoshi:Bold',sans-serif] text-[40px] leading-tight text-[#000f3d] md:text-[64px] md:leading-[1.1] md:tracking-tight">
-                    <p className="mb-0 leading-[1.1]">Merytoryczny</p>
-                    <p className="leading-[1.1]">Content.</p>
-                  </div>
-                  <div className="w-full max-w-[672px] pt-[7px] text-[22px] text-[#444651]">
-                    <p className="mb-0 leading-[27.5px]">Głębokie nurkowanie w procesy produktowe, architekturę zespołów</p>
-                    <p className="leading-[27.5px]">i matematykę biznesu. Bez ogólników, tylko konkretne modele.</p>
-                  </div>
+              <div className="col-[1/span_12] flex min-h-0 min-w-0 flex-col items-start gap-6 border-l-4 border-[var(--dark-blue,#022169)] pl-8 pr-0 sm:pl-8 lg:col-[1/span_8] lg:max-w-[872px]">
+                <div className="w-full font-['Satoshi:Bold',sans-serif] text-[16px] tracking-[1.2px] text-[#005bb3]">
+                  <p className="leading-[16px]">Artykuły i analizy</p>
                 </div>
-              }
+                <div className="w-full max-w-[872px] font-['Satoshi:Bold',sans-serif] text-[40px] leading-tight text-[#000f3d] md:text-[64px] md:leading-[1.1] md:tracking-tight">
+                  <p className="mb-0 leading-[1.1]">Merytoryczny</p>
+                  <p className="leading-[1.1]">Content.</p>
+                </div>
+                <div className="w-full max-w-[672px] pt-[7px] text-[22px] text-[#444651]">
+                  <p className="leading-[27.5px]">Głębokie nurkowanie w procesy produktowe, architekturę zespołów i matematykę biznesu. Bez ogólników, tylko konkretne modele.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -252,7 +245,7 @@ export function ArticlesMain() {
         <section className="relative mx-auto flex w-full min-w-0 max-w-content shrink-0 flex-col items-start gap-8 bg-white px-4 pb-[192px] pt-[96px] sm:px-6 md:px-10 lg:px-[61px]">
           <div className="w-full border-b border-[rgba(197,197,210,0.2)] pb-4">
             <div
-              className="flex w-full max-w-[640px] flex-wrap items-center gap-x-8 gap-y-3"
+              className="-mx-1 flex w-full max-w-full flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-8 sm:gap-y-3 md:max-w-[640px]"
               role="tablist"
               aria-label="Filtr kategorii artykułów"
             >
@@ -265,7 +258,7 @@ export function ArticlesMain() {
                     role="tab"
                     aria-selected={active}
                     onClick={() => setActiveFilter(value)}
-                    className={`border-0 bg-transparent p-0 font-['Satoshi:Bold',sans-serif] text-[16px] tracking-[1.2px] transition-colors duration-200 ${
+                    className={`inline-flex min-h-[44px] items-center rounded-md border-0 bg-transparent px-2 py-2 font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] transition-colors duration-200 sm:text-[16px] ${
                       active
                         ? "text-[#022169] underline decoration-solid [text-decoration-skip-ink:none]"
                         : "text-black"

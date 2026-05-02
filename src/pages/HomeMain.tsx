@@ -2,21 +2,18 @@ import { useLayoutEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ContactKontaktForm } from "../components/ContactKontaktForm";
 import { HomeCommunitySection } from "../components/HomeCommunitySection";
+import { HomeKnowledgeSection } from "../components/HomeKnowledgeSection";
 import { PageBlocks } from "../components/cms/PageBlocks";
 import { HomeExpertiseAccordion } from "../components/HomeExpertiseAccordion";
 import { KonsultacjaScrollLink } from "../components/KonsultacjaScrollLink";
 import { useSitePayload } from "../context/SitePayloadContext";
 import type { PayloadLayoutBlock } from "../lib/payload/blockUtils";
-import { mediaUrl } from "../lib/payload/client";
-
-const imgOverlay = "https://www.figma.com/api/mcp/asset/3ba9cf8c-ddf2-4c37-87ed-e115260701a9";
+import { FALLBACK_KNOWLEDGE_CARDS, articleToKnowledgeCard, normalizeFeaturedArticles } from "../lib/payload/homeFeaturedArticles";
+import { mediaUrl, resolveCommunityBackgroundUrls, uploadRefMedia } from "../lib/payload/client";
 const imgImage8 = "https://www.figma.com/api/mcp/asset/2717548e-54bd-4e3e-a05e-c1d097f5fa07";
 const imgImage11 = "https://www.figma.com/api/mcp/asset/01ff3667-cd79-4f08-902b-216735c2d283";
 const imgImage9 = "https://www.figma.com/api/mcp/asset/2aa1306d-2d93-4df8-9887-62987f5b63e7";
 const imgImage10 = "https://www.figma.com/api/mcp/asset/9c240abc-dbf1-4d29-bf1f-5a2785c16c8a";
-const imgModernArchitecturalStructure = "https://www.figma.com/api/mcp/asset/88685f3f-56ca-44e8-912f-8b7808a067b2";
-const imgAbstractGeometricPatterns = "https://www.figma.com/api/mcp/asset/231a2f81-6ab2-41a0-b6dc-d26a1717c8e1";
-const imgSleekGlassBuildingReflection = "https://www.figma.com/api/mcp/asset/be5ca7b5-8a11-47bc-be13-4fc3cbc9c51b";
 const imgContainer = "https://www.figma.com/api/mcp/asset/df4a6ade-0ed6-4fc7-8ae3-1547fc9972da";
 const imgContainer7 = "https://www.figma.com/api/mcp/asset/cfbeacf8-5f18-4199-a12f-cd3791c8b2e2";
 const imgGroup = "https://www.figma.com/api/mcp/asset/33ce9bcd-5617-4fae-9a8a-1a36ab9a75e8";
@@ -24,7 +21,6 @@ const imgContainer8 = "https://www.figma.com/api/mcp/asset/fc336216-fa6e-4ef0-a3
 const imgContainer9 = "https://www.figma.com/api/mcp/asset/57eb5300-0d15-4873-be8b-b29b2c84c025";
 const imgContainer10 = "https://www.figma.com/api/mcp/asset/2a0ccd0c-8aa6-4ea5-991c-72af2fde4c6e";
 const imgContainer11 = "https://www.figma.com/api/mcp/asset/971bed54-9d58-4436-b682-fe002b12d53f";
-const imgContainer12 = "https://www.figma.com/api/mcp/asset/95d4461c-3559-429a-9376-21f687653a48";
 const imgContainer13 = "https://www.figma.com/api/mcp/asset/1333a724-755f-42fe-9e65-2fb861bca57a";
 const imgContainer14 = "https://www.figma.com/api/mcp/asset/41d9ab9a-054d-4d5e-ab74-3631123949fb";
 export function HomeMain() {
@@ -48,6 +44,13 @@ export function HomeMain() {
         String((homepage.heroImage as { url?: string }).url)
       : undefined,
     ) ?? undefined;
+
+  const founderPortraitResolved = uploadRefMedia(
+    typeof homepage?.founderPortrait === "object" && homepage.founderPortrait ? homepage.founderPortrait : null,
+  );
+  const founderPortraitUrl = founderPortraitResolved.url;
+  const founderPortraitAlt =
+    homepage?.founderPortraitAlt?.trim() || founderPortraitResolved.alt || "Dawid Jurand Szkiełka";
 
   const expertiseEyebrow = homepage?.expertiseEyebrow ?? "Jak pomagam";
   const expertiseHeading = homepage?.expertiseHeading ?? "Obszary ekspertyzy";
@@ -86,6 +89,12 @@ export function HomeMain() {
   const homeContinuation = homepage?.homeContinuationLayout as PayloadLayoutBlock[] | null | undefined;
   const useCmsHomeBlocks = Boolean(homeTail?.length || homeContinuation?.length);
 
+  const featuredKnowledgeArticles = normalizeFeaturedArticles(homepage?.featuredKnowledgeArticles);
+  const homeKnowledgeCards =
+    featuredKnowledgeArticles.length > 0 ?
+      featuredKnowledgeArticles.map(articleToKnowledgeCard)
+    : FALLBACK_KNOWLEDGE_CARDS;
+
   useLayoutEffect(() => {
     if (location.pathname !== "/" || location.hash !== "#kontakt") return;
     const el = document.getElementById("kontakt");
@@ -99,7 +108,12 @@ export function HomeMain() {
   return (
     <div className="content-stretch relative size-full flex flex-col items-center bg-white pb-[3.66px]" data-node-id="1:962" data-name="Home (Desktop) - Brand Strict">
       <div className="bg-white content-stretch flex flex-col items-stretch relative shrink-0 w-full pt-[110px]" data-node-id="1:963" data-name="Main">
-        <div className="bg-[#f3f3f3] content-stretch flex flex-col gap-8 items-stretch py-12 sm:py-16 lg:flex-row lg:items-start lg:justify-between lg:gap-0 lg:py-[96px] relative mx-auto w-full min-w-0 max-w-content shrink-0 px-4 sm:px-6 md:px-10 lg:px-[61px]" data-node-id="1:964" data-name="Hero Section">
+        <div className="w-full shrink-0 bg-[#f3f3f3]" data-node-id="1:964-outer" data-name="Hero Section (full-bleed)">
+          <div
+            className="relative mx-auto flex w-full min-w-0 max-w-content shrink-0 flex-col content-stretch items-stretch gap-8 px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:flex-row lg:items-start lg:justify-between lg:gap-0 lg:px-[61px] lg:py-[96px]"
+            data-node-id="1:964"
+            data-name="Hero Section"
+          >
           <div className="content-stretch flex flex-col gap-[24px] items-start relative shrink-0 w-full min-w-0 max-w-[698px]" data-node-id="1:965" data-name="Container">
             <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:966" data-name="Heading 1">
               <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] w-full text-[2.25rem] leading-tight sm:text-4xl sm:leading-[1.12] md:text-5xl md:leading-[1.1] lg:text-[84px] lg:leading-[0]" data-node-id="1:967">
@@ -112,7 +126,7 @@ export function HomeMain() {
                 </p>
               </div>
             </div>
-            <div className="content-stretch flex flex-col items-start max-w-[672px] pt-[7px] relative shrink-0 w-full min-w-0 lg:w-[672px]" data-node-id="1:968" data-name="Container">
+            <div className="content-stretch flex flex-col items-start max-w-[672px] pt-[7px] relative shrink-0 w-full min-w-0" data-node-id="1:968" data-name="Container">
               <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[22px] whitespace-normal" data-node-id="1:969">
                 {heroSubLines.map((line, i) => (
                   <p key={i} className={`leading-[27.5px] ${i < heroSubLines.length - 1 ? "mb-0" : ""}`}>
@@ -123,26 +137,26 @@ export function HomeMain() {
             </div>
             {heroCtaIsKonsultacja ?
               <KonsultacjaScrollLink
-                className="bg-[var(--dark-blue,#022169)] content-stretch flex gap-[16px] items-center px-[40px] py-[20px] relative rounded-[18px] shrink-0 no-underline"
+                className="bg-[var(--dark-blue,#022169)] inline-flex max-w-full shrink-0 items-center gap-4 rounded-[18px] px-6 py-[18px] text-[color:var(--white,white)] no-underline sm:px-10 sm:py-5"
                 data-node-id="1:970"
                 data-name="Link"
               >
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--white,white)] tracking-[1.2px] w-[230px]" data-node-id="1:971">
-                  <p className="leading-[16px]">{heroCtaLabel}</p>
-                </div>
+                <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] leading-snug tracking-[1.2px] sm:text-left sm:text-[16px]">
+                  {heroCtaLabel}
+                </span>
                 <div className="relative shrink-0 size-[16px]" data-node-id="1:972" data-name="Container">
                   <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer} />
                 </div>
               </KonsultacjaScrollLink>
             : <Link
                 to={heroCtaPath}
-                className="bg-[var(--dark-blue,#022169)] content-stretch flex gap-[16px] items-center px-[40px] py-[20px] relative rounded-[18px] shrink-0 no-underline"
+                className="bg-[var(--dark-blue,#022169)] inline-flex max-w-full shrink-0 items-center gap-4 rounded-[18px] px-6 py-[18px] text-[color:var(--white,white)] no-underline sm:px-10 sm:py-5"
                 data-node-id="1:970"
                 data-name="Link"
               >
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--white,white)] tracking-[1.2px] w-[230px]" data-node-id="1:971">
-                  <p className="leading-[16px]">{heroCtaLabel}</p>
-                </div>
+                <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] leading-snug tracking-[1.2px] sm:text-left sm:text-[16px]">
+                  {heroCtaLabel}
+                </span>
                 <div className="relative shrink-0 size-[16px]" data-node-id="1:972" data-name="Container">
                   <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer} />
                 </div>
@@ -165,6 +179,7 @@ export function HomeMain() {
             >
               <div className="flex-[1_0_0] min-h-px opacity-60 w-full" data-node-id="1:976" data-name="Workshop setting" />
             </div>
+          </div>
           </div>
         </div>
         {homepage?.services?.length ?
@@ -246,7 +261,7 @@ export function HomeMain() {
           body={homepage?.communityBody}
           supportingBrands={homepage?.communitySupportingBrands?.map((b) => b.name!).filter(Boolean)}
           expertNames={homepage?.communityExpertNames?.map((n) => n.name!).filter(Boolean)}
-          bgPhotoUrls={homepage?.communityBgUrls?.map((u) => u.url!).filter(Boolean)}
+          bgPhotoUrls={resolveCommunityBackgroundUrls(homepage)}
         />
         <div className="w-full min-w-0 bg-white">
         <div className="content-stretch flex min-h-0 h-auto flex-col items-stretch justify-start gap-10 overflow-clip px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:flex-row lg:items-center lg:justify-between lg:gap-0 lg:h-[536px] lg:px-[61px] lg:py-[96px] relative shrink-0 w-full max-w-content mx-auto min-w-0" data-node-id="1:1122" data-name="Section - NEW SECTION: Podejście do wdroże">
@@ -392,7 +407,7 @@ export function HomeMain() {
         </div>
         </div>
         <div className="flow-root w-full min-w-0 shrink-0 self-stretch bg-white">
-        <div className="content-stretch mx-auto flex min-w-0 max-w-content shrink-0 flex-col items-start self-stretch overflow-clip bg-white py-[96px] relative w-full" data-node-id="1:1185" data-name="Section - Doświadczenie (Modern Architectural Redesign)">
+        <div className="content-stretch relative mx-auto flex w-full min-w-0 max-w-content shrink-0 flex-col items-start self-stretch overflow-visible bg-white py-[96px]" data-node-id="1:1185" data-name="Section - Doświadczenie (Modern Architectural Redesign)">
           <div className="content-stretch flex w-full min-w-0 shrink-0 flex-col gap-[80px] items-start bg-white max-w-[1536px] px-4 sm:px-6 md:px-10 lg:px-[61px] relative" data-node-id="1:1187" data-name="Container">
             <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1188" data-name="Container">
               <div className="content-stretch flex flex-col gap-[24px] items-start relative shrink-0 w-full" data-node-id="1:1189" data-name="Container">
@@ -508,61 +523,93 @@ export function HomeMain() {
                 </div>
               </div>
             </div>
-            <div className="bg-[var(--blue,#032796)] content-stretch flex flex-col items-start overflow-clip pb-[80px] pt-[96px] px-5 sm:px-10 lg:px-[80px] relative rounded-tr-[100px] shrink-0 w-full" data-node-id="1:1245" data-name="Case Highlight Box">
-              <div className="absolute bg-[rgba(0,91,179,0.1)] blur-[32px] right-[-80px] rounded-[12px] size-[256px] top-[-64px]" data-node-id="1:1246" data-name="Overlay+Blur" />
-              <div className="content-stretch flex gap-[64px] items-start relative shrink-0 w-full" data-node-id="1:1247" data-name="Container">
-                <div className="content-stretch flex flex-col gap-[32px] items-start relative shrink-0 w-[659.95px]" data-node-id="1:1248" data-name="Container">
-                  <div className="border border-[#7dfab6] border-solid content-stretch flex items-start px-[17px] py-[5px] relative shrink-0" data-node-id="1:1249" data-name="Border">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[#7dfab6] text-[12px] text-center tracking-[1.2px] w-[117.16px]" data-node-id="1:1250">
-                      <p className="leading-[16px]">Case Highlight</p>
+            <div
+              className="relative flex w-full min-w-0 shrink-0 flex-col items-stretch overflow-hidden rounded-tr-[clamp(48px,12vw,100px)] bg-[var(--blue,#032796)] px-5 pb-12 pt-16 sm:px-10 sm:pb-16 sm:pt-20 lg:px-[80px]"
+              data-node-id="1:1245"
+              data-name="Case Highlight Box"
+            >
+              <div
+                className="pointer-events-none absolute right-[-80px] top-[-64px] size-[256px] rounded-[12px] bg-[rgba(0,91,179,0.1)] blur-[32px]"
+                data-node-id="1:1246"
+                data-name="Overlay+Blur"
+              />
+              <div
+                className="relative flex w-full min-w-0 flex-col gap-10 lg:flex-row lg:items-start lg:gap-16 xl:gap-24"
+                data-node-id="1:1247"
+                data-name="Container"
+              >
+                <div
+                  className="flex min-w-0 w-full flex-1 flex-col items-start gap-8 lg:min-w-0 lg:pr-4"
+                  data-node-id="1:1248"
+                  data-name="Container"
+                >
+                  <div
+                    className="inline-flex items-start border border-solid border-[#7dfab6] px-[17px] py-[5px]"
+                    data-node-id="1:1249"
+                    data-name="Border"
+                  >
+                    <div
+                      className="flex flex-col justify-center font-['Satoshi:Bold',sans-serif] text-[12px] not-italic leading-[16px] tracking-[1.2px] text-[#7dfab6]"
+                      data-node-id="1:1250"
+                    >
+                      <p>Case Highlight</p>
                     </div>
                   </div>
-                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1251" data-name="Heading 4">
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-white w-full" data-node-id="1:1252">
-                      <p className="leading-[40px] whitespace-pre-wrap">{`Case: Useme - od 20% do 80% on  time delivery w ciągu 6 miesięcy. ownership culture zmienia wszystko.`}</p>
-                    </div>
+                  <div className="w-full min-w-0 max-w-full" data-node-id="1:1251" data-name="Heading 4">
+                    <p
+                      lang="pl"
+                      className="m-0 max-w-full font-['Satoshi:Bold',sans-serif] text-[clamp(1.25rem,calc(0.72rem+2.65vw),2.25rem)] font-normal leading-[1.22] text-white text-balance break-words hyphens-auto sm:leading-[1.2] lg:leading-[1.15]"
+                      data-node-id="1:1252"
+                    >
+                      {`Case: Useme - od 20% do 80% on time delivery w ciągu 6 miesięcy. ownership culture zmienia wszystko.`}
+                    </p>
                   </div>
                   <Link
                     to="/useme"
-                    className="bg-white content-stretch flex gap-[16px] items-center px-[40px] py-[20px] relative rounded-[18px] shrink-0 no-underline"
+                    className="flex w-full max-w-full shrink-0 flex-wrap items-center justify-center gap-3 rounded-[18px] bg-white px-6 py-4 no-underline sm:inline-flex sm:w-auto sm:justify-start sm:gap-4 sm:px-8 sm:py-5"
                     data-node-id="1:1253"
                     data-name="Link"
                   >
-                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] w-[190px]" data-node-id="1:1254">
-                      <p className="leading-[16px]">Przeczytaj Case Study</p>
-                    </div>
-                    <div className="relative shrink-0 size-[16px]" data-node-id="1:1255" data-name="Container">
-                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer11} />
-                    </div>
+                    <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] text-[#022169] sm:text-left sm:text-[16px]">
+                      Przeczytaj Case Study
+                    </span>
+                    <span className="relative size-4 shrink-0" data-node-id="1:1255" data-name="Container">
+                      <img alt="" className="absolute inset-0 block size-full max-w-none" src={imgContainer11} />
+                    </span>
                   </Link>
                 </div>
-                <div className="border-[rgba(255,255,255,0.1)] border-l border-solid content-stretch flex flex-col gap-[32px] h-[136px] items-start justify-center pl-[33px] relative shrink-0 w-[332.05px]" data-node-id="1:1257" data-name="VerticalBorder">
-                  <div className="opacity-60 relative shrink-0 w-full" data-node-id="1:1258" data-name="Container">
-                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col gap-[8px] items-start relative size-full">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1259" data-name="Container">
-                        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white tracking-[1.2px] w-[299px]" data-node-id="1:1260">
-                          <p className="leading-[16px]">Transformacja</p>
-                        </div>
-                      </div>
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1261" data-name="Container">
-                        <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white w-full" data-node-id="1:1262">
-                          <p className="leading-[25px]">Shape Up Implementation</p>
-                        </div>
-                      </div>
+                <div
+                  className="flex w-full min-w-0 flex-col items-center gap-8 border-t border-solid border-[rgba(255,255,255,0.12)] pt-8 text-center lg:max-w-md lg:flex-none lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0 xl:pl-16"
+                  data-node-id="1:1257"
+                  data-name="VerticalBorder"
+                >
+                  <div className="w-full min-w-0 max-w-md opacity-90" data-node-id="1:1258" data-name="Container">
+                    <div className="flex w-full min-w-0 flex-col items-center gap-2 text-center">
+                      <p
+                        className="m-0 font-['Satoshi:Bold',sans-serif] text-[12px] tracking-[1.2px] text-white"
+                        data-node-id="1:1260"
+                      >
+                        Transformacja
+                      </p>
+                      <p
+                        className="m-0 max-w-full break-words font-sans text-[16px] leading-[25px] text-white [overflow-wrap:anywhere]"
+                        data-node-id="1:1262"
+                      >
+                        Shape Up Implementation
+                      </p>
                     </div>
                   </div>
-                  <div className="opacity-60 relative shrink-0 w-full" data-node-id="1:1263" data-name="Container">
-                    <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col gap-[8px] items-start relative size-full">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1264" data-name="Container">
-                        <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-white tracking-[1.2px] w-full" data-node-id="1:1265">
-                          <p className="leading-[16px]">Wynik</p>
-                        </div>
-                      </div>
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1266" data-name="Container">
-                        <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white w-full" data-node-id="1:1267">
-                          <p className="leading-[25px]">+300% Predictability</p>
-                        </div>
-                      </div>
+                  <div className="w-full min-w-0 max-w-md opacity-90" data-node-id="1:1263" data-name="Container">
+                    <div className="flex w-full min-w-0 flex-col items-center gap-2 text-center">
+                      <p
+                        className="m-0 font-['Satoshi:Bold',sans-serif] text-[12px] tracking-[1.2px] text-white"
+                        data-node-id="1:1265"
+                      >
+                        Wynik
+                      </p>
+                      <p className="m-0 max-w-full break-words font-sans text-[16px] leading-[25px] text-white" data-node-id="1:1267">
+                        +300% Predictability
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -575,12 +622,12 @@ export function HomeMain() {
         <div className="content-stretch flex flex-col items-start px-4 sm:px-6 md:px-10 lg:px-[61px] py-[96px] relative shrink-0 w-full max-w-content mx-auto min-w-0" data-node-id="1:1268" data-name="Section - Jak to robię (Methods)">
           <div className="content-stretch flex flex-col gap-[80px] items-start max-w-[1536px] relative shrink-0 w-full" data-node-id="1:1269" data-name="Container">
             <div className="content-stretch flex flex-col items-center relative shrink-0 w-full" data-node-id="1:1270" data-name="Heading 2">
-              <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] text-center whitespace-nowrap" data-node-id="1:1271">
-                <p className="leading-[60px]">{`Jak działamy `}</p>
+              <div className="w-full max-w-full px-2 text-center font-['Satoshi:Bold',sans-serif] text-[clamp(1.75rem,5vw,3rem)] leading-tight text-[#000f3d]" data-node-id="1:1271">
+                <p className="leading-tight">{`Jak działamy `}</p>
               </div>
             </div>
             <div className="grid w-full min-h-0 grid-cols-1 grid-rows-[auto] gap-1 h-auto sm:grid-cols-2 lg:grid-cols-4 relative shrink-0" data-node-id="1:1272" data-name="Container">
-              <div className="bg-[#f9f9f9] border-[var(--dark-blue,#022169)] border-solid border-t-8 col-1 content-stretch flex flex-col gap-[14.9px] items-start justify-self-stretch pb-[68px] pt-[48px] px-[40px] relative row-1 self-start shrink-0" data-node-id="1:1273" data-name="Background+HorizontalBorder">
+              <div className="bg-[#f9f9f9] border-[var(--dark-blue,#022169)] border-solid border-t-8 col-1 content-stretch flex flex-col gap-[14.9px] items-start justify-self-stretch pb-[68px] pt-[48px] px-5 sm:px-8 lg:px-10 relative row-1 self-start shrink-0" data-node-id="1:1273" data-name="Background+HorizontalBorder">
                 <div className="bg-[var(--dark-blue,#022169)] relative shrink-0 size-[48px]" data-node-id="1:1274" data-name="Background">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
                     <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[20px] text-center text-white whitespace-nowrap" data-node-id="1:1275">
@@ -608,7 +655,7 @@ export function HomeMain() {
                   </div>
                 </div>
               </div>
-              <div className="bg-[#f9f9f9] border-[var(--dark-blue,#022169)] border-solid border-t-8 col-2 content-stretch flex flex-col gap-[14.9px] items-start justify-self-stretch pb-[40px] pt-[48px] px-[40px] relative row-1 self-start shrink-0" data-node-id="1:1280" data-name="Background+HorizontalBorder">
+              <div className="bg-[#f9f9f9] border-[var(--dark-blue,#022169)] border-solid border-t-8 col-2 content-stretch flex flex-col gap-[14.9px] items-start justify-self-stretch pb-[40px] pt-[48px] px-5 sm:px-8 lg:px-10 relative row-1 self-start shrink-0" data-node-id="1:1280" data-name="Background+HorizontalBorder">
                 <div className="bg-[var(--dark-blue,#022169)] relative shrink-0 size-[48px]" data-node-id="1:1281" data-name="Background">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
                     <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[20px] text-center text-white whitespace-nowrap" data-node-id="1:1282">
@@ -636,7 +683,7 @@ export function HomeMain() {
                   </div>
                 </div>
               </div>
-              <div className="bg-[#f9f9f9] border-[var(--dark-blue,#022169)] border-solid border-t-8 col-3 content-stretch flex flex-col gap-[14.9px] items-start justify-self-stretch pb-[40px] pt-[48px] px-[40px] relative row-1 self-start shrink-0" data-node-id="1:1287" data-name="Background+HorizontalBorder">
+              <div className="bg-[#f9f9f9] border-[var(--dark-blue,#022169)] border-solid border-t-8 col-3 content-stretch flex flex-col gap-[14.9px] items-start justify-self-stretch pb-[40px] pt-[48px] px-5 sm:px-8 lg:px-10 relative row-1 self-start shrink-0" data-node-id="1:1287" data-name="Background+HorizontalBorder">
                 <div className="bg-[var(--dark-blue,#022169)] relative shrink-0 size-[48px]" data-node-id="1:1288" data-name="Background">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
                     <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[20px] text-center text-white whitespace-nowrap" data-node-id="1:1289">
@@ -664,7 +711,7 @@ export function HomeMain() {
                   </div>
                 </div>
               </div>
-              <div className="bg-[#f9f9f9] border-[var(--dark-blue,#022169)] border-solid border-t-8 col-4 content-stretch flex flex-col gap-[14.9px] items-start justify-self-stretch pb-[68px] pt-[48px] px-[40px] relative row-1 self-start shrink-0" data-node-id="1:1294" data-name="Background+HorizontalBorder">
+              <div className="bg-[#f9f9f9] border-[var(--dark-blue,#022169)] border-solid border-t-8 col-4 content-stretch flex flex-col gap-[14.9px] items-start justify-self-stretch pb-[68px] pt-[48px] px-5 sm:px-8 lg:px-10 relative row-1 self-start shrink-0" data-node-id="1:1294" data-name="Background+HorizontalBorder">
                 <div className="bg-[var(--dark-blue,#022169)] relative shrink-0 size-[48px]" data-node-id="1:1295" data-name="Background">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex items-center justify-center relative size-full">
                     <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[20px] text-center text-white whitespace-nowrap" data-node-id="1:1296">
@@ -698,7 +745,7 @@ export function HomeMain() {
         </div>
         <div className="w-full min-w-0 bg-white">
         <div className="content-stretch flex flex-col items-start px-4 sm:px-6 md:px-10 lg:px-[61px] py-[96px] relative shrink-0 w-full max-w-content mx-auto min-w-0" data-node-id="1:1301" data-name="Section - Kim jestem (About)">
-          <div className="grid w-full min-h-0 max-w-[1536px] grid-cols-1 grid-rows-[auto] gap-10 lg:grid-cols-[repeat(2,minmax(0,1fr))] lg:gap-x-20 lg:gap-y-20 lg:grid-rows-[_minmax(0,568px)] relative shrink-0" data-node-id="1:1302" data-name="Container">
+          <div className="relative grid w-full min-h-0 max-w-[1536px] grid-cols-1 grid-rows-[auto] gap-10 lg:grid-cols-[repeat(2,minmax(0,1fr))] lg:gap-x-20 lg:gap-y-16 lg:grid-rows-[minmax(0,auto)]" data-node-id="1:1302" data-name="Container">
             <div className="col-1 content-stretch flex flex-col gap-[23.3px] items-start justify-self-stretch relative row-1 self-center shrink-0" data-node-id="1:1303" data-name="Container">
               <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1304" data-name="Container">
                 <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full" data-node-id="1:1305">
@@ -731,12 +778,12 @@ export function HomeMain() {
                     </div>
                   </div>
                   <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1317" data-name="Container">
-                    <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#757682] text-[16px] whitespace-nowrap" data-node-id="1:1318">
+                    <div className="flex max-w-[14rem] flex-col justify-center leading-snug not-italic relative shrink-0 text-[#757682] text-[16px] break-words sm:max-w-none" data-node-id="1:1318">
                       <p className="leading-[25px]">Lat doświadczenia</p>
                     </div>
                   </div>
                 </div>
-                <div className="content-stretch flex flex-col gap-[4px] items-start relative self-stretch shrink-0 w-[161px]" data-node-id="1:1319" data-name="Container">
+                <div className="content-stretch flex min-w-0 flex-1 flex-col gap-[4px] items-start relative self-stretch sm:flex-none sm:w-auto" data-node-id="1:1319" data-name="Container">
                   <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1320" data-name="Container">
                     <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[36px] text-[color:var(--dark-blue,#022169)] whitespace-nowrap" data-node-id="1:1321">
                       <p className="leading-[40px]">50+</p>
@@ -750,13 +797,20 @@ export function HomeMain() {
                 </div>
               </div>
             </div>
-            <div className="aspect-square bg-[#e8e8e8] col-2 content-stretch flex flex-col items-start justify-center justify-self-stretch overflow-clip relative rounded-tr-[80px] row-1 self-center shrink-0" data-node-id="1:1324" data-name="Background">
-              <div className="bg-white h-[568px] mix-blend-saturation shrink-0 w-full" data-node-id="1:1325" data-name="AB6AXuDV_INCETE5LdV023o91qj78bF2_x2BqdAgQv_sH0X3JI3gnp0CtL1rw2Ebrzj93HE3CpTe13FtcRcgtJVRbBIEV_nrtK2UBLUsiO2O0YAUYmgtyjbMuJ6QbMebAPJFHWcbLiUmOMrZEkxAdEowJf_7nH3gVDwW-KwmBE2HCtXCl5XJmENeJqKJXgD44RX8f-iKVuy1WSt3RuHOqFaCualtx2xuEdM1tpusiZUMkfyu7OeAaK9LiXmrLgAPQeBzAAHAK0fNyQ1xZjA" />
-              <div className="absolute inset-0 mix-blend-multiply" data-node-id="1:1326" data-name="Overlay">
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                  <img alt="" className="absolute h-[139.57%] left-[-0.01%] max-w-none top-[0.1%] w-full" src={imgOverlay} />
-                </div>
-              </div>
+            <div
+              className={`relative aspect-square max-h-[90vw] min-h-[240px] w-full max-w-full shrink-0 col-2 row-1 flex flex-col items-start justify-center justify-self-stretch self-start overflow-hidden rounded-tr-[clamp(40px,10vw,80px)] lg:max-h-none lg:min-h-0 lg:self-center ${founderPortraitUrl ? "bg-transparent" : "bg-[#e8e8e8]"}`}
+              data-node-id="1:1324"
+              data-name="Background"
+            >
+              {founderPortraitUrl ?
+                <img
+                  alt={founderPortraitAlt}
+                  src={founderPortraitUrl}
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                  loading="lazy"
+                  decoding="async"
+                />
+              : <div className="absolute inset-0 bg-[#e8e8e8]" data-node-id="1:1325" aria-hidden />}
             </div>
           </div>
         </div>
@@ -766,18 +820,22 @@ export function HomeMain() {
           <div className="content-stretch flex flex-col gap-[80px] items-start max-w-[1536px] relative shrink-0 w-full" data-node-id="1:1328" data-name="Container">
             <div className="content-stretch flex flex-col gap-[16px] items-center relative shrink-0 w-full" data-node-id="1:1329" data-name="Container">
               <div className="h-[16px] shrink-0 w-full" data-node-id="1:1330" data-name="Container" />
-              <div className="content-stretch flex flex-col items-center pb-[8px] relative shrink-0 w-full" data-node-id="1:1331" data-name="Heading 2">
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[48px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[48px] text-center w-[441.13px]" data-node-id="1:1332">
-                  <p className="leading-[60px]">Opinie</p>
+              <div className="content-stretch flex flex-col items-center pb-[8px] relative shrink-0 w-full px-2" data-node-id="1:1331" data-name="Heading 2">
+                <div className="w-full max-w-full text-center font-['Satoshi:Bold',sans-serif] text-[clamp(2rem,6vw,3rem)] leading-tight text-[#022169]" data-node-id="1:1332">
+                  <p className="leading-tight">Opinie</p>
                 </div>
               </div>
             </div>
-            <div className="gap-x-[48px] gap-y-[48px] grid grid-cols-[repeat(3,minmax(0,1fr))] grid-rows-[_464px] relative shrink-0 w-full" data-node-id="1:1333" data-name="Container">
-              <div className="border-[rgba(2,33,105,0.1)] border-l border-solid col-1 content-stretch flex flex-col items-start justify-between justify-self-stretch pl-[33px] relative row-1 self-start shrink-0" data-node-id="1:1334" data-name="Testimonial 1">
-                <div className="relative shrink-0 w-full" data-node-id="1:1335" data-name="Blockquote">
-                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pb-[104px] relative size-full">
+            <div
+              className="relative grid w-full min-w-0 grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-10 md:gap-y-12 lg:grid-cols-3 lg:gap-x-12"
+              data-node-id="1:1333"
+              data-name="Container"
+            >
+              <div className="flex min-h-0 min-w-0 flex-col gap-8 border-[rgba(2,33,105,0.1)] border-l border-solid pl-6 sm:pl-8 lg:min-h-[unset]" data-node-id="1:1334" data-name="Testimonial 1">
+                <div className="relative min-w-0 w-full shrink-0" data-node-id="1:1335" data-name="Blockquote">
+                  <div className="flex flex-col items-start pb-0">
                     <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1336" data-name="Container">
-                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[22px] text-[rgba(2,33,105,0.8)] w-full" data-node-id="1:1337">
+                      <div className="flex min-w-0 flex-col justify-center leading-normal not-italic relative shrink-0 text-[22px] text-[rgba(2,33,105,0.8)] w-full [overflow-wrap:anywhere]" data-node-id="1:1337">
                         <p className="leading-[27.5px] mb-0">{`"Polecam współpracę z Dawidem,`}</p>
                         <p className="leading-[27.5px] mb-0">którego głębokie zrozumienie</p>
                         <p className="leading-[27.5px] mb-0">potrzeb klientów (JTBD) i</p>
@@ -800,17 +858,17 @@ export function HomeMain() {
                           <img alt="" className="absolute bg-clip-padding border-0 border-[transparent] border-solid inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage8} />
                         </div>
                       </div>
-                      <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0" data-node-id="1:1342" data-name="Container">
+                      <div className="content-stretch flex min-w-0 flex-1 flex-col gap-[2px] items-start relative shrink-0" data-node-id="1:1342" data-name="Container">
                         <div className="content-stretch flex gap-[7px] items-center relative shrink-0 w-full" data-node-id="1:1343" data-name="Container">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] whitespace-nowrap" data-node-id="1:1344">
+                          <div className="min-w-0 flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] break-words" data-node-id="1:1344">
                             <p className="leading-[16px]">Filip</p>
                           </div>
                           <div className="relative shrink-0 size-[13px]" data-node-id="1:1345" data-name="image 11">
                             <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage11} />
                           </div>
                         </div>
-                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1346" data-name="Container">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase w-[207.78px]" data-node-id="1:1347">
+                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1346" data-name="Container">
+                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase break-words" data-node-id="1:1347">
                             <p className="leading-[13.5px]">Product Growth @DocPlanner</p>
                           </div>
                         </div>
@@ -819,11 +877,11 @@ export function HomeMain() {
                   </div>
                 </div>
               </div>
-              <div className="border-[rgba(2,33,105,0.1)] border-l border-solid col-2 content-stretch flex flex-col items-start justify-between justify-self-stretch pl-[33px] relative row-1 self-start shrink-0" data-node-id="1:1348" data-name="Testimonial 2">
-                <div className="relative shrink-0 w-full" data-node-id="1:1349" data-name="Blockquote">
-                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pb-[40px] relative size-full">
-                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1350" data-name="Container">
-                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[22px] text-[rgba(2,33,105,0.8)] w-full" data-node-id="1:1351">
+              <div className="flex min-h-0 min-w-0 flex-col gap-8 border-[rgba(2,33,105,0.1)] border-l border-solid pl-6 sm:pl-8" data-node-id="1:1348" data-name="Testimonial 2">
+                <div className="relative min-w-0 w-full shrink-0" data-node-id="1:1349" data-name="Blockquote">
+                  <div className="flex flex-col items-start pb-0">
+                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1350" data-name="Container">
+                      <div className="flex min-w-0 flex-col justify-center leading-normal not-italic relative shrink-0 text-[22px] text-[rgba(2,33,105,0.8)] w-full [overflow-wrap:anywhere]" data-node-id="1:1351">
                         <p className="leading-[27.5px] mb-0">{`"Współpracowałam z Dawidem`}</p>
                         <p className="leading-[27.5px] mb-0">przez 2 lata - to ekspert, który</p>
                         <p className="leading-[27.5px] mb-0">doskonale lokalizuje prawdziwe</p>
@@ -840,25 +898,25 @@ export function HomeMain() {
                     </div>
                   </div>
                 </div>
-                <div className="relative shrink-0 w-full" data-node-id="1:1352" data-name="Footer">
+                <div className="relative shrink-0 w-full min-w-0" data-node-id="1:1352" data-name="Footer">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
-                    <div className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full" data-node-id="1:1353" data-name="Container">
+                    <div className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full min-w-0" data-node-id="1:1353" data-name="Container">
                       <div className="bg-[rgba(2,33,105,0.05)] border border-[rgba(2,33,105,0.1)] border-solid content-stretch flex items-center justify-center overflow-clip p-px relative rounded-[12px] shrink-0 size-[40px]" data-node-id="1:1354" data-name="Overlay+Border">
                         <div className="h-[41px] relative shrink-0 w-[40px]" data-node-id="1:1355" data-name="image 9">
                           <img alt="" className="absolute bg-clip-padding border-0 border-[transparent] border-solid inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage9} />
                         </div>
                       </div>
-                      <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-[179px]" data-node-id="1:1356" data-name="Container">
-                        <div className="content-stretch flex gap-[7px] items-center relative shrink-0 w-full" data-node-id="1:1357" data-name="Container">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] whitespace-nowrap" data-node-id="1:1358">
+                      <div className="content-stretch flex min-w-0 flex-1 flex-col gap-[2px] items-start relative shrink-0" data-node-id="1:1356" data-name="Container">
+                        <div className="content-stretch flex gap-[7px] items-center relative shrink-0 w-full min-w-0" data-node-id="1:1357" data-name="Container">
+                          <div className="min-w-0 flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] break-words" data-node-id="1:1358">
                             <p className="leading-[16px]">Agnieszka</p>
                           </div>
                           <div className="relative shrink-0 size-[13px]" data-node-id="1:1359" data-name="image 11">
                             <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage11} />
                           </div>
                         </div>
-                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1360" data-name="Container">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase w-[162.39px]" data-node-id="1:1361">
+                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1360" data-name="Container">
+                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase break-words" data-node-id="1:1361">
                             <p className="leading-[13.5px]">Head of Growth @Useme</p>
                           </div>
                         </div>
@@ -867,11 +925,11 @@ export function HomeMain() {
                   </div>
                 </div>
               </div>
-              <div className="border-[rgba(2,33,105,0.1)] border-l border-solid col-3 content-stretch flex flex-col items-start justify-between justify-self-stretch pl-[33px] relative row-1 self-start shrink-0" data-node-id="1:1362" data-name="Testimonial 3">
-                <div className="relative shrink-0 w-full" data-node-id="1:1363" data-name="Blockquote">
-                  <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start pb-[72px] relative size-full">
-                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1364" data-name="Container">
-                      <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[22px] text-[rgba(2,33,105,0.8)] w-full" data-node-id="1:1365">
+              <div className="flex min-h-0 min-w-0 flex-col gap-8 border-[rgba(2,33,105,0.1)] border-l border-solid pl-6 sm:pl-8 md:col-span-2 lg:col-span-1" data-node-id="1:1362" data-name="Testimonial 3">
+                <div className="relative min-w-0 w-full shrink-0" data-node-id="1:1363" data-name="Blockquote">
+                  <div className="flex flex-col items-start pb-0">
+                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1364" data-name="Container">
+                      <div className="flex min-w-0 flex-col justify-center leading-normal not-italic relative shrink-0 text-[22px] text-[rgba(2,33,105,0.8)] w-full [overflow-wrap:anywhere]" data-node-id="1:1365">
                         <p className="leading-[27.5px] mb-0">{`"Współpraca z Dawidem znacząco`}</p>
                         <p className="leading-[27.5px] mb-0">przyczyniła się do rozwoju kultury</p>
                         <p className="leading-[27.5px] mb-0">produktowej w organizacji. Dawid</p>
@@ -887,25 +945,25 @@ export function HomeMain() {
                     </div>
                   </div>
                 </div>
-                <div className="relative shrink-0 w-full" data-node-id="1:1366" data-name="Footer">
+                <div className="relative shrink-0 w-full min-w-0" data-node-id="1:1366" data-name="Footer">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
-                    <div className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full" data-node-id="1:1367" data-name="Container">
+                    <div className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full min-w-0" data-node-id="1:1367" data-name="Container">
                       <div className="bg-[rgba(2,33,105,0.05)] border border-[rgba(2,33,105,0.1)] border-solid content-stretch flex items-center justify-center overflow-clip p-px relative rounded-[12px] shrink-0 size-[40px]" data-node-id="1:1368" data-name="Overlay+Border">
                         <div className="h-[41px] relative shrink-0 w-[40px]" data-node-id="1:1369" data-name="image 10">
                           <img alt="" className="absolute bg-clip-padding border-0 border-[transparent] border-solid inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage10} />
                         </div>
                       </div>
-                      <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-[166px]" data-node-id="1:1370" data-name="Container">
-                        <div className="content-stretch flex gap-[7px] items-center relative shrink-0 w-full" data-node-id="1:1371" data-name="Container">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] whitespace-nowrap" data-node-id="1:1372">
+                      <div className="content-stretch flex min-w-0 flex-1 flex-col gap-[2px] items-start relative shrink-0" data-node-id="1:1370" data-name="Container">
+                        <div className="content-stretch flex gap-[7px] items-center relative shrink-0 w-full min-w-0" data-node-id="1:1371" data-name="Container">
+                          <div className="min-w-0 flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] break-words" data-node-id="1:1372">
                             <p className="leading-[16px]">Marta</p>
                           </div>
                           <div className="relative shrink-0 size-[13px]" data-node-id="1:1373" data-name="image 11">
                             <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage11} />
                           </div>
                         </div>
-                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1374" data-name="Container">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase w-[105.83px]" data-node-id="1:1375">
+                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1374" data-name="Container">
+                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase break-words" data-node-id="1:1375">
                             <p className="leading-[13.5px]">COO @Useme</p>
                           </div>
                         </div>
@@ -918,193 +976,12 @@ export function HomeMain() {
           </div>
         </div>
         </div>
-        <div className="w-full min-w-0 bg-white">
-        <div className="content-stretch flex flex-col items-start px-4 sm:px-6 md:px-10 lg:px-[61px] py-[91px] relative shrink-0 w-full max-w-content mx-auto min-w-0" data-node-id="1:1376" data-name="Section - Baza Wiedzy (Modular Clean Grid with Photos)">
-          <div className="content-stretch flex flex-col gap-[80px] items-start max-w-[1536px] relative shrink-0 w-full" data-node-id="1:1377" data-name="Container">
-            <div className="content-stretch flex flex-col gap-[24px] items-start relative shrink-0 w-full" data-node-id="1:1378" data-name="Container">
-              <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1379" data-name="Container">
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full" data-node-id="1:1380">
-                  <p className="leading-[16px]">Artykuły</p>
-                </div>
-              </div>
-              <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1381" data-name="Heading 2">
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full" data-node-id="1:1382">
-                  <p className="leading-[60px]">Baza wiedzy</p>
-                </div>
-              </div>
-              <div className="content-stretch flex flex-col items-start pb-[16.625px] pt-[7.375px] relative shrink-0 w-full" data-node-id="1:1383" data-name="Container">
-                <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[22px] w-full" data-node-id="1:1384">
-                  <p className="leading-[27.5px]">Eseje i artykuły</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-[#e2e8f0] border border-[#e2e8f0] border-solid gap-x-px gap-y-px grid grid-cols-[repeat(3,minmax(0,1fr))] grid-rows-[__636px_minmax(0,1fr)] h-[637px] overflow-clip p-px relative shrink-0 w-full" data-node-id="1:1385" data-name="Background+Border">
-              <div className="bg-white col-1 justify-self-stretch relative row-1 self-start shrink-0" data-node-id="1:1386" data-name="Article 1">
-                <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[inherit] size-full">
-                  <div className="content-stretch flex flex-col h-[256px] items-start justify-center overflow-clip relative shrink-0 w-full" data-node-id="1:1387" data-name="Container">
-                    <div className="flex-[1_0_0] min-h-px relative w-full" data-node-id="1:1388" data-name="Modern architectural structure">
-                      <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-                        <div className="absolute inset-0 overflow-hidden">
-                          <img alt="" className="absolute h-[157.81%] left-0 max-w-none top-[-28.91%] w-full" src={imgModernArchitecturalStructure} />
-                        </div>
-                        <div className="absolute bg-white inset-0 mix-blend-saturation" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="content-stretch flex flex-col h-[380px] items-start justify-between p-[48px] relative shrink-0 w-full" data-node-id="1:1389" data-name="Container">
-                    <div className="content-stretch flex flex-col items-start pb-[32px] relative shrink-0 w-full" data-node-id="1:1390" data-name="Margin">
-                      <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:1391" data-name="Container">
-                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1392" data-name="Container">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full" data-node-id="1:1393">
-                            <p className="leading-[16px]">Metodyka</p>
-                          </div>
-                        </div>
-                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1394" data-name="Heading 3">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[24px] w-full" data-node-id="1:1395">
-                            <p className="leading-[40px]">Shape Up a Scrum</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="content-stretch flex flex-col items-start pb-[32px] relative shrink-0 w-full" data-node-id="1:1396" data-name="Margin">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1397" data-name="Container">
-                        <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[20px] w-full" data-node-id="1:1398">
-                          <p className="leading-[25px]">Scrum miał być remedium na chaos, ale dla wielu stał się pułapką ceremonii. Dlaczego Shape Up wygrywa w scale-upach?</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="content-stretch flex flex-[1_0_0] flex-col items-start justify-end min-h-[28px] pt-[42.25px] relative w-full" data-node-id="1:1399" data-name="Margin">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1400" data-name="Container">
-                        <Link
-                          to="/artykuly/shape-up-scrum"
-                          className="content-stretch flex gap-[16px] items-center relative shrink-0 no-underline"
-                          data-node-id="1:1401"
-                          data-name="Link"
-                        >
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--dark-blue,#022169)] tracking-[1.2px] w-[165px]" data-node-id="1:1402">
-                            <p className="leading-[16px]">Dowiedz się więcej</p>
-                          </div>
-                          <div className="relative shrink-0 size-[12px]" data-node-id="1:1403" data-name="Container">
-                            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer12} />
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white col-2 justify-self-stretch relative row-1 self-start shrink-0" data-node-id="1:1405" data-name="Article 4">
-                <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[inherit] size-full">
-                  <div className="content-stretch flex flex-col h-[256px] items-start justify-center overflow-clip relative shrink-0 w-full" data-node-id="1:1406" data-name="Container">
-                    <div className="flex-[1_0_0] min-h-px relative w-full" data-node-id="1:1407" data-name="Abstract geometric patterns">
-                      <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-                        <div className="absolute inset-0 overflow-hidden">
-                          <img alt="" className="absolute h-[157.81%] left-0 max-w-none top-[-28.91%] w-full" src={imgAbstractGeometricPatterns} />
-                        </div>
-                        <div className="absolute bg-white inset-0 mix-blend-saturation" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="content-stretch flex flex-col h-[380px] items-start justify-between p-[48px] relative shrink-0 w-full" data-node-id="1:1408" data-name="Container">
-                    <div className="content-stretch flex flex-col items-start pb-[32px] relative shrink-0 w-full" data-node-id="1:1409" data-name="Margin">
-                      <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:1410" data-name="Container">
-                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1411" data-name="Container">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full" data-node-id="1:1412">
-                            <p className="leading-[16px]">Zespół</p>
-                          </div>
-                        </div>
-                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1413" data-name="Heading 3">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[24px] w-full" data-node-id="1:1414">
-                            <p className="leading-[40px]">Zarządzanie ryzykiem</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="content-stretch flex flex-col items-start pb-[32px] relative shrink-0 w-full" data-node-id="1:1415" data-name="Margin">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1416" data-name="Container">
-                        <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[20px] w-full" data-node-id="1:1417">
-                          <p className="leading-[25px]">W innowacji nie ma pewności. Betting model pozwala nam decydować na co postawić czas zespołu z zimną krwią.</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="content-stretch flex flex-[1_0_0] flex-col items-start justify-end min-h-[28px] pt-[42.25px] relative w-full" data-node-id="1:1418" data-name="Margin">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1419" data-name="Container">
-                        <Link
-                          to="/artykuly"
-                          className="content-stretch flex gap-[16px] items-center relative shrink-0 no-underline"
-                          data-node-id="1:1420"
-                          data-name="Link"
-                        >
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--dark-blue,#022169)] tracking-[1.2px] w-[165px]" data-node-id="1:1421">
-                            <p className="leading-[16px]">Dowiedz się więcej</p>
-                          </div>
-                          <div className="relative shrink-0 size-[12px]" data-node-id="1:1422" data-name="Container">
-                            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer12} />
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white col-3 justify-self-stretch relative row-1 self-start shrink-0" data-node-id="1:1424" data-name="Article 5">
-                <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[inherit] size-full">
-                  <div className="content-stretch flex flex-col h-[256px] items-start justify-center overflow-clip relative shrink-0 w-full" data-node-id="1:1425" data-name="Container">
-                    <div className="flex-[1_0_0] min-h-px relative w-full" data-node-id="1:1426" data-name="Sleek glass building reflection">
-                      <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-                        <div className="absolute inset-0 overflow-hidden">
-                          <img alt="" className="absolute h-[157.81%] left-0 max-w-none top-[-28.91%] w-full" src={imgSleekGlassBuildingReflection} />
-                        </div>
-                        <div className="absolute bg-white inset-0 mix-blend-saturation" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="content-stretch flex flex-col h-[380px] items-start justify-between p-[48px] relative shrink-0 w-full" data-node-id="1:1427" data-name="Container">
-                    <div className="content-stretch flex flex-col items-start pb-[32px] relative shrink-0 w-full" data-node-id="1:1428" data-name="Margin">
-                      <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:1429" data-name="Container">
-                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1430" data-name="Container">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full" data-node-id="1:1431">
-                            <p className="leading-[16px]">Proces</p>
-                          </div>
-                        </div>
-                        <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1432" data-name="Heading 3">
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[24px] w-full" data-node-id="1:1433">
-                            <p className="leading-[40px]">{`Efektywność & focus`}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="content-stretch flex flex-col items-start pb-[32px] relative shrink-0 w-full" data-node-id="1:1434" data-name="Margin">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1435" data-name="Container">
-                        <div className="flex flex-col  justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[20px] w-full" data-node-id="1:1436">
-                          <p className="leading-[25px]">Większość zespołów produktowych spędza więcej czasu na rozmawianiu o pracy niż na samej pracy. Czas to zmienić.</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="content-stretch flex flex-[1_0_0] flex-col items-start justify-end min-h-[28px] pt-[42.25px] relative w-full" data-node-id="1:1437" data-name="Margin">
-                      <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:1438" data-name="Container">
-                        <Link
-                          to="/artykuly"
-                          className="content-stretch flex gap-[16px] items-center relative shrink-0 no-underline"
-                          data-node-id="1:1439"
-                          data-name="Link"
-                        >
-                          <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--dark-blue,#022169)] tracking-[1.2px] w-[165px]" data-node-id="1:1440">
-                            <p className="leading-[16px]">Dowiedz się więcej</p>
-                          </div>
-                          <div className="relative shrink-0 size-[12px]" data-node-id="1:1441" data-name="Container">
-                            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer12} />
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
+        <HomeKnowledgeSection
+          eyebrow="Artykuły"
+          heading="Baza wiedzy"
+          subtitle="Eseje i artykuły"
+          cards={homeKnowledgeCards}
+        />
         </>
         )}
         <div className="w-full min-w-0 bg-white">
@@ -1146,7 +1023,7 @@ export function HomeMain() {
                 <div className="content-stretch flex flex-col items-start relative shrink-0" data-node-id="1:1457" data-name="Container">
                   <a
                     href={`mailto:${contactEmail}`}
-                    className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[16px] tracking-[1.2px] whitespace-nowrap no-underline"
+                    className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[#1b1b1b] text-[16px] tracking-[1.2px] break-all no-underline sm:break-normal"
                     data-node-id="1:1458"
                   >
                     <p className="leading-[16px]">{contactEmail}</p>
@@ -1160,7 +1037,7 @@ export function HomeMain() {
                   </div>
                 </div>
                 <div className="content-stretch flex flex-col items-start relative shrink-0" data-node-id="1:1463" data-name="Container">
-                  <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#1b1b1b] text-[16px] tracking-[1.2px] whitespace-nowrap" data-node-id="1:1464">
+                  <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-snug not-italic relative shrink-0 text-[#1b1b1b] text-[16px] tracking-[1.2px] break-words" data-node-id="1:1464">
                     <p className="leading-[16px]">{contactLocation}</p>
                   </div>
                 </div>
