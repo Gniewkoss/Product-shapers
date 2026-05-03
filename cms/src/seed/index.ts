@@ -8,6 +8,7 @@ import {
   seedNavigation,
   seedSeo,
 } from "./seedData.js";
+import { flattenLayoutBlocks } from "./flattenLayoutBlock.js";
 import { ensureSitePages } from "./sitePagesSeed.js";
 
 async function seed() {
@@ -16,7 +17,13 @@ async function seed() {
   await ensureSitePages(payload);
 
   await payload.updateGlobal({ slug: "navigation", data: seedNavigation });
-  await payload.updateGlobal({ slug: "homepage", data: seedHomepage });
+  await payload.updateGlobal({
+    slug: "homepage",
+    data: {
+      ...seedHomepage,
+      homeContinuationLayout: flattenLayoutBlocks(seedHomepage.homeContinuationLayout),
+    },
+  });
   await payload.updateGlobal({ slug: "footer", data: seedFooter });
   await payload.updateGlobal({ slug: "seo-defaults", data: seedSeo });
 

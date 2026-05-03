@@ -112,6 +112,8 @@ function database() {
     return postgresAdapter({
       pool: { connectionString: uri },
       push: pushEnabled,
+      /** Omit extension-owned objects (e.g. Render Postgres `pg_stat_statements`) from Drizzle push. */
+      tablesFilter: ["!pg_stat_*"],
     });
   }
 

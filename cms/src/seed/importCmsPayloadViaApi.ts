@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import { flattenLayoutBlock } from "./flattenLayoutBlock.js";
 import { seedHomepage } from "./seedData.js";
 import { seedSitePagesByRoute } from "./sitePagesSeed.js";
 
@@ -49,27 +50,12 @@ function requireString(value: unknown, field: string): string {
   return value.trim();
 }
 
-/**
- * Local seed / hand-written JSON often uses `{ blockType, heroBand: { ... } }`.
- * Payload REST create/update expects flat `{ blockType, ...heroBandFields }`.
- */
-function normalizeLayoutBlockForRestApi(block: JsonRecord): JsonRecord {
-  const bt = block.blockType;
-  if (typeof bt !== "string") return block;
-  const nested = block[bt];
-  if (!nested || typeof nested !== "object" || Array.isArray(nested)) return block;
-  const out: JsonRecord = { ...nested, blockType: bt };
-  if (typeof block.id === "string") out.id = block.id;
-  if (typeof block.blockName === "string") out.blockName = block.blockName;
-  return out;
-}
-
 function normalizeSitePageForRestApi(page: JsonRecord): JsonRecord {
   const layout = page.layout;
   if (!Array.isArray(layout)) return page;
   return {
     ...page,
-    layout: layout.map((b) => normalizeLayoutBlockForRestApi(b as JsonRecord)),
+    layout: layout.map((b) => flattenLayoutBlock(b as JsonRecord)),
   };
 }
 
@@ -78,7 +64,7 @@ function normalizeHomepageGlobalForRestApi(data: JsonRecord): JsonRecord {
   for (const key of ["homeTailLayout", "homeContinuationLayout"]) {
     const arr = out[key];
     if (Array.isArray(arr)) {
-      out[key] = arr.map((b) => normalizeLayoutBlockForRestApi(b as JsonRecord));
+      out[key] = arr.map((b) => flattenLayoutBlock(b as JsonRecord));
     }
   }
   return out;

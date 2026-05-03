@@ -1,5 +1,7 @@
 import type { Payload } from "payload";
 
+import { flattenLayoutBlocks } from "./flattenLayoutBlock.js";
+
 const hiringLayout = [
   {
     blockType: "heroBand" as const,
@@ -385,8 +387,7 @@ export async function ensureSitePages(payload: Payload) {
       collection: "site-pages",
       data: {
         routeKey,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Payload blocks serialized shape
-        layout: layout as any,
+        layout: flattenLayoutBlocks(layout),
       },
     });
     console.info(`[seed] Created site-page: ${routeKey}`);

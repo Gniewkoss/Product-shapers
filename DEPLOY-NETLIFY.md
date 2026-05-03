@@ -20,7 +20,8 @@ Na **domenie Netlify** użytkownik wchodzi np. w `https://twoja-strona.netlify.a
 6. Na Netlify: **Deploy → Trigger deploy → Clear cache and deploy**, żeby `npm run build:netlify` wygenerowało `public/_redirects` z regułami proxy.
 7. **Pusta baza — schemat + seed (bootstrap):** lokalnie (to samo `DATABASE_URI` co na Render) **albo** w **Render → Shell** (katalog roboczy = `cms/`):  
    `npm run db:bootstrap` (lub z głównego katalogu repo: `npm run db:bootstrap --prefix cms`).  
-   Jednorazowo — nie dodawaj tego do `npm start`.
+   Jednorazowo — nie dodawaj tego do `npm start`.  
+   **Bootstrap z komputera** przy **zewnętrznym** URI Postgres na Renderze: dopisz do connection stringa **`?sslmode=require`** (lub `&sslmode=require`), inaczej możesz dostać `SSL/TLS required`. Pełny host musi być widoczny w DNS (`…postgres.render.com`), nie skrócona nazwa.
 8. Na Render (Environment serwisu CMS) ustaw **`PAYLOAD_DATABASE_PUSH=false`** po udanym bootstrapie (opcjonalnie, zalecane po ustabilizowaniu schematu).
 9. Otwórz `https://…twoja-strona….netlify.app/admin` i utwórz **pierwszego użytkownika** Payload.
 10. Kolejne doładowanie treści: `npm run seed --prefix cms` (lokalnie lub Shell).
@@ -33,6 +34,7 @@ Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.exa
 - **Pliki `cms/media/`** na dysku kontenera mogą **zginąć przy redeploy**; na dłuższą produkcję: [Persistent Disk](https://render.com/docs/disks) pod katalog uploadów albo **S3** (zmienne w [`cms/.env.production.example`](./cms/.env.production.example)).
 - Jeśli blueprint odrzuci `plan: free` dla Postgresa w regionie, edytuj [`render.yaml`](./render.yaml) (np. `basic-256mb`).
 - **Build** na Renderze używa tymczasowego SQLite (jak [`cms/Dockerfile`](./cms/Dockerfile) / [`render.yaml`](./render.yaml) `buildCommand`) — nie wymaga żywego Postgresa podczas `next build`. **Start** używa `DATABASE_URI` z bazy.
+- **`db:bootstrap` z laptopa:** użyj **External Database URL** z pełnym hostname oraz **`sslmode=require`** w URI (patrz checklista pkt 7).
 - Gdy **deploy Web** kończy się błędem, sprawdź **Logs** → **Build**; gdy start się wywala, sprawdź czy **`PAYLOAD_PUBLIC_SERVER_URL`** i **`FRONTEND_ORIGINS`** nie są puste.
 
 ---
