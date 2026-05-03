@@ -1,4 +1,4 @@
-# Frontend: Vite React (marketing). CMS (Payload + Next.js) na osobnym hoście — patrz DEPLOY-NETLIFY.md
+# Witryna Netlify A: Vite React (marketing). CMS — osobny projekt Netlify z base cms/ — patrz DEPLOY-NETLIFY.md
 [build]
   command = "npm run build:netlify"
   publish = "dist"

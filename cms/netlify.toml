@@ -1,0 +1,8 @@
+# Netlify site B: Payload + Next.js from repo subdirectory cms/
+# Build matches cms/Dockerfile: temporary SQLite so next build does not require Postgres.
+[build]
+  command = "npm ci && DATABASE_ADAPTER=sqlite DATABASE_URI=file:/tmp/netlify-cms-build.sqlite PAYLOAD_SECRET=build-placeholder-minimum-32-characters-xx PAYLOAD_DATABASE_PUSH=false npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
