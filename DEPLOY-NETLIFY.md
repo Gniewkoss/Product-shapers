@@ -1,120 +1,106 @@
-# Wdrożenie: dwie witryny Netlify (strona Vite + Payload CMS)
+# Wdrożenie: Netlify (strona) + Render (Payload CMS)
 
-Ten projekt zakłada **dwa osobne projekty Netlify** z **tego samego repozytorium**:
+Domyślna konfiguracja: **jedna witryna Netlify** serwuje statyczny build Vite (`dist/`). **Payload (Next.js) i PostgreSQL** działają na **Render** z [`render.yaml`](./render.yaml) (`rootDir: cms`).
 
-| Witryna | Katalog | Co publikuje |
-|---------|---------|----------------|
-| **A — marketing** | root repo | statyczny build Vite → `dist/` |
-| **B — CMS** | `cms/` | Next.js + Payload (admin, API, media) |
+Na **domenie Netlify** użytkownik wchodzi np. w `https://twoja-strona.netlify.app/admin` — Netlify **`_redirects`** (HTTP 200) proxy przekazuje `/api`, `/admin`, `/media` na **publiczny URL serwisu Web Render** (`CMS_ORIGIN`).
 
-Na **domenie witryny A** użytkownik otwiera np. `https://twoja-strona.netlify.app/admin` — Netlify **`_redirects`** (HTTP 200) proxy przekazuje `/api`, `/admin`, `/media` na **URL witryny B** (`CMS_ORIGIN`). W pasku adresu nadal widać domenę witryny A.
-
-Konfiguracja CMS dla proxy: **`PAYLOAD_PUBLIC_SERVER_URL`** i **`FRONTEND_ORIGINS`** = adres **witryny A** (ten z paska przeglądarki), **nie** surowy URL witryny B.
+**Ważne:** W środowisku Render (`PAYLOAD_PUBLIC_SERVER_URL`, `FRONTEND_ORIGINS` / `FRONTEND_ORIGIN`) ustaw **adres witryny Netlify** (to, co widać w pasku adresu), a **nie** surowy URL `onrender.com` — tak działają linki, CSRF i proxy.
 
 ---
 
-## 1. Witryna B — CMS (Payload), katalog `cms/`
+## Checklista (Netlify + Render)
 
-Utwórz **drugi** projekt Netlify z tego repozytorium (ta sama gałąź co witryna A).
+1. **Zacommituj i wypchnij** repozytorium na GitHub/GitLab.
+2. W **[Render](https://render.com)**: New → **Blueprint** → wybierz repo → Render wczyta [`render.yaml`](./render.yaml) i utworzy **PostgreSQL** + serwis **Web** z katalogu `cms/`.
+3. Przy tworzeniu uzupełnij zmienne ze `sync: false` (URL Twojej strony na Netlify):
+   - **`PAYLOAD_PUBLIC_SERVER_URL`** = `https://twoja-strona.netlify.app` (bez `/` na końcu),
+   - **`FRONTEND_ORIGINS`** = ten sam URL; opcjonalnie dopisz adresy **Deploy Preview** Netlify po przecinku.
+4. Poczekaj aż serwis CMS ma status **Live**. Skopiuj **publiczny URL** Web (np. `https://product-shapers-cms-xxxx.onrender.com`).
+5. W **Netlify** (tylko witryna marketingowa): Site configuration → Environment variables → **`CMS_ORIGIN`** = skopiowany URL Render **bez** końcowego `/`. Wzorzec: [`deploy/netlify-env.example.txt`](./deploy/netlify-env.example.txt).
+6. Na Netlify: **Deploy → Trigger deploy → Clear cache and deploy**, żeby `npm run build:netlify` wygenerowało `public/_redirects` z regułami proxy.
+7. **Pusta baza — schemat + seed (bootstrap):** lokalnie (to samo `DATABASE_URI` co na Render) **albo** w **Render → Shell** (katalog roboczy = `cms/`):  
+   `npm run db:bootstrap` (lub z głównego katalogu repo: `npm run db:bootstrap --prefix cms`).  
+   Jednorazowo — nie dodawaj tego do `npm start`.
+8. Na Render (Environment serwisu CMS) ustaw **`PAYLOAD_DATABASE_PUSH=false`** po udanym bootstrapie (opcjonalnie, zalecane po ustabilizowaniu schematu).
+9. Otwórz `https://…twoja-strona….netlify.app/admin` i utwórz **pierwszego użytkownika** Payload.
+10. Kolejne doładowanie treści: `npm run seed --prefix cms` (lokalnie lub Shell).
 
-### Build i deploy
+Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.example).
 
-1. **Site configuration → Build & deploy → Continuous Deployment**
-   - **Base directory:** `cms`
-   - Netlify wczyta [`cms/netlify.toml`](cms/netlify.toml): build używa **tymczasowego SQLite** (jak [`cms/Dockerfile`](cms/Dockerfile)), żeby `next build` **nie wymagał** Postgresa podczas kompilacji.
+### Render — na co uważać
 
-2. **Node:** w `netlify.toml` ustawione `NODE_VERSION = 20` — nie nadpisuj na starszą.
+- **Cold start**: na darmowym planie usługa może zasnąć — pierwsze żądanie bywa wolniejsze.
+- **Pliki `cms/media/`** na dysku kontenera mogą **zginąć przy redeploy**; na dłuższą produkcję: [Persistent Disk](https://render.com/docs/disks) pod katalog uploadów albo **S3** (zmienne w [`cms/.env.production.example`](./cms/.env.production.example)).
+- Jeśli blueprint odrzuci `plan: free` dla Postgresa w regionie, edytuj [`render.yaml`](./render.yaml) (np. `basic-256mb`).
+- **Build** na Renderze używa tymczasowego SQLite (jak [`cms/Dockerfile`](./cms/Dockerfile) / [`render.yaml`](./render.yaml) `buildCommand`) — nie wymaga żywego Postgresa podczas `next build`. **Start** używa `DATABASE_URI` z bazy.
+- Gdy **deploy Web** kończy się błędem, sprawdź **Logs** → **Build**; gdy start się wywala, sprawdź czy **`PAYLOAD_PUBLIC_SERVER_URL`** i **`FRONTEND_ORIGINS`** nie są puste.
 
-3. **Publish:** dla Next.js na Netlify **nie** ustawiaj ręcznie `dist` — integracja Next (OpenNext) jest wykrywana automatycznie.
+---
 
-### Baza danych (PostgreSQL)
+## 1. Backend CMS na Render (Payload)
 
-1. Podłącz **Netlify Postgres** (lub inny Postgres) do witryny B i skopiuj **`DATABASE_URI`**.
-2. Preferuj **connection string przyjazny serverless** (pooled), jeśli panel go podaje — Payload na funkcjach serverless korzysta z krótkotrwałych połączeń.
+| Zmienna | Przykład |
+|--------|----------|
+| `PAYLOAD_SECRET` | długi losowy ciąg (Render może wygenerować przy blueprintcie) |
+| `DATABASE_URI` | z addonu Postgres (`fromDatabase` w [`render.yaml`](./render.yaml)) |
+| `DATABASE_ADAPTER` | nie ustawiaj `sqlite` przy Postgres |
+| `PAYLOAD_PUBLIC_SERVER_URL` | **publiczny URL witryny Netlify** — tak działają linki i CSRF przy proxy |
+| `FRONTEND_ORIGINS` | URL Netlify (+ opcjonalnie preview), przecinkami |
+| `FRONTEND_ORIGIN` | opcjonalnie (legacy) |
+| `PAYLOAD_DATABASE_PUSH` | `true` na pustej bazie / pierwszym deployu; po **`db:bootstrap`** ustaw `false` |
 
-### Przechowywanie plików (Media) — wymagane na produkcji
+**Healthcheck:** [`render.yaml`](./render.yaml) → `/api/content-version`.
 
-Na Netlify dysk kontenera jest **ulotny**. Kolekcja `media` domyślnie zapisuje pod `cms/media/` — po wdrożeniu **[`@payloadcms/storage-s3`](https://payloadcms.com/docs/upload/storage-adapters)** włącza się, gdy ustawisz zmienne **S3** (patrz [`cms/.env.production.example`](cms/.env.production.example)): bucket AWS, **Cloudflare R2** (S3-compatible) itd.
+---
 
-Bez S3: uploady mogą **znikać** po redeploy lub w ogóle nie działać stabilnie — nadaje się tylko do szybkiego testu.
+## 2. Netlify (tylko frontend)
 
-### Zmienne środowiskowe — witryna B (CMS)
+**Environment variables:**
 
 | Zmienna | Opis |
 |---------|------|
-| `DATABASE_URI` | `postgresql://…` z Netlify Postgres / Neon |
-| `PAYLOAD_SECRET` | min. 32 znaki, losowy |
-| `PAYLOAD_PUBLIC_SERVER_URL` | URL **witryny A** (marketing), **bez** `/` na końcu |
-| `FRONTEND_ORIGINS` | ten sam co A (+ opcjonalnie adresy Deploy Preview Netlify, po przecinku) |
-| `FRONTEND_ORIGIN` | opcjonalnie (legacy); wystarczy `FRONTEND_ORIGINS` |
-| `PAYLOAD_DATABASE_PUSH` | na start `true` na pustej bazie; po **`db:bootstrap`** ustaw `false` (patrz niżej) |
-| `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_REGION` | gdy używasz S3/R2; opcjonalnie `S3_ENDPOINT`, `S3_FORCE_PATH_STYLE=true` (R2) |
+| `CMS_ORIGIN` | Pełny URL serwisu CMS na Render **bez** `/`, np. `https://product-shapers-cms-xxxx.onrender.com` |
 
-**Nie** ustawiaj `DATABASE_ADAPTER=sqlite` w runtime produkcyjnym z Postgres — tylko build w `netlify.toml` używa SQLite.
+**Build:** `npm run build:netlify` — generuje `public/_redirects` i buduje Vite.
+
+**Domena własna:** podepnij na Netlify; ten sam host wpisz w `PAYLOAD_PUBLIC_SERVER_URL` i `FRONTEND_ORIGINS` na Renderze.
 
 ---
 
-## 2. Witryna A — frontend (Vite)
-
-1. **Base directory:** root repozytorium (puste lub `.`).
-2. **Build command:** `npm ci && npm run build:netlify`
-3. **Publish directory:** `dist`
-4. **Environment variables:** **`CMS_ORIGIN`** = publiczny URL **witryny B**, np. `https://twoj-cms.netlify.app`, **bez** końcowego `/`. Wzorzec: [`deploy/netlify-env.example.txt`](deploy/netlify-env.example.txt).
-
-Kolejność: utwórz witrynę B, skopiuj jej URL → wklej jako `CMS_ORIGIN` na A → **Trigger deploy** na A, żeby [`scripts/generate-netlify-redirects.mjs`](scripts/generate-netlify-redirects.mjs) wygenerował `public/_redirects` z poprawnym proxy.
-
-**Domena własna:** podepnij na witrynie A. Ten sam host wpisz w `PAYLOAD_PUBLIC_SERVER_URL` i `FRONTEND_ORIGINS` na witrynie B.
-
----
-
-## 3. Pusta baza: schemat + seed (bootstrap)
-
-Netlify nie zastępuje „powłoki” jak Render Shell — **jednorazowo** uruchom bootstrap **lokalnie** (albo w CI z sekretami), z dostępem sieciowym do tego samego `DATABASE_URI` co witryna B.
-
-1. Skopiuj [`cms/.env.production.example`](cms/.env.production.example) → `cms/.env` (nie commituj). Ustaw `DATABASE_URI`, `PAYLOAD_SECRET`, URL-e jak w produkcji.
-2. Z katalogu głównego repo:  
-   **`npm run db:bootstrap --prefix cms`**  
-   To uruchamia seed z wymuszonym `PAYLOAD_DATABASE_PUSH=true` na czas procesu (tabele Drizzle + dane startowe).
-3. Na witrynie B w Netlify ustaw **`PAYLOAD_DATABASE_PUSH=false`** i opcjonalnie redeploy.
-4. Otwórz **`https://<witryna-A>/admin`** i utwórz pierwszego użytkownika Payload.
-5. Kolejne doładowanie treści bez push: `npm run seed --prefix cms`.
-
----
-
-## 4. Co robi `public/_redirects` (generowane przy buildzie A)
+## 3. Co robi `public/_redirects`
 
 - `/api/*` → `{CMS_ORIGIN}/api/:splat`
-- `/admin`, `/admin/*` → CMS Payload na witrynie B
+- `/admin`, `/admin/*` → panel Payload na Renderze
 - `/media/*` → pliki z CMS
 - pozostałe ścieżki → `index.html` (React Router)
 
 ---
 
-## 5. Development lokalny
+## 4. Development lokalny
 
-`vite.config.ts` proxy: `/api`, `/media`, `/admin` → `localhost:3000`. Zmienne `CMS_ORIGIN` nie są potrzebne lokalnie przy `npm run dev`.
-
----
-
-## 6. Problemy z ciasteczkami / logowaniem w `/admin`
-
-Sprawdź `PAYLOAD_PUBLIC_SERVER_URL` (musi być URL widoczny użytkownikowi — witryna A) oraz `FRONTEND_ORIGINS` (CSRF/CORS). Dodaj subdomeny preview Netlify do `FRONTEND_ORIGINS`, jeśli testujesz preview.
+`vite.config.ts` proxy: `/api`, `/media`, `/admin` → `localhost:3000`. Przy `npm run dev` zmienne Netlify nie są potrzebne.
 
 ---
 
-## 7. Alternatywa: CMS na Render / VPS / Docker
+## 5. Problemy z ciasteczkami / logowaniem w `/admin`
 
-Jeśli wolisz Payload jako **długo działający proces** (np. [`render.yaml`](render.yaml), [`DEPLOY-VPS.md`](DEPLOY-VPS.md), [`cms/Dockerfile`](cms/Dockerfile)):
-
-- **`CMS_ORIGIN`** na Netlify (witryna A) = publiczny URL backendu (Render, VPS itd.), tak jak wcześniej.
-- **`PAYLOAD_PUBLIC_SERVER_URL`** nadal = domena **witryny marketingowej** (Netlify), nie bezpośredni URL Render.
-- Pliki `cms/media/` na dysku kontenera przy Render: rozważ **Persistent Disk** albo S3 — ta sama logika co powyżej.
+Sprawdź `PAYLOAD_PUBLIC_SERVER_URL` (URL widoczny użytkownikowi — Netlify) oraz `FRONTEND_ORIGINS`. Dodaj subdomeny preview Netlify do `FRONTEND_ORIGINS`, jeśli testujesz preview.
 
 ---
 
-## Skrót checklisty
+## 6. Opcjonalnie: CMS na drugim projekcie Netlify
 
-1. Witryna B: base `cms/`, Postgres, env (URL-e **A** dla Payload), opcjonalnie S3; deploy.
-2. Witryna A: `CMS_ORIGIN` = URL B, `npm ci && npm run build:netlify`, publish `dist`.
-3. Lokalnie: `npm run db:bootstrap --prefix cms` na pustą bazę; potem `PAYLOAD_DATABASE_PUSH=false` na B.
-4. `/admin` pod domeną A.
+Zamiast Render możesz wdrożyć **Payload jako drugą witrynę Netlify** z **base directory `cms/`** — wtedy **`CMS_ORIGIN`** = URL tej drugiej witryny (np. `https://twoj-cms.netlify.app`).
+
+- Konfiguracja buildu: [`cms/netlify.toml`](cms/netlify.toml) (SQLite przy kompilacji, jak Dockerfile).
+- Na Netlify dysk funkcji jest **ulotny** — dla uploadów praktycznie **wymagane** jest **S3/R2** (zmienne w [`cms/.env.production.example`](./cms/.env.production.example)); szczegóły wcześniejszej architektury „dwóch Netlify” zostały skrócone na rzecz ścieżki Render.
+
+---
+
+## Skrót
+
+| Gdzie | Co |
+|-------|-----|
+| **Render** | Postgres + Web `cms/`, env z URL **Netlify** dla Payload |
+| **Netlify** | `CMS_ORIGIN` = URL **Render Web**, build `build:netlify`, publish `dist` |
+| **Bootstrap** | `db:bootstrap` lokalnie lub Render Shell; potem `PAYLOAD_DATABASE_PUSH=false` na Renderze |

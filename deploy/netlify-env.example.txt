@@ -1,5 +1,5 @@
-# Witryna Netlify A (marketing / frontend) — Site configuration → Environment variables
-# CMS_ORIGIN = publiczny URL witryny B (Payload z podkatalogu cms/), BEZ końcowego /
-# (może być drugi projekt Netlify: np. https://twoj-projekt-cms.netlify.app)
+# Netlify (marketing / frontend) — Site configuration → Environment variables
+# CMS_ORIGIN = publiczny URL serwisu Web Payload na Renderze („Copy URL” z dashboardu), BEZ końcowego /
+# (jedna witryna Netlify; CMS działa na Renderze — patrz DEPLOY-NETLIFY.md)
 
-CMS_ORIGIN=https://twoj-projekt-cms.netlify.app
+CMS_ORIGIN=https://product-shapers-cms-xxxx.onrender.com

@@ -1,4 +1,4 @@
-# Witryna Netlify A: Vite React (marketing). CMS — osobny projekt Netlify z base cms/ — patrz DEPLOY-NETLIFY.md
+# Netlify: Vite React (marketing). CMS na Renderze — CMS_ORIGIN w panelu; patrz DEPLOY-NETLIFY.md (opcjonalnie drugi projekt Netlify + cms/netlify.toml).
 [build]
   command = "npm run build:netlify"
   publish = "dist"

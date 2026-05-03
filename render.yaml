@@ -1,5 +1,5 @@
 # Render Blueprint: Postgres + Payload CMS z podkatalogu cms/
-# Dokładny flow: DEPLOY-NETLIFY.md → sekcja „Render (blueprint w repo)”
+# Domyślny stack z DEPLOY-NETLIFY.md: frontend Netlify + CMS ten serwis — ustaw PAYLOAD_PUBLIC_SERVER_URL / FRONTEND_ORIGINS na URL Netlify.
 #
 # Uwagi:
 # - Po utworzeniu z blueprintu Render poprosi o wartości zmiennych sync:false (URL Twojej strony Netlify).
