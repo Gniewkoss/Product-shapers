@@ -1,5 +1,6 @@
 import type { Payload } from "payload";
 
+import type { SitePage } from "../payload-types";
 import { flattenLayoutBlocks } from "./flattenLayoutBlock.js";
 
 const hiringLayout = [
@@ -387,7 +388,7 @@ export async function ensureSitePages(payload: Payload) {
       collection: "site-pages",
       data: {
         routeKey,
-        layout: flattenLayoutBlocks(layout),
+        layout: flattenLayoutBlocks(layout) as SitePage["layout"],
       },
     });
     console.info(`[seed] Created site-page: ${routeKey}`);
