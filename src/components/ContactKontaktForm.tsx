@@ -20,6 +20,13 @@ const submitBase = [
   "disabled:cursor-not-allowed disabled:opacity-60",
 ].join(" ");
 
+/** FormSubmit delivers here; override with VITE_FORMSUBMIT_EMAIL if needed. */
+const FORMSUBMIT_EMAIL =
+  (typeof import.meta.env.VITE_FORMSUBMIT_EMAIL === "string" && import.meta.env.VITE_FORMSUBMIT_EMAIL.trim()) ||
+  "d.szkielka@gmail.com";
+
+const FORMSUBMIT_URL = `https://formsubmit.co/ajax/${encodeURIComponent(FORMSUBMIT_EMAIL)}`;
+
 type FormState = {
   name: string;
   email: string;
@@ -29,32 +36,51 @@ type FormState = {
 
 const initial: FormState = { name: "", email: "", company: "", message: "" };
 
-function buildMailtoBody(values: FormState) {
-  const lines = [
-    `Imię i nazwisko: ${values.name}`,
-    `Email: ${values.email}`,
-    `Firma: ${values.company}`,
-    "",
-    "Wiadomość:",
-    values.message,
-  ];
-  return lines.join("\n");
-}
+type SubmitStatus = "idle" | "submitting" | "success" | "error";
 
 export function ContactKontaktForm({ "data-node-id": dataNodeId }: { "data-node-id"?: string }) {
   const [values, setValues] = useState<FormState>(initial);
+  const [status, setStatus] = useState<SubmitStatus>("idle");
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
-    const body = buildMailtoBody(values);
-    const subject = encodeURIComponent("Konsultacja — formularz Product Shapers");
-    const href = `mailto:kontakt@productshapers.com?subject=${subject}&body=${encodeURIComponent(body)}`;
-    window.location.href = href;
+
+    setStatus("submitting");
+    try {
+      const res = await fetch(FORMSUBMIT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: values.name.trim(),
+          email: values.email.trim(),
+          company: values.company.trim(),
+          message: values.message.trim(),
+          _subject: "Konsultacja — formularz Product Shapers",
+          _template: "table",
+          _captcha: false,
+        }),
+      });
+
+      const data = (await res.json().catch(() => ({}))) as { success?: boolean; message?: string };
+
+      if (!res.ok || data.success === false) {
+        setStatus("error");
+        return;
+      }
+
+      setValues(initial);
+      setStatus("success");
+    } catch {
+      setStatus("error");
+    }
   }
 
   return (
@@ -78,6 +104,8 @@ export function ContactKontaktForm({ "data-node-id": dataNodeId }: { "data-node-
             onChange={(e) => setValues((s) => ({ ...s, name: e.target.value }))}
             className={`${inputBase} h-[50px] sm:h-[58px]`}
             placeholder="Jan Kowalski"
+            required
+            disabled={status === "submitting"}
             aria-describedby="kontakt-form-hint"
           />
         </div>
@@ -96,6 +124,7 @@ export function ContactKontaktForm({ "data-node-id": dataNodeId }: { "data-node-
             className={`${inputBase} h-[50px] sm:h-[58px]`}
             placeholder="imie@firma.pl"
             required
+            disabled={status === "submitting"}
             aria-describedby="kontakt-form-hint"
           />
         </div>
@@ -113,6 +142,7 @@ export function ContactKontaktForm({ "data-node-id": dataNodeId }: { "data-node-
           onChange={(e) => setValues((s) => ({ ...s, company: e.target.value }))}
           className={`${inputBase} h-[50px] sm:h-[58px]`}
           placeholder="Nazwa firmy"
+          disabled={status === "submitting"}
         />
       </div>
       <div className="flex w-full min-w-0 flex-col gap-2" data-name="Wiadomość">
@@ -128,18 +158,33 @@ export function ContactKontaktForm({ "data-node-id": dataNodeId }: { "data-node-
           className={`${inputBase} min-h-[140px] resize-y py-2.5`}
           placeholder="Opisz, z czym do nas przychodzisz…"
           required
+          disabled={status === "submitting"}
         />
       </div>
+      {status === "success" ?
+        <p className="rounded-md border border-[#7dfab6]/40 bg-[#f0fdf4] px-3 py-2 text-[14px] leading-snug text-[#14532d]" role="status">
+          Dziękujemy — wiadomość została wysłana. Odezwiemy się na podany adres e-mail.
+        </p>
+      : null}
+      {status === "error" ?
+        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[14px] leading-snug text-red-900" role="alert">
+          Nie udało się wysłać formularza. Spróbuj ponownie za chwilę lub napisz bezpośrednio na{" "}
+          <a href="mailto:kontakt@productshapers.com" className="font-medium underline underline-offset-2">
+            kontakt@productshapers.com
+          </a>
+          .
+        </p>
+      : null}
       <p id="kontakt-form-hint" className="text-[12px] leading-4 text-[#64748b]">
-        Wysyłając, otworzysz skrzynkę poczty z uzupełnionym szablonem. Możesz też napisać na{" "}
+        Wysyłając formularz, przekazujesz dane do Product Shapers. Możesz też napisać na{" "}
         <a href="mailto:kontakt@productshapers.com" className="text-[#022169] underline-offset-2 hover:underline">
           kontakt@productshapers.com
         </a>
-        .
+        . Przy pierwszym użyciu usługi FormSubmit możesz dostać e-mail aktywacyjny — potwierdź go, aby odbierać zgłoszenia.
       </p>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-        <button type="submit" className={submitBase}>
-          Wyślij wiadomość
+        <button type="submit" className={submitBase} disabled={status === "submitting"}>
+          {status === "submitting" ? "Wysyłanie…" : "Wyślij wiadomość"}
         </button>
       </div>
     </form>
