@@ -108,7 +108,7 @@ const ExpertiseRow = memo(function ExpertiseRow({ item, i, open, onToggle }: Row
   return (
     <div
       className={`relative w-full shrink-0 border-l-4 border-solid bg-clip-padding ${
-        open ? "border-[var(--dark-blue,#022169)] bg-[#f8fafc]" : "border-transparent bg-white"
+        open ? "border-[var(--dark-blue,#022169)] bg-[#f8fafc]" : "border-white bg-white"
       }`}
       data-name={open ? "Details - Active" : `Details - ${item.title}`}
     >
@@ -239,7 +239,7 @@ export function HomeExpertiseAccordion({ cmsItems }: { cmsItems?: CmsExpertiseIt
 
   return (
     <div
-      className="content-stretch col-span-1 flex flex-col gap-px items-start self-start row-1 shrink-0 justify-self-stretch border border-[rgba(197,197,210,0.2)] border-solid bg-[rgba(197,197,210,0.2)] p-px lg:col-[5/span_8] relative [contain:layout]"
+      className="content-stretch col-span-1 flex flex-col gap-px items-start self-start row-1 shrink-0 justify-self-stretch border border-solid border-[rgba(197,197,210,0.2)] bg-[rgba(197,197,210,0.2)] p-px lg:col-[5/span_8] relative [contain:layout]"
       data-node-id="1:987"
       data-name="Overlay+Border"
     >

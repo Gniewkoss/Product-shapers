@@ -61,7 +61,7 @@ const FaqRow = memo(function FaqRow({ item, i, open, onToggle }: RowProps) {
   return (
     <div
       className={`relative w-full shrink-0 border-l-4 border-solid bg-clip-padding ${
-        open ? "border-[var(--dark-blue,#022169)] bg-[#f8fafc]" : "border-transparent bg-white"
+        open ? "border-[var(--dark-blue,#022169)] bg-[#f8fafc]" : "border-white bg-white"
       }`}
     >
       <div className="content-stretch flex size-full flex-col items-start border-0 border-[transparent] border-solid bg-clip-padding">
@@ -136,7 +136,7 @@ export function SzkoleniaFaqAccordion({ items: cmsItems }: { items?: { title: st
 
   return (
     <div
-      className="content-stretch mx-auto flex w-full max-w-[896px] flex-col items-stretch gap-px border border-[rgba(197,197,210,0.2)] border-solid bg-[rgba(197,197,210,0.2)] p-px [contain:layout]"
+      className="content-stretch mx-auto flex w-full max-w-[896px] flex-col items-stretch gap-px border border-solid border-[rgba(197,197,210,0.2)] bg-[rgba(197,197,210,0.2)] p-px [contain:layout]"
       data-node-id="1:258"
     >
       {resolved.map((item, i) => (
