@@ -9,7 +9,8 @@
     "dev:all": "concurrently \"npm run dev\" \"npm run dev --prefix cms\"",
     "build": "tsc -b && vite build",
     "build:netlify": "node scripts/generate-netlify-redirects.mjs && npm run build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "figma:pull-szkolenia-benefit-icon": "node scripts/fetch-figma-node-png.mjs"
   },
   "dependencies": {
     "dompurify": "^3.4.2",

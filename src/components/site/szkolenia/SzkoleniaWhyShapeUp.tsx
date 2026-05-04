@@ -1,7 +1,6 @@
 /** „Dlaczego Shape Up?” — parity with `SzkoleniaMain.tsx` (lines 234–332). */
 
-const imgBenefitIcon = "https://www.figma.com/api/mcp/asset/0857130b-81a6-4514-817e-27c32b4bfbda";
-const imgDarkCardIcon = "https://www.figma.com/api/mcp/asset/e27b3d11-14c4-4f8f-882d-78150d0442eb";
+import { brandIcons } from "../../../lib/brandIcons";
 
 export type SzkoleniaWhyShapeUpProps = {
   titleLine1: string;
@@ -70,7 +69,7 @@ export function SzkoleniaWhyShapeUpFidelity(p: SzkoleniaWhyShapeUpProps) {
                     data-node-id={bi === 0 ? "1:218" : bi === 1 ? "1:223" : "1:228"}
                     data-name="Container"
                   >
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgBenefitIcon} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={brandIcons.tickBlue} />
                   </div>
                   <div
                     className="content-stretch flex flex-col items-start relative shrink-0"
@@ -144,7 +143,7 @@ export function SzkoleniaWhyShapeUpFidelity(p: SzkoleniaWhyShapeUpProps) {
                 data-name="Background"
               >
                 <div className="h-[27px] relative shrink-0 w-[16.5px]" data-node-id="1:244" data-name="Icon">
-                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDarkCardIcon} />
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={brandIcons.cyrkiel} />
                 </div>
                 <div className="content-stretch flex flex-col items-start pt-[8px] relative shrink-0 w-full" data-node-id="1:245" data-name="Container">
                   <div

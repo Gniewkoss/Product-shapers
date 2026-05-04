@@ -10,19 +10,11 @@ import { useSitePayload } from "../context/SitePayloadContext";
 import type { PayloadLayoutBlock } from "../lib/payload/blockUtils";
 import { FALLBACK_KNOWLEDGE_CARDS, articleToKnowledgeCard, normalizeFeaturedArticles } from "../lib/payload/homeFeaturedArticles";
 import { mediaUrl, resolveCommunityBackgroundUrls, uploadRefMedia } from "../lib/payload/client";
+import { brandIcons } from "../lib/brandIcons";
+
 const imgImage8 = "https://www.figma.com/api/mcp/asset/2717548e-54bd-4e3e-a05e-c1d097f5fa07";
-const imgImage11 = "https://www.figma.com/api/mcp/asset/01ff3667-cd79-4f08-902b-216735c2d283";
 const imgImage9 = "https://www.figma.com/api/mcp/asset/2aa1306d-2d93-4df8-9887-62987f5b63e7";
 const imgImage10 = "https://www.figma.com/api/mcp/asset/9c240abc-dbf1-4d29-bf1f-5a2785c16c8a";
-const imgContainer = "https://www.figma.com/api/mcp/asset/df4a6ade-0ed6-4fc7-8ae3-1547fc9972da";
-const imgContainer7 = "https://www.figma.com/api/mcp/asset/cfbeacf8-5f18-4199-a12f-cd3791c8b2e2";
-const imgGroup = "https://www.figma.com/api/mcp/asset/33ce9bcd-5617-4fae-9a8a-1a36ab9a75e8";
-const imgContainer8 = "https://www.figma.com/api/mcp/asset/fc336216-fa6e-4ef0-a3d9-02a8da8ba2a4";
-const imgContainer9 = "https://www.figma.com/api/mcp/asset/57eb5300-0d15-4873-be8b-b29b2c84c025";
-const imgContainer10 = "https://www.figma.com/api/mcp/asset/2a0ccd0c-8aa6-4ea5-991c-72af2fde4c6e";
-const imgContainer11 = "https://www.figma.com/api/mcp/asset/971bed54-9d58-4436-b682-fe002b12d53f";
-const imgContainer13 = "https://www.figma.com/api/mcp/asset/1333a724-755f-42fe-9e65-2fb861bca57a";
-const imgContainer14 = "https://www.figma.com/api/mcp/asset/41d9ab9a-054d-4d5e-ab74-3631123949fb";
 export function HomeMain() {
   const location = useLocation();
   const { homepage } = useSitePayload();
@@ -71,7 +63,7 @@ export function HomeMain() {
     homepage?.methodologyBullets?.filter((b) => b.title)?.length ?
       homepage.methodologyBullets!.filter((b) => b.title)
     : [{ title: "Tailored solutions" }, { title: "Step-by-step evolution" }, { title: "Execution focus" }];
-  const methodologyIcons = [imgContainer7, imgGroup, imgContainer8];
+  const methodologyIcons = [brandIcons.tailored, brandIcons.stepByStep, brandIcons.execution];
 
   const contactEyebrow = homepage?.contactEyebrow ?? "Konsultacja";
   const contactHeading = homepage?.contactHeading ?? "Umów się na rozmowę";
@@ -145,7 +137,7 @@ export function HomeMain() {
                   {heroCtaLabel}
                 </span>
                 <div className="relative shrink-0 size-[16px]" data-node-id="1:972" data-name="Container">
-                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer} />
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={brandIcons.arrow} />
                 </div>
               </KonsultacjaScrollLink>
             : <Link
@@ -158,7 +150,7 @@ export function HomeMain() {
                   {heroCtaLabel}
                 </span>
                 <div className="relative shrink-0 size-[16px]" data-node-id="1:972" data-name="Container">
-                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer} />
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={brandIcons.arrow} />
                 </div>
               </Link>
             }
@@ -434,7 +426,7 @@ export function HomeMain() {
                 <div className="relative w-full min-w-0 shrink-0" data-node-id="1:1198" data-name="Heading 3">
                   <div className="flex min-w-0 items-center gap-[16px]">
                     <div className="relative size-[20px] shrink-0" data-node-id="1:1199" data-name="Container">
-                      <img alt="" className="absolute inset-0 block max-w-none size-full" src={imgContainer9} />
+                      <img alt="" className="absolute inset-0 block max-w-none size-full" src={brandIcons.fintech} />
                     </div>
                     <div className="min-w-0 font-['Satoshi:Bold',sans-serif] text-[24px] not-italic leading-none text-[color:var(--dark-blue,#022169)]" data-node-id="1:1201">
                       <p className="leading-[40px]">Fintech</p>
@@ -480,7 +472,7 @@ export function HomeMain() {
                 <div className="relative w-full min-w-0 shrink-0" data-node-id="1:1222" data-name="Heading 3">
                   <div className="flex min-w-0 items-center gap-[16px]">
                     <div className="relative h-[20px] w-[16px] shrink-0" data-node-id="1:1223" data-name="Container">
-                      <img alt="" className="absolute inset-0 block max-w-none size-full" src={imgContainer10} />
+                      <img alt="" className="absolute inset-0 block max-w-none size-full" src={brandIcons.ecommerce} />
                     </div>
                     <div className="min-w-0 font-['Satoshi:Bold',sans-serif] text-[24px] not-italic leading-none text-[color:var(--dark-blue,#022169)]" data-node-id="1:1225">
                       <p className="leading-[40px]">Ecommerce</p>
@@ -574,7 +566,11 @@ export function HomeMain() {
                       Przeczytaj Case Study
                     </span>
                     <span className="relative size-4 shrink-0" data-node-id="1:1255" data-name="Container">
-                      <img alt="" className="absolute inset-0 block size-full max-w-none" src={imgContainer11} />
+                      <img
+                        alt=""
+                        className="absolute inset-0 block size-full max-w-none brightness-0"
+                        src={brandIcons.arrow}
+                      />
                     </span>
                   </Link>
                 </div>
@@ -864,7 +860,7 @@ export function HomeMain() {
                             <p className="leading-[16px]">Filip</p>
                           </div>
                           <div className="relative shrink-0 size-[13px]" data-node-id="1:1345" data-name="image 11">
-                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage11} />
+                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={brandIcons.linkedIn} />
                           </div>
                         </div>
                         <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1346" data-name="Container">
@@ -912,7 +908,7 @@ export function HomeMain() {
                             <p className="leading-[16px]">Agnieszka</p>
                           </div>
                           <div className="relative shrink-0 size-[13px]" data-node-id="1:1359" data-name="image 11">
-                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage11} />
+                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={brandIcons.linkedIn} />
                           </div>
                         </div>
                         <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1360" data-name="Container">
@@ -959,7 +955,7 @@ export function HomeMain() {
                             <p className="leading-[16px]">Marta</p>
                           </div>
                           <div className="relative shrink-0 size-[13px]" data-node-id="1:1373" data-name="image 11">
-                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgImage11} />
+                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={brandIcons.linkedIn} />
                           </div>
                         </div>
                         <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1374" data-name="Container">
@@ -1017,7 +1013,7 @@ export function HomeMain() {
               <div className="content-stretch flex gap-[24px] items-center relative shrink-0 w-full" data-node-id="1:1453" data-name="Container">
                 <div className="bg-[#f3f3f3] content-stretch flex items-center justify-center relative shrink-0 size-[48px]" data-node-id="1:1454" data-name="Background">
                   <div className="h-[16px] relative shrink-0 w-[20px]" data-node-id="1:1455" data-name="Container">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer13} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={brandIcons.kontakt} />
                   </div>
                 </div>
                 <div className="content-stretch flex flex-col items-start relative shrink-0" data-node-id="1:1457" data-name="Container">
@@ -1033,7 +1029,7 @@ export function HomeMain() {
               <div className="content-stretch flex gap-[24px] items-center relative shrink-0 w-full" data-node-id="1:1459" data-name="Container">
                 <div className="bg-[#f3f3f3] content-stretch flex items-center justify-center relative shrink-0 size-[48px]" data-node-id="1:1460" data-name="Background">
                   <div className="h-[20px] relative shrink-0 w-[16px]" data-node-id="1:1461" data-name="Container">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer14} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={brandIcons.location} />
                   </div>
                 </div>
                 <div className="content-stretch flex flex-col items-start relative shrink-0" data-node-id="1:1463" data-name="Container">

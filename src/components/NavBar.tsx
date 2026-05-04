@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSitePayload } from "../context/SitePayloadContext";
 import { KonsultacjaScrollLink } from "./KonsultacjaScrollLink";
-import { imgLogoMark1, imgLogoMark2, imgLogoMark3 } from "../figma/brandAssets";
+import { imgLogoLockup } from "../figma/brandAssets";
 
 const defaultNavLinks = [
   { to: "/", label: "Home" },
@@ -41,21 +41,17 @@ export function NavBar() {
       <div className="mx-auto flex w-full min-w-0 max-w-content items-center justify-between gap-3 px-4 py-4 sm:gap-4 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center md:justify-items-stretch md:gap-x-6 md:px-[61px] md:py-[30px] lg:gap-x-8">
         <Link
           to="/"
-          className="relative h-[50px] min-h-[44px] w-[205px] max-w-[calc(100%-3.75rem)] shrink-0 justify-self-start sm:max-w-none md:max-w-none"
+          className="relative block h-[50px] min-h-[44px] w-[205px] max-w-[calc(100%-3.75rem)] shrink-0 justify-self-start sm:max-w-none md:max-w-none"
           onClick={() => setOpen(false)}
         >
-          <span className="absolute inset-[5%_-0.21%_1%_29.85%] text-left font-['Satoshi:Bold',sans-serif] text-[18.571px] leading-[23.214px] text-[#032796] whitespace-nowrap">
-            Product Shapers<br />Consulting
-          </span>
-          <span className="absolute inset-[34.58%_83.92%_0_0] block">
-            <img alt="" className="h-full w-full object-contain" src={imgLogoMark1} />
-          </span>
-          <span className="absolute inset-[69.16%_92.49%_0_0] block">
-            <img alt="" className="h-full w-full object-contain" src={imgLogoMark2} />
-          </span>
-          <span className="absolute inset-[0_75.36%_0_0] block">
-            <img alt="" className="h-full w-full object-contain" src={imgLogoMark3} />
-          </span>
+          <img
+            alt="Product Shapers Consulting"
+            className="block h-full w-full object-contain object-left"
+            src={imgLogoLockup}
+            width={205}
+            height={50}
+            decoding="async"
+          />
         </Link>
 
         <nav

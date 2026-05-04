@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useSitePayload } from "../context/SitePayloadContext";
-import { imgLogoFooter1, imgLogoFooter2, imgLogoFooter3 } from "../figma/brandAssets";
+import { imgLogoLockup } from "../figma/brandAssets";
 
 const footerColumns = [
   {
@@ -71,19 +71,14 @@ export function SiteFooter() {
             </div>
             <div className="mt-10 flex w-full flex-col items-start justify-between gap-6 border-t border-white/10 pt-10 md:flex-row md:items-end">
               <div className="relative h-[50px] w-[205px] shrink-0">
-                <p className="absolute inset-[4%_-0.21%_2%_29.85%] font-['Satoshi:Bold',sans-serif] text-[18.571px] leading-none text-white whitespace-nowrap">
-                  <span className="block leading-[23.214px]">Product Shapers</span>
-                  <span className="block leading-[23.214px]">Consulting</span>
-                </p>
-                <div className="absolute inset-[33.58%_83.92%_1%_0]">
-                  <img alt="" className="absolute inset-0 size-full max-w-none" src={imgLogoFooter1} />
-                </div>
-                <div className="absolute inset-[68.16%_92.49%_1%_0]">
-                  <img alt="" className="absolute inset-0 size-full max-w-none" src={imgLogoFooter2} />
-                </div>
-                <div className="absolute inset-[-1%_75.36%_1%_0]">
-                  <img alt="" className="absolute inset-0 size-full max-w-none" src={imgLogoFooter3} />
-                </div>
+                <img
+                  alt="Product Shapers Consulting"
+                  className="block h-full w-full max-w-none object-contain object-left brightness-0 invert"
+                  src={imgLogoLockup}
+                  width={205}
+                  height={50}
+                  decoding="async"
+                />
               </div>
               <div className="flex min-w-0 max-w-full flex-wrap items-center gap-4 text-[12px] font-sans font-medium uppercase tracking-[1.2px] text-white">
                 <span className="max-w-full break-words opacity-40">{legalLine}</span>

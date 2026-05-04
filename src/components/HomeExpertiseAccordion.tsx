@@ -1,10 +1,6 @@
 import { memo, useCallback, useState, type ReactNode } from "react";
+import { brandIcons } from "../lib/brandIcons";
 import { CollapsibleHeight } from "./CollapsibleHeight";
-
-const imgContainer1 =
-  "https://www.figma.com/api/mcp/asset/2ff6a2e7-f1a0-4189-b14d-665cef3e8fa6";
-const imgContainer2 =
-  "https://www.figma.com/api/mcp/asset/53ecc42b-d884-4c38-af0f-b5df9b9060a3";
 
 const LOREM =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
@@ -82,13 +78,8 @@ const defaultItems: Item[] = [
               className="content-stretch flex w-full items-start gap-[20px]"
               data-node-id="1:1029"
             >
-              <div className="content-stretch flex flex-col items-start pt-[4px]" data-node-id="1:1030">
-                <div
-                  className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic text-[20px] text-[color:var(--light-blue,#0083fe)] whitespace-nowrap"
-                  data-node-id="1:1031"
-                >
-                  <p className="leading-[20px]">/</p>
-                </div>
+              <div className="relative size-5 shrink-0 pt-px" data-node-id="1:1030">
+                <img alt="" className="block size-full max-w-none object-contain" src={brandIcons.tickBlue} />
               </div>
               <div
                 className="content-stretch flex flex-col items-start border-b border-solid border-[rgba(0,0,0,0)] pb-px"
@@ -116,11 +107,9 @@ type RowProps = {
 const ExpertiseRow = memo(function ExpertiseRow({ item, i, open, onToggle }: RowProps) {
   return (
     <div
-      className={
-        open
-          ? "w-full shrink-0 border-l-4 border-solid border-[var(--dark-blue,#022169)] bg-[#f8fafc] relative"
-          : "relative w-full shrink-0 bg-white"
-      }
+      className={`relative w-full shrink-0 border-l-4 border-solid bg-clip-padding ${
+        open ? "border-[var(--dark-blue,#022169)] bg-[#f8fafc]" : "border-transparent bg-white"
+      }`}
       data-name={open ? "Details - Active" : `Details - ${item.title}`}
     >
       <div className="content-stretch flex size-full flex-col items-start border-0 border-[transparent] border-solid bg-clip-padding">
@@ -133,16 +122,10 @@ const ExpertiseRow = memo(function ExpertiseRow({ item, i, open, onToggle }: Row
           id={`expertise-trigger-${i}`}
         >
           <div
-            className={
-              open
-                ? "relative flex size-full w-full items-center justify-between border-0 border-[transparent] border-solid bg-clip-padding py-[32px] pl-[32px] pr-[23.667px]"
-                : "relative flex w-full shrink-0 items-center justify-between p-[32px]"
-            }
+            className="relative flex w-full shrink-0 items-center justify-between border-0 border-[transparent] border-solid bg-clip-padding px-[32px] py-[32px]"
             data-node-id={open ? "1:1016" : "1:989"}
           >
-            <div
-              className={`content-stretch flex items-center ${open ? "gap-[32px]" : "gap-[24px]"} relative shrink-0`}
-            >
+            <div className="content-stretch flex min-w-0 flex-1 items-center gap-[24px] relative">
               <div className="content-stretch flex flex-col items-start relative shrink-0">
                 <div
                   className={`flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[24px] whitespace-nowrap ${
@@ -162,32 +145,21 @@ const ExpertiseRow = memo(function ExpertiseRow({ item, i, open, onToggle }: Row
                 </div>
               </div>
             </div>
-            <div className="relative flex shrink-0 items-center justify-center p-1" aria-hidden>
-              {open ? (
-                <div className="flex size-[24.749px] items-center justify-center">
-                  <div className="flex-none rotate-45">
-                    <div className="relative size-[17.5px]">
-                      <img
-                        alt=""
-                        className="absolute inset-0 size-full max-w-none"
-                        src={imgContainer2}
-                        decoding="async"
-                        loading="lazy"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="relative size-[14px]">
-                  <img
-                    alt=""
-                    className="absolute inset-0 size-full max-w-none"
-                    src={imgContainer1}
-                    decoding="async"
-                    loading="lazy"
-                  />
-                </div>
-              )}
+            <div
+              className="flex size-12 shrink-0 items-center justify-center"
+              aria-hidden
+            >
+              <div
+                className={`relative size-[14px] origin-center transition-transform duration-300 ease-out motion-reduce:transition-none motion-reduce:duration-0 ${open ? "rotate-45" : "rotate-0"}`}
+              >
+                <img
+                  alt=""
+                  className="absolute inset-0 size-full max-w-none"
+                  src={brandIcons.plus}
+                  decoding="async"
+                  loading="lazy"
+                />
+              </div>
             </div>
           </div>
         </button>
@@ -239,10 +211,8 @@ function mapCmsExpertise(items: CmsExpertiseItem[]): Item[] {
           <div className="content-stretch mt-10 flex w-full flex-col items-start gap-[24px] sm:mt-12" data-node-id="1:1028">
             {(row.bullets ?? []).map((b, i) => (
               <div key={i} className="content-stretch flex w-full items-start gap-[20px]" data-node-id="1:1029">
-                <div className="content-stretch flex flex-col items-start pt-[4px]" data-node-id="1:1030">
-                  <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic text-[20px] text-[color:var(--light-blue,#0083fe)] whitespace-nowrap">
-                    <p className="leading-[20px]">/</p>
-                  </div>
+                <div className="relative size-5 shrink-0 pt-px" data-node-id="1:1030">
+                  <img alt="" className="block size-full max-w-none object-contain" src={brandIcons.tickBlue} />
                 </div>
                 <div className="content-stretch flex flex-col items-start border-b border-solid border-[rgba(0,0,0,0)] pb-px">
                   <AccordionBodyText>

@@ -1,7 +1,6 @@
-﻿const imgFinancialTechnologyInterface = "https://www.figma.com/api/mcp/asset/0eba44d5-9425-4c1e-a191-f61728ae2f23";
-const imgIcon = "https://www.figma.com/api/mcp/asset/7b0a516d-1b7f-47ea-afed-2a28c4aa4b40";
-const imgIcon1 = "https://www.figma.com/api/mcp/asset/a24b3a10-b6b2-4347-b771-080662d2cf25";
-const imgIcon2 = "https://www.figma.com/api/mcp/asset/112fb91d-7308-45fb-a626-f6e72281650f";
+﻿import { brandIcons } from "../lib/brandIcons";
+
+const imgFinancialTechnologyInterface = "https://www.figma.com/api/mcp/asset/0eba44d5-9425-4c1e-a191-f61728ae2f23";
 
 function UsemeMainFallback() {
   return (
@@ -201,7 +200,7 @@ function UsemeMainFallback() {
               <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-self-stretch p-[40px] relative self-start shrink-0" data-node-id="1:592" data-name="Column 1">
                 <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:593" data-name="Container">
                   <div className="h-[27px] relative shrink-0 w-[16.5px]" data-node-id="1:594" data-name="Icon">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={brandIcons.cyrkiel} />
                   </div>
                   <div className="content-stretch flex flex-col items-start pt-[8px] relative shrink-0 w-full" data-node-id="1:595" data-name="Heading 3">
                     <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[24px] w-full" data-node-id="1:596">
@@ -221,7 +220,7 @@ function UsemeMainFallback() {
               <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-self-stretch p-[40px] relative self-start shrink-0" data-node-id="1:599" data-name="Column 2">
                 <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:600" data-name="Container">
                   <div className="h-[31.5px] relative shrink-0 w-[27px]" data-node-id="1:601" data-name="Icon">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon1} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={brandIcons.timer} />
                   </div>
                   <div className="content-stretch flex flex-col items-start pt-[8px] relative shrink-0 w-full" data-node-id="1:602" data-name="Heading 3">
                     <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[24px] w-full" data-node-id="1:603">
@@ -241,7 +240,7 @@ function UsemeMainFallback() {
               <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-self-stretch pb-[64px] pt-[40px] px-[40px] relative self-start shrink-0" data-node-id="1:606" data-name="Column 3">
                 <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="1:607" data-name="Container">
                   <div className="relative shrink-0 size-[33px]" data-node-id="1:608" data-name="Icon">
-                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIcon2} />
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={brandIcons.icons} />
                   </div>
                   <div className="content-stretch flex flex-col items-start pt-[8px] relative shrink-0 w-full" data-node-id="1:609" data-name="Heading 3">
                     <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[24px] w-full" data-node-id="1:610">

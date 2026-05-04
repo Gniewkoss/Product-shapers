@@ -1,10 +1,6 @@
 import { memo, useCallback, useState, type ReactNode } from "react";
+import { brandIcons } from "../lib/brandIcons";
 import { CollapsibleHeight } from "./CollapsibleHeight";
-
-const imgPlus =
-  "https://www.figma.com/api/mcp/asset/f5bf2d52-af5a-4372-80b9-27a3db8ec8ad";
-const imgOpen =
-  "https://www.figma.com/api/mcp/asset/1b2cabb2-508c-4a52-bed5-a32a56a85f65";
 
 const LOREM =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.";
@@ -64,13 +60,11 @@ type RowProps = {
 const FaqRow = memo(function FaqRow({ item, i, open, onToggle }: RowProps) {
   return (
     <div
-      className={
-        open
-          ? "w-full shrink-0 border-l-4 border-solid border-[var(--dark-blue,#022169)] bg-[#f8fafc] relative"
-          : "relative w-full shrink-0 bg-white"
-      }
+      className={`relative w-full shrink-0 border-l-4 border-solid bg-clip-padding ${
+        open ? "border-[var(--dark-blue,#022169)] bg-[#f8fafc]" : "border-transparent bg-white"
+      }`}
     >
-      <div className="content-stretch flex size-full flex-col items-start border-0 border-[transparent] border-solid bg-clip-padding pl-[4px]">
+      <div className="content-stretch flex size-full flex-col items-start border-0 border-[transparent] border-solid bg-clip-padding">
         <button
           type="button"
           className="w-full cursor-pointer text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#022169]"
@@ -79,47 +73,27 @@ const FaqRow = memo(function FaqRow({ item, i, open, onToggle }: RowProps) {
           aria-controls={`faq-panel-${i}`}
           id={`faq-trigger-${i}`}
         >
-          <div
-            className={
-              open
-                ? "content-stretch flex w-full items-center justify-between py-[32px] pl-[32px] pr-[23.667px] relative"
-                : "content-stretch flex w-full items-center justify-between p-[32px] relative"
-            }
-          >
-            <div className="content-stretch flex min-w-0 items-center gap-[24px] relative shrink-0">
+          <div className="relative flex w-full items-center justify-between px-[32px] py-[32px]">
+            <div className="content-stretch flex min-w-0 flex-1 items-center gap-[24px] pr-4">
               <div className="content-stretch flex min-w-0 flex-col items-start relative shrink-0">
                 <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[24px] whitespace-normal">
                   <p className="leading-[40px]">{item.title}</p>
                 </div>
               </div>
             </div>
-            {open ? (
-              <div className="content-stretch flex h-[48px] shrink-0 flex-col items-center justify-center">
-                <div className="flex size-[24.749px] items-center justify-center">
-                  <div className="flex-none rotate-45">
-                    <div className="relative size-[17.5px]">
-                      <img
-                        alt=""
-                        className="absolute inset-0 size-full max-w-none"
-                        src={imgOpen}
-                        decoding="async"
-                        loading="lazy"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="relative size-[14px] shrink-0">
+            <div className="flex size-12 shrink-0 items-center justify-center" aria-hidden>
+              <div
+                className={`relative size-[14px] shrink-0 origin-center transition-transform duration-300 ease-out motion-reduce:transition-none motion-reduce:duration-0 ${open ? "rotate-45" : "rotate-0"}`}
+              >
                 <img
                   alt=""
                   className="absolute inset-0 size-full max-w-none"
-                  src={imgPlus}
+                  src={brandIcons.plus}
                   decoding="async"
                   loading="lazy"
                 />
               </div>
-            )}
+            </div>
           </div>
         </button>
         <CollapsibleHeight
