@@ -16,6 +16,7 @@ cms/out/
 *.tsbuildinfo
 cms/payload.local.db
 cms/payload.local.db-*
+cms/payload.local.db.bak-*
 
 cms/media/
 
