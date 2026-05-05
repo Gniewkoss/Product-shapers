@@ -2,9 +2,15 @@
 
 Domyślna konfiguracja: **jedna witryna Netlify** serwuje statyczny build Vite (`dist/`). **Payload (Next.js) i PostgreSQL** działają na **Render** z [`render.yaml`](./render.yaml) (`rootDir: cms`).
 
-Na **domenie Netlify** użytkownik wchodzi np. w `https://twoja-strona.netlify.app/admin` — Netlify **`_redirects`** (HTTP 200) proxy przekazuje `/api`, `/admin`, `/media` na **publiczny URL serwisu Web Render** (`CMS_ORIGIN`).
+Domyślnie **`/admin`** na Netlify jest przekierowany na panel Payload pod **publicznym URL serwisu Web Render** (301 — szczegóły w [`public/_redirects`](./public/_redirects)). Nadal możesz serwować **`/api`** i **`/media`** przez proxy (200) na `CMS_ORIGIN`.
 
-**Ważne:** W środowisku Render (`PAYLOAD_PUBLIC_SERVER_URL`, `FRONTEND_ORIGINS` / `FRONTEND_ORIGIN`) ustaw **adres witryny Netlify** (to, co widać w pasku adresu), a **nie** surowy URL `onrender.com` — tak działają linki, CSRF i proxy.
+**Ważne — dwa adresy:** marketing to **Netlify**; panel CMS często otwierasz na **`*.onrender.com`**. Zmienna `PAYLOAD_PUBLIC_SERVER_URL` nadal powinna wskazywać **witrynę marketingową** (linki z CMS, CORS z frontu). **`serverURL`** w Payload musi natomiast odpowiadać hostowi, pod którym faktycznie ładuje się `/admin`. W kodzie jest `resolvePayloadServerURL()` ([`cms/src/lib/serverUrl.ts`](./cms/src/lib/serverUrl.ts)):
+
+1. **`PAYLOAD_SERVER_URL`** — jawny kanoniczny URL CMS (np. `https://….onrender.com`), jeśli chcesz to ustawić ręcznie.
+2. Jeśli **`PAYLOAD_USE_MARKETING_SERVER_URL=true`** — używane jest **`PAYLOAD_PUBLIC_SERVER_URL`** (np. stary scenariusz: admin widoczny pod domeną Netlify przez proxy).
+3. W przeciwnym razie, gdy na Renderze jest **`RENDER_EXTERNAL_URL`** i różni się od **`PAYLOAD_PUBLIC_SERVER_URL`** — jako `serverURL` wybierany jest **Render** (typowy przypadek: admin na onrender.com, marketing na `productshapers.pl`).
+
+Zawsze ustaw **`FRONTEND_ORIGINS`** (lub **`FRONTEND_ORIGIN`**) na adres(y) witryny Netlify (+ preview), niezależnie od tego, gdzie otwierasz panel.
 
 ---
 
@@ -12,9 +18,10 @@ Na **domenie Netlify** użytkownik wchodzi np. w `https://twoja-strona.netlify.a
 
 1. **Zacommituj i wypchnij** repozytorium na GitHub/GitLab.
 2. W **[Render](https://render.com)**: New → **Blueprint** → wybierz repo → Render wczyta [`render.yaml`](./render.yaml) i utworzy **PostgreSQL** + serwis **Web** z katalogu `cms/`.
-3. Przy tworzeniu uzupełnij zmienne ze `sync: false` (URL Twojej strony na Netlify):
-   - **`PAYLOAD_PUBLIC_SERVER_URL`** = `https://twoja-strona.netlify.app` (bez `/` na końcu),
-   - **`FRONTEND_ORIGINS`** = ten sam URL; opcjonalnie dopisz adresy **Deploy Preview** Netlify po przecinku.
+3. Przy tworzeniu uzupełnij zmienne ze `sync: false`:
+   - **`PAYLOAD_PUBLIC_SERVER_URL`** = publiczny URL **witryny marketingowej** Netlify (bez `/` na końcu),
+   - **`FRONTEND_ORIGINS`** = ten sam URL (+ opcjonalnie **Deploy Preview** po przecinku),
+   - opcjonalnie **`PAYLOAD_SERVER_URL`** = publiczny URL **Web Render** (ten z kroku 4), jeśli wolisz ustalić go ręcznie zamiast polegać na `RENDER_EXTERNAL_URL`.
 4. Poczekaj aż serwis CMS ma status **Live**. Skopiuj **publiczny URL** Web (np. `https://product-shapers-cms-xxxx.onrender.com`).
 5. W **Netlify** (tylko witryna marketingowa): Site configuration → Environment variables → **`CMS_ORIGIN`** = skopiowany URL Render **bez** końcowego `/`. Wzorzec: [`deploy/netlify-env.example.txt`](./deploy/netlify-env.example.txt).
 6. Na Netlify: **Deploy → Trigger deploy → Clear cache and deploy**, żeby `npm run build:netlify` wygenerowało `public/_redirects` z regułami proxy.
@@ -23,7 +30,7 @@ Na **domenie Netlify** użytkownik wchodzi np. w `https://twoja-strona.netlify.a
    Jednorazowo — nie dodawaj tego do `npm start`.  
    **Bootstrap z komputera** przy **zewnętrznym** URI Postgres na Renderze: dopisz do connection stringa **`?sslmode=require`** (lub `&sslmode=require`), inaczej możesz dostać `SSL/TLS required`. Pełny host musi być widoczny w DNS (`…postgres.render.com`), nie skrócona nazwa.
 8. Na Render (Environment serwisu CMS) ustaw **`PAYLOAD_DATABASE_PUSH=false`** po udanym bootstrapie (opcjonalnie, zalecane po ustabilizowaniu schematu).
-9. Otwórz `https://…twoja-strona….netlify.app/admin` i utwórz **pierwszego użytkownika** Payload.
+9. Otwórz panel admin (po przekierowaniu z Netlify: **`https://…onrender.com/admin`**) i utwórz **pierwszego użytkownika** Payload. Jeśli widzisz **404** na kolekcjach / globals, sprawdź zgodność **`serverURL`** z hostem w pasku adresu (patrz akapit „Ważne — dwa adresy” powyżej).
 10. Kolejne doładowanie treści: `npm run seed --prefix cms` (lokalnie lub Shell).
 
 Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.example).
@@ -46,7 +53,9 @@ Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.exa
 | `PAYLOAD_SECRET` | długi losowy ciąg (Render może wygenerować przy blueprintcie) |
 | `DATABASE_URI` | z addonu Postgres (`fromDatabase` w [`render.yaml`](./render.yaml)) |
 | `DATABASE_ADAPTER` | nie ustawiaj `sqlite` przy Postgres |
-| `PAYLOAD_PUBLIC_SERVER_URL` | **publiczny URL witryny Netlify** — tak działają linki i CSRF przy proxy |
+| `PAYLOAD_PUBLIC_SERVER_URL` | **publiczny URL witryny Netlify** (marketing) |
+| `PAYLOAD_SERVER_URL` | opcjonalnie: jawny URL instancji Payload (zwykle Web Render), gdy nie chcesz domyślnej logiki z `serverUrl.ts` |
+| `PAYLOAD_USE_MARKETING_SERVER_URL` | `true` tylko gdy `/admin` jest serwowane pod hostem marketingowym (proxy); domyślnie nie ustawiaj |
 | `FRONTEND_ORIGINS` | URL Netlify (+ opcjonalnie preview), przecinkami |
 | `FRONTEND_ORIGIN` | opcjonalnie (legacy) |
 | `PAYLOAD_DATABASE_PUSH` | `true` na pustej bazie / pierwszym deployu; po **`db:bootstrap`** ustaw `false` |
@@ -72,7 +81,7 @@ Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.exa
 ## 3. Co robi `public/_redirects`
 
 - `/api/*` → `{CMS_ORIGIN}/api/:splat`
-- `/admin`, `/admin/*` → panel Payload na Renderze
+- `/admin`, `/admin/*` → zwykle **301** na panel Payload na Renderze (szczegóły w generatorze [`scripts/generate-netlify-redirects.mjs`](./scripts/generate-netlify-redirects.mjs))
 - `/media/*` → pliki z CMS
 - pozostałe ścieżki → `index.html` (React Router)
 
@@ -84,9 +93,9 @@ Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.exa
 
 ---
 
-## 5. Problemy z ciasteczkami / logowaniem w `/admin`
+## 5. Problemy z ciasteczkami / logowaniem / 404 w panelu
 
-Sprawdź `PAYLOAD_PUBLIC_SERVER_URL` (URL widoczny użytkownikowi — Netlify) oraz `FRONTEND_ORIGINS`. Dodaj subdomeny preview Netlify do `FRONTEND_ORIGINS`, jeśli testujesz preview.
+Sprawdź **`FRONTEND_ORIGINS`** oraz to, czy host w przeglądarce na `/admin` zgadza się z **`serverURL`** (logika w [`cms/src/lib/serverUrl.ts`](./cms/src/lib/serverUrl.ts)). Typowy błąd: otwarty panel na **`*.onrender.com`**, a wcześniej w env zostawione było ustawienie sugerujące wyłącznie URL Netlify — po deployu z aktualnym kodem konflikt **marketing vs Render** jest rozwiązywany na korzyść Rendera; ewentualnie ustaw **`PAYLOAD_SERVER_URL`** na URL Web Render. Dodaj subdomeny preview Netlify do `FRONTEND_ORIGINS`, jeśli testujesz preview.
 
 ---
 
@@ -103,6 +112,6 @@ Zamiast Render możesz wdrożyć **Payload jako drugą witrynę Netlify** z **ba
 
 | Gdzie | Co |
 |-------|-----|
-| **Render** | Postgres + Web `cms/`, env z URL **Netlify** dla Payload |
+| **Render** | Postgres + Web `cms/`, `PAYLOAD_PUBLIC_SERVER_URL` = marketing; `serverURL` domyślnie z Render, jeśli admin pod onrender.com |
 | **Netlify** | `CMS_ORIGIN` = URL **Render Web**, build `build:netlify`, publish `dist` |
 | **Bootstrap** | `db:bootstrap` lokalnie lub Render Shell; potem `PAYLOAD_DATABASE_PUSH=false` na Renderze |

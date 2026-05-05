@@ -1,4 +1,5 @@
 import { bumpContentVersion } from "../lib/contentVersion";
+import { resolvePayloadServerURL } from "../lib/serverUrl";
 
 export type RevalidateBody = {
   collection?: string;
@@ -13,7 +14,7 @@ export type RevalidateBody = {
 export async function postRevalidate(body: RevalidateBody) {
   bumpContentVersion();
 
-  const base = process.env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000";
+  const base = resolvePayloadServerURL();
   const url = process.env.REVALIDATE_URL || `${base.replace(/\/$/, "")}/api/revalidate`;
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) return;

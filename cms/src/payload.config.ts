@@ -18,6 +18,7 @@ import { Footer } from "./globals/Footer";
 import { Homepage } from "./globals/Homepage";
 import { Navigation } from "./globals/Navigation";
 import { SeoDefaults } from "./globals/SeoDefaults";
+import { resolvePayloadServerURL, trimServerUrl } from "./lib/serverUrl";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -58,13 +59,21 @@ function schemaPushEnabled(): boolean {
   return Boolean(process.stdin?.isTTY);
 }
 
-/** CORS: wiele originów z env (Netlify prod + preview), rozdziel przecinkiem. */
-function frontendCorsOrigins(): string[] {
+/** CORS: marketing origins + Payload host + Render URL when present (direct admin on Render). */
+function corsOrigins(): string[] {
   const multi = process.env.FRONTEND_ORIGINS?.split(",")
     .map((s) => s.trim())
     .filter(Boolean);
   const single = process.env.FRONTEND_ORIGIN?.trim();
-  const merged = [...(multi ?? []), ...(single ? [single] : []), "http://localhost:5173"];
+  const server = resolvePayloadServerURL();
+  const render = trimServerUrl(process.env.RENDER_EXTERNAL_URL);
+  const merged = [
+    ...(multi ?? []),
+    ...(single ? [single] : []),
+    server,
+    ...(render && render !== server ? [render] : []),
+    "http://localhost:5173",
+  ].filter(Boolean);
   return [...new Set(merged)];
 }
 
@@ -136,15 +145,12 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(dirname) },
   },
   collections: [Users, Media, Authors, Articles, CaseStudies, SitePages],
-  cors: [
-    ...frontendCorsOrigins(),
-    process.env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000",
-  ].filter(Boolean),
+  cors: corsOrigins(),
   db: database(),
   globals: [Navigation, Homepage, Footer, SeoDefaults],
   plugins: s3Plugins(),
   secret: process.env.PAYLOAD_SECRET || "",
-  serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000",
+  serverURL: resolvePayloadServerURL(),
   sharp,
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
 });
