@@ -2495,8 +2495,36 @@ export interface Footer {
   companyName?: string | null;
   tagline?: string | null;
   email?: string | null;
+  /**
+   * Pełny URL profilu LinkedIn (https://...)
+   */
   linkedinUrl?: string | null;
+  /**
+   * Etykieta przycisku LinkedIn (np. „Obserwuj nas”). Puste = nie pokazuj przycisku, nawet jeśli URL jest ustawiony.
+   */
+  linkedinLabel?: string | null;
+  /**
+   * Otwórz LinkedIn w nowej karcie
+   */
+  linkedinOpenInNewTab?: boolean | null;
   legalText?: string | null;
+  /**
+   * Wyświetlany w nagłówku/górnej części footera. Aby ukryć — pozostaw puste pola.
+   */
+  primaryCta?: {
+    /**
+     * Tekst na przycisku, np. „Skontaktuj się”
+     */
+    label?: string | null;
+    /**
+     * Dokąd kieruje przycisk (ścieżka /kontakt lub pełny URL https://...)
+     */
+    url?: string | null;
+    /**
+     * Otwórz w nowej karcie (zalecane gdy URL jest zewnętrzny)
+     */
+    openInNewTab?: boolean | null;
+  };
   /**
    * Four columns like current footer
    */
@@ -2506,6 +2534,14 @@ export interface Footer {
         items?:
           | {
               label: string;
+              /**
+               * Opcjonalny link. Puste = pozycja jest tylko tekstem (bez kliknięcia).
+               */
+              url?: string | null;
+              /**
+               * Otwórz w nowej karcie
+               */
+              openInNewTab?: boolean | null;
               id?: string | null;
             }[]
           | null;
@@ -3396,7 +3432,16 @@ export interface FooterSelect<T extends boolean = true> {
   tagline?: T;
   email?: T;
   linkedinUrl?: T;
+  linkedinLabel?: T;
+  linkedinOpenInNewTab?: T;
   legalText?: T;
+  primaryCta?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        openInNewTab?: T;
+      };
   columns?:
     | T
     | {
@@ -3405,6 +3450,8 @@ export interface FooterSelect<T extends boolean = true> {
           | T
           | {
               label?: T;
+              url?: T;
+              openInNewTab?: T;
               id?: T;
             };
         id?: T;
