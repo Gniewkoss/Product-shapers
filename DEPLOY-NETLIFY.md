@@ -29,9 +29,21 @@ Zawsze ustaw **`FRONTEND_ORIGINS`** (lub **`FRONTEND_ORIGIN`**) na adres(y) witr
    `npm run db:bootstrap` (lub z głównego katalogu repo: `npm run db:bootstrap --prefix cms`).  
    Jednorazowo — nie dodawaj tego do `npm start`.  
    **Bootstrap z komputera** przy **zewnętrznym** URI Postgres na Renderze: dopisz do connection stringa **`?sslmode=require`** (lub `&sslmode=require`), inaczej możesz dostać `SSL/TLS required`. Pełny host musi być widoczny w DNS (`…postgres.render.com`), nie skrócona nazwa.
-8. Na Render (Environment serwisu CMS) ustaw **`PAYLOAD_DATABASE_PUSH=false`** po udanym bootstrapie (opcjonalnie, zalecane po ustabilizowaniu schematu).
+8. Na Render (Environment serwisu CMS) ustaw **`PAYLOAD_DATABASE_PUSH=false`** po udanym bootstrapie. **Zalecane** — od tego momentu zmiany schematu jadą tylko przez migracje (patrz sekcja **Migracje schematu** poniżej). `push=true` pod Render bywa zwodnicze: dla niektórych zmian (np. dodanie kolumny `*_id` do bloku) Drizzle wymaga interaktywnej akceptacji, której kontener bez TTY nie ma — zmiana cicho się nie aplikuje, a panel zwraca **500/404** na globals/collections, które tej kolumny dotyczą.
 9. Otwórz panel admin (po przekierowaniu z Netlify: **`https://…onrender.com/admin`**) i utwórz **pierwszego użytkownika** Payload. Jeśli widzisz **404** na kolekcjach / globals, sprawdź zgodność **`serverURL`** z hostem w pasku adresu (patrz akapit „Ważne — dwa adresy” powyżej).
 10. Kolejne doładowanie treści: `npm run seed --prefix cms` (lokalnie lub Shell).
+
+### Migracje schematu (po pierwszym bootstrapie)
+
+Po ustawieniu `PAYLOAD_DATABASE_PUSH=false` każda zmiana w `payload.config` (nowe pole, nowy blok, nowe FK) musi być zaaplikowana migracją. Workflow:
+
+1. **Lokalnie** (lub w Render Shell), z aktywnym `cms/.env.production`, sprawdź różnicę: `npm run migrate:create --prefix cms -- --name short_description --skip-empty --force-accept-warning`.
+2. Otwórz wygenerowany `cms/src/migrations/<stamp>.ts` i upewnij się, że to **tylko** `ADD COLUMN` / `CREATE INDEX` (a nie pełny `CREATE TABLE` od zera — taki wariant wskazuje, że Payload nigdy wcześniej nie miał snapshotu). Jeśli plik to dump pełnego schematu, **zastąp jego treść** wyłącznie potrzebnymi `ADD COLUMN` / `CREATE INDEX` — patrz wzorzec w [`cms/src/migrations/20260505_174545.ts`](cms/src/migrations/20260505_174545.ts) (cross-dialekt SQLite + Postgres).
+3. **Status** przed apply: `npm run migrate:status:prod --prefix cms` (powinien pokazać twoją migrację jako `Ran=No`).
+4. **Backup prod-DB** zanim ruszysz: `pg_dump --format=custom --no-owner --no-privileges --file=cms/backup-prod-<stamp>.dump "$DATABASE_URI"` (binaria PG18 lokalnie albo Render manual snapshot). Zachowaj plik poza repo.
+5. **Apply**: `npm run migrate:prod --prefix cms`. Jeśli Payload pyta o `data loss will occur` → masz w `payload_migrations` wpis `batch=-1, name='dev'` (marker push-bootstrapu) — usuń go przed apply: `psql "$DATABASE_URI" -c "DELETE FROM payload_migrations WHERE batch=-1 AND name='dev';"`. Marker przestaje być potrzebny, gdy DB przechodzi pod migracje.
+6. **Verify**: `npm run migrate:status:prod` (`Ran=Yes`) oraz curl: `https://product-shapers-cms.onrender.com/api/globals/<global>` powinny zwracać 200.
+7. **Rollback** (jeśli potrzebny): `cross-env PAYLOAD_USE_ENV_PRODUCTION=true payload migrate:down --prefix cms` (uruchamia `down()` z migracji), albo `pg_restore --clean` z dumpu z pkt. 4 + redeploy do poprzedniego SHA Renderze (Manual Deploy → poprzedni commit).
 
 Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.example).
 
@@ -58,7 +70,7 @@ Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.exa
 | `PAYLOAD_USE_MARKETING_SERVER_URL` | `true` tylko gdy `/admin` jest serwowane pod hostem marketingowym (proxy); domyślnie nie ustawiaj |
 | `FRONTEND_ORIGINS` | URL Netlify (+ opcjonalnie preview), przecinkami |
 | `FRONTEND_ORIGIN` | opcjonalnie (legacy) |
-| `PAYLOAD_DATABASE_PUSH` | `true` na pustej bazie / pierwszym deployu; po **`db:bootstrap`** ustaw `false` |
+| `PAYLOAD_DATABASE_PUSH` | `true` na pustej bazie / pierwszym deployu; po **`db:bootstrap`** ustaw `false` (po przejściu na migrate-flow — patrz **Migracje schematu**) |
 
 **Healthcheck:** [`render.yaml`](./render.yaml) → `/api/content-version`.
 

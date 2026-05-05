@@ -1,28 +1,29 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-sqlite'
+import type { MigrateUpArgs, MigrateDownArgs } from 'payload'
+import { sql } from 'drizzle-orm'
 
 /**
  * Schema-recovery migration: adds upload-relation columns and one text field
  * that were declared in `payload.config` blocks but were missing from the
- * underlying SQLite schema (DB had been pushed before those fields existed,
- * and `PAYLOAD_DATABASE_PUSH` is now disabled). All added columns are nullable,
- * so existing rows remain valid.
+ * underlying schema (DB had been pushed before those fields existed).
+ * All added columns are nullable, so existing rows remain valid.
  *
- * Targets:
- *   - homepage_blocks_feature_columns3_columns.icon_id (FK media)
- *   - homepage_blocks_industry_pillars_pillars.icon_id (FK media)
- *   - homepage_blocks_knowledge_teasers_cards.image_id (FK media)
- *   - homepage_blocks_program_modules_modules.footer_image_id (FK media)
- *   - homepage_blocks_founder_spotlight.portrait_image_id (FK media)
- *   - homepage_blocks_rich_split.media_id (FK media)
- *   - homepage_blocks_testimonials_home_items.linkedin_link (text), avatar_id (FK media)
- *   - and the same 7 columns mirrored on `site_pages_blocks_*` tables
+ * Targets (mirrored across `homepage_blocks_*` and `site_pages_blocks_*`):
+ *   - feature_columns3_columns.icon_id (FK media)
+ *   - industry_pillars_pillars.icon_id (FK media)
+ *   - knowledge_teasers_cards.image_id (FK media)
+ *   - program_modules_modules.footer_image_id (FK media)
+ *   - founder_spotlight.portrait_image_id (FK media)
+ *   - rich_split.media_id (FK media)
+ *   - testimonials_home_items.linkedin_link (text), avatar_id (FK media)
  *
- * SQLite ADD COLUMN cannot embed FOREIGN KEY clauses, so FK enforcement is
- * application-level (Payload doesn't rely on DB-side FKs anyway). Indexes are
- * created for each new *_id column to match the schema produced by Drizzle.
+ * Cross-dialect: detects `payload.db.name` and emits Postgres or SQLite SQL.
+ * Postgres: uses `IF NOT EXISTS` for idempotency (Render had
+ * `PAYLOAD_DATABASE_PUSH=true` so columns may already be present).
+ * SQLite: ADD COLUMN doesn't accept IF NOT EXISTS, but Payload's migration
+ * runner only invokes `up()` once per registry entry.
  */
 
-type IdColumnSpec = { table: string; column: string; indexName: string };
+type IdColumnSpec = { table: string; column: string; indexName: string }
 
 const ID_COLUMNS: IdColumnSpec[] = [
   { table: 'homepage_blocks_feature_columns3_columns', column: 'icon_id', indexName: 'homepage_blocks_feature_columns3_columns_icon_idx' },
@@ -39,29 +40,55 @@ const ID_COLUMNS: IdColumnSpec[] = [
   { table: 'site_pages_blocks_program_modules_modules', column: 'footer_image_id', indexName: 'site_pages_blocks_program_modules_modules_footer_image_idx' },
   { table: 'site_pages_blocks_rich_split', column: 'media_id', indexName: 'site_pages_blocks_rich_split_media_idx' },
   { table: 'site_pages_blocks_testimonials_home_items', column: 'avatar_id', indexName: 'site_pages_blocks_testimonials_home_items_avatar_idx' },
-];
+]
 
 const TEXT_COLUMNS: { table: string; column: string }[] = [
   { table: 'homepage_blocks_testimonials_home_items', column: 'linkedin_link' },
   { table: 'site_pages_blocks_testimonials_home_items', column: 'linkedin_link' },
-];
+]
 
-export async function up({ db }: MigrateUpArgs): Promise<void> {
+type Dialect = 'postgres' | 'sqlite'
+
+const quote = (name: string, dialect: Dialect): string =>
+  dialect === 'postgres' ? `"${name}"` : `\`${name}\``
+
+async function exec(payload: { db: { name: string } }, db: unknown, query: string): Promise<void> {
+  const dialect: Dialect = payload.db.name === 'postgres' ? 'postgres' : 'sqlite'
+  const runner: ((q: ReturnType<typeof sql.raw>) => Promise<unknown>) =
+    dialect === 'postgres'
+      ? (db as { execute: (q: ReturnType<typeof sql.raw>) => Promise<unknown> }).execute.bind(db)
+      : (db as { run: (q: ReturnType<typeof sql.raw>) => Promise<unknown> }).run.bind(db)
+  await runner(sql.raw(query))
+}
+
+export async function up({ db, payload }: MigrateUpArgs): Promise<void> {
+  const dialect: Dialect = payload.db.name === 'postgres' ? 'postgres' : 'sqlite'
+  const q = (n: string) => quote(n, dialect)
+  const ifNotExists = dialect === 'postgres' ? 'IF NOT EXISTS ' : ''
+
   for (const t of TEXT_COLUMNS) {
-    await db.run(sql.raw(`ALTER TABLE \`${t.table}\` ADD COLUMN \`${t.column}\` text;`));
+    await exec(payload, db, `ALTER TABLE ${q(t.table)} ADD COLUMN ${ifNotExists}${q(t.column)} text;`)
   }
   for (const c of ID_COLUMNS) {
-    await db.run(sql.raw(`ALTER TABLE \`${c.table}\` ADD COLUMN \`${c.column}\` integer REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null;`));
-    await db.run(sql.raw(`CREATE INDEX \`${c.indexName}\` ON \`${c.table}\` (\`${c.column}\`);`));
+    await exec(
+      payload,
+      db,
+      `ALTER TABLE ${q(c.table)} ADD COLUMN ${ifNotExists}${q(c.column)} integer ` +
+        `REFERENCES ${q('media')}(${q('id')}) ON UPDATE NO ACTION ON DELETE SET NULL;`,
+    )
+    await exec(payload, db, `CREATE INDEX IF NOT EXISTS ${q(c.indexName)} ON ${q(c.table)} (${q(c.column)});`)
   }
 }
 
-export async function down({ db }: MigrateDownArgs): Promise<void> {
+export async function down({ db, payload }: MigrateDownArgs): Promise<void> {
+  const dialect: Dialect = payload.db.name === 'postgres' ? 'postgres' : 'sqlite'
+  const q = (n: string) => quote(n, dialect)
+
   for (const c of ID_COLUMNS) {
-    await db.run(sql.raw(`DROP INDEX IF EXISTS \`${c.indexName}\`;`));
-    await db.run(sql.raw(`ALTER TABLE \`${c.table}\` DROP COLUMN \`${c.column}\`;`));
+    await exec(payload, db, `DROP INDEX IF EXISTS ${q(c.indexName)};`)
+    await exec(payload, db, `ALTER TABLE ${q(c.table)} DROP COLUMN ${q(c.column)};`)
   }
   for (const t of TEXT_COLUMNS) {
-    await db.run(sql.raw(`ALTER TABLE \`${t.table}\` DROP COLUMN \`${t.column}\`;`));
+    await exec(payload, db, `ALTER TABLE ${q(t.table)} DROP COLUMN ${q(t.column)};`)
   }
 }

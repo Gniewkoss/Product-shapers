@@ -17,6 +17,8 @@ cms/out/
 cms/payload.local.db
 cms/payload.local.db-*
 cms/payload.local.db.bak-*
+cms/backup-prod-*.dump
+cms/backup-prod-logical-*/
 
 cms/media/
 
