@@ -1,6 +1,6 @@
-# /admin -> CMS (301 redirect, not reverse-proxy on marketing domain)
-/admin	https://product-shapers-cms.onrender.com/	301!
-/admin/*	https://product-shapers-cms.onrender.com/	301!
+# /admin -> Payload admin (301, not reverse-proxy on marketing domain)
+/admin	https://product-shapers-cms.onrender.com/admin	301!
+/admin/*	https://product-shapers-cms.onrender.com/admin/:splat	301!
 # Proxy: CMS_ORIGIN (https://product-shapers-cms.onrender.com)
 /api/*	https://product-shapers-cms.onrender.com/api/:splat	200
 /media/*	https://product-shapers-cms.onrender.com/media/:splat	200

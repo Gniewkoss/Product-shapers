@@ -5,7 +5,7 @@
  * - `/api/*`, `/media/*` → proxy do CMS_ORIGIN (200), jeśli ustawione.
  *
  * CMS_ORIGIN=https://twoj-backend.onrender.com (bez końcowego /).
- * Opcjonalnie ADMIN_REDIRECT_URL=… — docelowy URL dla /admin (domyślnie `${CMS_ORIGIN}/`).
+ * Opcjonalnie ADMIN_REDIRECT_URL — pełny URL panelu (domyślnie `${CMS_ORIGIN}/admin`).
  * Bez CMS_ORIGIN — opcjonalnie tylko ADMIN_REDIRECT_URL dla /admin; zawsze SPA fallback na końcu.
  */
 import fs from "fs";
@@ -19,9 +19,9 @@ const outFile = path.join(pub, "_redirects");
 
 const cmsOrigin = (process.env.CMS_ORIGIN ?? "").trim().replace(/\/$/, "");
 const adminRedirectRaw = (process.env.ADMIN_REDIRECT_URL ?? "").trim().replace(/\/$/, "");
-const adminRedirectTarget =
-  adminRedirectRaw ? `${adminRedirectRaw}/`
-  : cmsOrigin ? `${cmsOrigin}/`
+const adminRedirectBase =
+  adminRedirectRaw ? adminRedirectRaw
+  : cmsOrigin ? `${cmsOrigin}/admin`
   : "";
 
 if (!fs.existsSync(pub)) {
@@ -30,10 +30,10 @@ if (!fs.existsSync(pub)) {
 
 let body = "";
 
-if (adminRedirectTarget) {
-  body += `# /admin -> CMS (301 redirect, not reverse-proxy on marketing domain)\n`;
-  body += `/admin\t${adminRedirectTarget}\t301!\n`;
-  body += `/admin/*\t${adminRedirectTarget}\t301!\n`;
+if (adminRedirectBase) {
+  body += `# /admin -> Payload admin (301, not reverse-proxy on marketing domain)\n`;
+  body += `/admin\t${adminRedirectBase}\t301!\n`;
+  body += `/admin/*\t${adminRedirectBase}/:splat\t301!\n`;
 }
 
 if (cmsOrigin) {
@@ -41,7 +41,7 @@ if (cmsOrigin) {
   body += `/api/*\t${cmsOrigin}/api/:splat\t200\n`;
   body += `/media/*\t${cmsOrigin}/media/:splat\t200\n`;
   console.info("[netlify] CMS_ORIGIN:", cmsOrigin, "→ public/_redirects (api/media proxy + admin redirect)");
-} else if (!adminRedirectTarget) {
+} else if (!adminRedirectBase) {
   console.warn("[netlify] CMS_ORIGIN nie ustawione — tylko SPA fallback (brak /api z produkcji)");
 }
 
