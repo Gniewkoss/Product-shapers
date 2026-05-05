@@ -27,6 +27,11 @@ function ScrollToTopOnRouteChange() {
 }
 
 export default function App() {
+  if (typeof window !== "undefined" && /^\/admin(?:\/|$)/.test(window.location.pathname)) {
+    window.location.replace("https://product-shapers-cms.onrender.com/admin/");
+    return null;
+  }
+
   return (
     <BrowserRouter>
       <ScrollToTopOnRouteChange />

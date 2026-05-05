@@ -480,6 +480,10 @@ export interface SitePage {
                    * Szkolenia accent module: decorative strip image URL
                    */
                   footerImageUrl?: string | null;
+                  /**
+                   * Szkolenia accent module: decorative strip image file (png/jpg/webp)
+                   */
+                  footerImage?: (number | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -506,6 +510,10 @@ export interface SitePage {
              * Hero image URL (optional)
              */
             mediaUrl?: string | null;
+            /**
+             * Hero image file (png/jpg/webp)
+             */
+            media?: (number | null) | Media;
             leftTitle: string;
             bodyParagraphs: string;
             quote?: string | null;
@@ -549,6 +557,10 @@ export interface SitePage {
             columns?:
               | {
                   iconUrl?: string | null;
+                  /**
+                   * Icon file (png/jpg/svg/webp)
+                   */
+                  icon?: (number | null) | Media;
                   title: string;
                   body: string;
                   id?: string | null;
@@ -636,6 +648,10 @@ export interface SitePage {
               | {
                   title: string;
                   iconUrl?: string | null;
+                  /**
+                   * Icon file (png/jpg/svg/webp)
+                   */
+                  icon?: (number | null) | Media;
                   clients?:
                     | {
                         name: string;
@@ -692,6 +708,10 @@ export interface SitePage {
                 }[]
               | null;
             portraitUrl?: string | null;
+            /**
+             * Portrait file (png/jpg/webp)
+             */
+            portraitImage?: (number | null) | Media;
             id?: string | null;
             blockName?: string | null;
             blockType: 'founderSpotlight';
@@ -705,6 +725,10 @@ export interface SitePage {
                   role: string;
                   linkedinLink?: string | null;
                   avatarUrl?: string | null;
+                  /**
+                   * Avatar file (png/jpg/webp)
+                   */
+                  avatar?: (number | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -726,6 +750,10 @@ export interface SitePage {
                   title: string;
                   excerpt?: string | null;
                   imageUrl?: string | null;
+                  /**
+                   * Card image file (png/jpg/webp)
+                   */
+                  image?: (number | null) | Media;
                   href?: string | null;
                   ctaLabel?: string | null;
                   id?: string | null;
@@ -1132,6 +1160,7 @@ export interface SitePagesSelect<T extends boolean = true> {
                     asideEyebrow?: T;
                     asideQuote?: T;
                     footerImageUrl?: T;
+                    footerImage?: T;
                     id?: T;
                   };
               id?: T;
@@ -1156,6 +1185,7 @@ export interface SitePagesSelect<T extends boolean = true> {
           | T
           | {
               mediaUrl?: T;
+              media?: T;
               leftTitle?: T;
               bodyParagraphs?: T;
               quote?: T;
@@ -1203,6 +1233,7 @@ export interface SitePagesSelect<T extends boolean = true> {
                 | T
                 | {
                     iconUrl?: T;
+                    icon?: T;
                     title?: T;
                     body?: T;
                     id?: T;
@@ -1301,6 +1332,7 @@ export interface SitePagesSelect<T extends boolean = true> {
                 | {
                     title?: T;
                     iconUrl?: T;
+                    icon?: T;
                     clients?:
                       | T
                       | {
@@ -1359,6 +1391,7 @@ export interface SitePagesSelect<T extends boolean = true> {
                     id?: T;
                   };
               portraitUrl?: T;
+              portraitImage?: T;
               id?: T;
               blockName?: T;
             };
@@ -1374,6 +1407,7 @@ export interface SitePagesSelect<T extends boolean = true> {
                     role?: T;
                     linkedinLink?: T;
                     avatarUrl?: T;
+                    avatar?: T;
                     id?: T;
                   };
               id?: T;
@@ -1393,6 +1427,7 @@ export interface SitePagesSelect<T extends boolean = true> {
                     title?: T;
                     excerpt?: T;
                     imageUrl?: T;
+                    image?: T;
                     href?: T;
                     ctaLabel?: T;
                     id?: T;
@@ -1709,6 +1744,10 @@ export interface Homepage {
                    * Szkolenia accent module: decorative strip image URL
                    */
                   footerImageUrl?: string | null;
+                  /**
+                   * Szkolenia accent module: decorative strip image file (png/jpg/webp)
+                   */
+                  footerImage?: (number | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -1735,6 +1774,10 @@ export interface Homepage {
              * Hero image URL (optional)
              */
             mediaUrl?: string | null;
+            /**
+             * Hero image file (png/jpg/webp)
+             */
+            media?: (number | null) | Media;
             leftTitle: string;
             bodyParagraphs: string;
             quote?: string | null;
@@ -1778,6 +1821,10 @@ export interface Homepage {
             columns?:
               | {
                   iconUrl?: string | null;
+                  /**
+                   * Icon file (png/jpg/svg/webp)
+                   */
+                  icon?: (number | null) | Media;
                   title: string;
                   body: string;
                   id?: string | null;
@@ -1865,6 +1912,10 @@ export interface Homepage {
               | {
                   title: string;
                   iconUrl?: string | null;
+                  /**
+                   * Icon file (png/jpg/svg/webp)
+                   */
+                  icon?: (number | null) | Media;
                   clients?:
                     | {
                         name: string;
@@ -1921,6 +1972,10 @@ export interface Homepage {
                 }[]
               | null;
             portraitUrl?: string | null;
+            /**
+             * Portrait file (png/jpg/webp)
+             */
+            portraitImage?: (number | null) | Media;
             id?: string | null;
             blockName?: string | null;
             blockType: 'founderSpotlight';
@@ -1934,6 +1989,10 @@ export interface Homepage {
                   role: string;
                   linkedinLink?: string | null;
                   avatarUrl?: string | null;
+                  /**
+                   * Avatar file (png/jpg/webp)
+                   */
+                  avatar?: (number | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -1955,6 +2014,10 @@ export interface Homepage {
                   title: string;
                   excerpt?: string | null;
                   imageUrl?: string | null;
+                  /**
+                   * Card image file (png/jpg/webp)
+                   */
+                  image?: (number | null) | Media;
                   href?: string | null;
                   ctaLabel?: string | null;
                   id?: string | null;
@@ -2092,6 +2155,10 @@ export interface Homepage {
                    * Szkolenia accent module: decorative strip image URL
                    */
                   footerImageUrl?: string | null;
+                  /**
+                   * Szkolenia accent module: decorative strip image file (png/jpg/webp)
+                   */
+                  footerImage?: (number | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -2118,6 +2185,10 @@ export interface Homepage {
              * Hero image URL (optional)
              */
             mediaUrl?: string | null;
+            /**
+             * Hero image file (png/jpg/webp)
+             */
+            media?: (number | null) | Media;
             leftTitle: string;
             bodyParagraphs: string;
             quote?: string | null;
@@ -2161,6 +2232,10 @@ export interface Homepage {
             columns?:
               | {
                   iconUrl?: string | null;
+                  /**
+                   * Icon file (png/jpg/svg/webp)
+                   */
+                  icon?: (number | null) | Media;
                   title: string;
                   body: string;
                   id?: string | null;
@@ -2248,6 +2323,10 @@ export interface Homepage {
               | {
                   title: string;
                   iconUrl?: string | null;
+                  /**
+                   * Icon file (png/jpg/svg/webp)
+                   */
+                  icon?: (number | null) | Media;
                   clients?:
                     | {
                         name: string;
@@ -2304,6 +2383,10 @@ export interface Homepage {
                 }[]
               | null;
             portraitUrl?: string | null;
+            /**
+             * Portrait file (png/jpg/webp)
+             */
+            portraitImage?: (number | null) | Media;
             id?: string | null;
             blockName?: string | null;
             blockType: 'founderSpotlight';
@@ -2317,6 +2400,10 @@ export interface Homepage {
                   role: string;
                   linkedinLink?: string | null;
                   avatarUrl?: string | null;
+                  /**
+                   * Avatar file (png/jpg/webp)
+                   */
+                  avatar?: (number | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -2338,6 +2425,10 @@ export interface Homepage {
                   title: string;
                   excerpt?: string | null;
                   imageUrl?: string | null;
+                  /**
+                   * Card image file (png/jpg/webp)
+                   */
+                  image?: (number | null) | Media;
                   href?: string | null;
                   ctaLabel?: string | null;
                   id?: string | null;
@@ -2616,6 +2707,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     asideEyebrow?: T;
                     asideQuote?: T;
                     footerImageUrl?: T;
+                    footerImage?: T;
                     id?: T;
                   };
               id?: T;
@@ -2640,6 +2732,7 @@ export interface HomepageSelect<T extends boolean = true> {
           | T
           | {
               mediaUrl?: T;
+              media?: T;
               leftTitle?: T;
               bodyParagraphs?: T;
               quote?: T;
@@ -2687,6 +2780,7 @@ export interface HomepageSelect<T extends boolean = true> {
                 | T
                 | {
                     iconUrl?: T;
+                    icon?: T;
                     title?: T;
                     body?: T;
                     id?: T;
@@ -2785,6 +2879,7 @@ export interface HomepageSelect<T extends boolean = true> {
                 | {
                     title?: T;
                     iconUrl?: T;
+                    icon?: T;
                     clients?:
                       | T
                       | {
@@ -2843,6 +2938,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     id?: T;
                   };
               portraitUrl?: T;
+              portraitImage?: T;
               id?: T;
               blockName?: T;
             };
@@ -2858,6 +2954,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     role?: T;
                     linkedinLink?: T;
                     avatarUrl?: T;
+                    avatar?: T;
                     id?: T;
                   };
               id?: T;
@@ -2877,6 +2974,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     title?: T;
                     excerpt?: T;
                     imageUrl?: T;
+                    image?: T;
                     href?: T;
                     ctaLabel?: T;
                     id?: T;
@@ -2983,6 +3081,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     asideEyebrow?: T;
                     asideQuote?: T;
                     footerImageUrl?: T;
+                    footerImage?: T;
                     id?: T;
                   };
               id?: T;
@@ -3007,6 +3106,7 @@ export interface HomepageSelect<T extends boolean = true> {
           | T
           | {
               mediaUrl?: T;
+              media?: T;
               leftTitle?: T;
               bodyParagraphs?: T;
               quote?: T;
@@ -3054,6 +3154,7 @@ export interface HomepageSelect<T extends boolean = true> {
                 | T
                 | {
                     iconUrl?: T;
+                    icon?: T;
                     title?: T;
                     body?: T;
                     id?: T;
@@ -3152,6 +3253,7 @@ export interface HomepageSelect<T extends boolean = true> {
                 | {
                     title?: T;
                     iconUrl?: T;
+                    icon?: T;
                     clients?:
                       | T
                       | {
@@ -3210,6 +3312,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     id?: T;
                   };
               portraitUrl?: T;
+              portraitImage?: T;
               id?: T;
               blockName?: T;
             };
@@ -3225,6 +3328,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     role?: T;
                     linkedinLink?: T;
                     avatarUrl?: T;
+                    avatar?: T;
                     id?: T;
                   };
               id?: T;
@@ -3244,6 +3348,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     title?: T;
                     excerpt?: T;
                     imageUrl?: T;
+                    image?: T;
                     href?: T;
                     ctaLabel?: T;
                     id?: T;

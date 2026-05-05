@@ -29,6 +29,13 @@ function cmsMedia(src: unknown): string {
   return mediaUrl(raw) ?? "";
 }
 
+function cmsMediaEither(urlCandidate: unknown, uploadCandidate: unknown): string {
+  const uploadResolved = uploadRefMedia(uploadCandidate);
+  const uploadUrl = uploadResolved.url ? String(uploadResolved.url).trim() : "";
+  if (uploadUrl) return uploadUrl;
+  return cmsMedia(urlCandidate);
+}
+
 function isFigmaMcpAssetUrl(url: string): boolean {
   return /figma\.com\/api\/mcp\/asset/i.test(url);
 }
@@ -129,7 +136,7 @@ function programModulesToBento(block: Record<string, unknown>): SzkoleniaProgram
     m05: {
       title: String(m4?.title ?? ""),
       bodyLines: fourLinesPad(m4?.body),
-      footerImageUrl: m4?.footerImageUrl ? cmsMedia(m4.footerImageUrl) || undefined : undefined,
+      footerImageUrl: cmsMediaEither(m4?.footerImageUrl, m4?.footerImage) || undefined,
     },
   };
 }
@@ -212,7 +219,7 @@ function threeIntroLines(intro: string): [string, string, string] {
 
 function FounderSpotlightBlock({ f }: { f: Record<string, unknown> }) {
   const { homepage } = useSitePayload();
-  const rawBlock = cmsMedia(f.portraitUrl);
+  const rawBlock = cmsMediaEither(f.portraitUrl, f.portraitImage);
   const blockPortrait =
     rawBlock && !isLegacyFounderSilhouetteAssetUrl(rawBlock) ? rawBlock : "";
 
@@ -323,7 +330,12 @@ function KnowledgeTeasersBlockPayload({ f }: { f: Record<string, unknown> }) {
   const legacyCards = legacyRaw.filter((c) => c.title);
   const cards =
     useHome && featured.length > 0 ? featured.map(articleToKnowledgeCard)
-    : legacyCards.length > 0 ? legacyCards
+    : legacyCards.length > 0 ?
+      legacyCards.map((c) => {
+        const cardAny = c as KnowledgeTeaserCardData & { image?: unknown };
+        const resolvedImage = cmsMediaEither(cardAny.imageUrl, cardAny.image);
+        return { ...c, imageUrl: resolvedImage || cardAny.imageUrl };
+      })
     : [];
 
   const eyebrow = f.eyebrow ? String(f.eyebrow) : undefined;
@@ -479,7 +491,7 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
       return (
         <UsemeContextFidelity
           key={index}
-          mediaUrl={cmsMedia(f.mediaUrl) || USEME_CONTEXT_IMAGE_FALLBACK}
+          mediaUrl={cmsMediaEither(f.mediaUrl, f.media) || USEME_CONTEXT_IMAGE_FALLBACK}
           leftTitle={String(f.leftTitle)}
           bodyParagraphs={String(f.bodyParagraphs ?? "")}
           quoteLine1={quoteLines[0] ?? ""}
@@ -517,9 +529,9 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
     }
 
     case "featureColumns3": {
-      const cols = (f.columns as { iconUrl?: string; title?: string; body?: string }[]) ?? [];
+      const cols = (f.columns as { iconUrl?: string; icon?: unknown; title?: string; body?: string }[]) ?? [];
       const strategyCols = cols.slice(0, 3).map((c, ci) => ({
-        iconUrl: cmsMedia(c.iconUrl),
+        iconUrl: cmsMediaEither(c.iconUrl, c.icon),
         iconWrapClass: ci === 0 ? "h-[27px] relative shrink-0 w-[16.5px]" : ci === 1 ? "h-[31.5px] relative shrink-0 w-[27px]" : "h-[27px] relative shrink-0 w-[20px]",
         title: String(c.title ?? ""),
         bodyLines: splitLines(String(c.body ?? "")),
@@ -671,7 +683,7 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
     }
 
     case "industryPillars": {
-      const pillars = (f.pillars as { title?: string; iconUrl?: string; clients?: { name?: string; segment?: string }[] }[]) ?? [];
+      const pillars = (f.pillars as { title?: string; iconUrl?: string; icon?: unknown; clients?: { name?: string; segment?: string }[] }[]) ?? [];
       const introLines = f.intro ? splitLines(String(f.intro)) : [];
       return (
         <div key={index} className="flow-root w-full min-w-0 shrink-0 self-stretch bg-white">
@@ -706,7 +718,7 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
               </div>
               <div className="grid w-full min-w-0 shrink-0 grid-cols-1 gap-x-[48px] gap-y-[48px] bg-white lg:grid-cols-2 lg:grid-rows-[minmax(0,auto)]">
                 {pillars.map((p, pi) => {
-                  const cmsIcon = cmsMedia(p.iconUrl);
+                  const cmsIcon = cmsMediaEither(p.iconUrl, p.icon);
                   const resolvedIcon =
                     cmsIcon && !isFigmaMcpAssetUrl(cmsIcon) ? cmsIcon
                     : (pi === 0 ? iconFintech : iconEcommerce);
@@ -897,7 +909,7 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
 
     case "testimonialsHome": {
       const items =
-        (f.items as { quote?: string; authorName?: string; role?: string; avatarUrl?: string; linkedinLink?: string }[]) ?? [];
+        (f.items as { quote?: string; authorName?: string; role?: string; avatarUrl?: string; avatar?: unknown; linkedinLink?: string }[]) ?? [];
       return (
         <div key={index} className="w-full min-w-0 bg-[#f3f3f3]">
           <div className="content-stretch mx-auto flex min-w-0 max-w-content flex-col items-start px-4 py-[96px] sm:px-6 md:px-10 lg:px-[61px] relative shrink-0 w-full">
@@ -915,7 +927,7 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
               <div className="relative grid w-full min-w-0 grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-10 md:gap-y-12 lg:grid-cols-3 lg:gap-x-12">
                 {items.map((it, ii) => {
                   const qLines = splitLines(String(it.quote ?? ""));
-                  const av = cmsMedia(it.avatarUrl);
+                  const av = cmsMediaEither(it.avatarUrl, it.avatar);
                   const spanThird = ii === 2 ? "md:col-span-2 lg:col-span-1" : "";
                   const linkedinLink = String(it.linkedinLink ?? "").trim();
                   const hasLinkedinLink = /^https?:\/\//i.test(linkedinLink);

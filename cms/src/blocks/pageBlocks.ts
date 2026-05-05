@@ -127,6 +127,12 @@ export const programModulesBlock: Block = {
           type: "text",
           admin: { description: "Szkolenia accent module: decorative strip image URL" },
         },
+        {
+          name: "footerImage",
+          type: "upload",
+          relationTo: "media",
+          admin: { description: "Szkolenia accent module: decorative strip image file (png/jpg/webp)" },
+        },
       ],
     },
   ],
@@ -180,6 +186,7 @@ export const richSplitBlock: Block = {
   labels: { singular: "Rich split (image + columns)", plural: "Rich splits" },
   fields: [
     { name: "mediaUrl", type: "text", admin: { description: "Hero image URL (optional)" } },
+    { name: "media", type: "upload", relationTo: "media", admin: { description: "Hero image file (png/jpg/webp)" } },
     { name: "leftTitle", type: "text", required: true },
     { name: "bodyParagraphs", type: "textarea", required: true },
     { name: "quote", type: "textarea" },
@@ -256,6 +263,7 @@ export const industryPillarsBlock: Block = {
       fields: [
         { name: "title", type: "text", required: true },
         { name: "iconUrl", type: "text" },
+        { name: "icon", type: "upload", relationTo: "media", admin: { description: "Icon file (png/jpg/svg/webp)" } },
         {
           name: "clients",
           type: "array",
@@ -321,6 +329,7 @@ export const founderSpotlightBlock: Block = {
       ],
     },
     { name: "portraitUrl", type: "text" },
+    { name: "portraitImage", type: "upload", relationTo: "media", admin: { description: "Portrait file (png/jpg/webp)" } },
   ],
 };
 
@@ -338,6 +347,7 @@ export const testimonialsHomeBlock: Block = {
         { name: "role", type: "text", required: true },
         { name: "linkedinLink", type: "text", label: "LinkedIn Link" },
         { name: "avatarUrl", type: "text" },
+        { name: "avatar", type: "upload", relationTo: "media", admin: { description: "Avatar file (png/jpg/webp)" } },
       ],
     },
   ],
@@ -367,6 +377,7 @@ export const knowledgeTeasersBlock: Block = {
         { name: "title", type: "text", required: true },
         { name: "excerpt", type: "textarea" },
         { name: "imageUrl", type: "text" },
+        { name: "image", type: "upload", relationTo: "media", admin: { description: "Card image file (png/jpg/webp)" } },
         { name: "href", type: "text" },
         { name: "ctaLabel", type: "text", defaultValue: "Dowiedz się więcej" },
       ],
@@ -405,6 +416,7 @@ export const featureColumns3Block: Block = {
       type: "array",
       fields: [
         { name: "iconUrl", type: "text" },
+        { name: "icon", type: "upload", relationTo: "media", admin: { description: "Icon file (png/jpg/svg/webp)" } },
         { name: "title", type: "text", required: true },
         { name: "body", type: "textarea", required: true },
       ],
