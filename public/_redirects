@@ -1,0 +1,10 @@
+/admin https://product-shapers-cms.onrender.com/ 301!
+/admin/* https://product-shapers-cms.onrender.com/ 301!
+/admin https://product-shapers-cms.onrender.com/ 301!
+/admin/* https://product-shapers-cms.onrender.com/ 301!
+# Proxied z CMS_ORIGIN (https://cms.example.com) — adres w przeglądarce pozostaje domeną Netlify
+/api/*	https://cms.example.com/api/:splat	200
+/admin	https://cms.example.com/admin	200
+/admin/*	https://cms.example.com/admin/:splat	200
+/media/*	https://cms.example.com/media/:splat	200
+/*	/index.html	200
