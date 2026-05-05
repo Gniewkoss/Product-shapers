@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSitePayload } from "../context/SitePayloadContext";
+import logo from "../assets/branding/logo.svg";
 import { KonsultacjaScrollLink } from "./KonsultacjaScrollLink";
-import { imgLogoLockup } from "../figma/brandAssets";
 
 const defaultNavLinks = [
   { to: "/", label: "Home" },
@@ -47,7 +47,7 @@ export function NavBar() {
           <img
             alt="Product Shapers Consulting"
             className="block h-full w-full object-contain object-left"
-            src={imgLogoLockup}
+            src={logo}
             width={205}
             height={50}
             decoding="async"

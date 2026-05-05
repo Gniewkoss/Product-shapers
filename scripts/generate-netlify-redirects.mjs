@@ -1,7 +1,12 @@
 /**
- * Generuje public/_redirects dla Netlify (proxy CMS pod /admin, /api, /media).
- * Ustaw CMS_ORIGIN=https://twoj-backend.railway.app (bez końcowego /).
- * Bez CMS_ORIGIN — tylko fallback SPA (localhost / preview bez API).
+ * Generuje public/_redirects dla Netlify.
+ *
+ * - `/admin` → zewnętrzny CMS (301), żeby productshapers.pl/admin nie proxy’owało Panelu Payload pod tą samą domeną.
+ * - `/api/*`, `/media/*` → proxy do CMS_ORIGIN (200), jeśli ustawione.
+ *
+ * CMS_ORIGIN=https://twoj-backend.onrender.com (bez końcowego /).
+ * Opcjonalnie ADMIN_REDIRECT_URL=… — docelowy URL dla /admin (domyślnie `${CMS_ORIGIN}/`).
+ * Bez CMS_ORIGIN — opcjonalnie tylko ADMIN_REDIRECT_URL dla /admin; zawsze SPA fallback na końcu.
  */
 import fs from "fs";
 import path from "path";
@@ -13,6 +18,11 @@ const pub = path.join(root, "public");
 const outFile = path.join(pub, "_redirects");
 
 const cmsOrigin = (process.env.CMS_ORIGIN ?? "").trim().replace(/\/$/, "");
+const adminRedirectRaw = (process.env.ADMIN_REDIRECT_URL ?? "").trim().replace(/\/$/, "");
+const adminRedirectTarget =
+  adminRedirectRaw ? `${adminRedirectRaw}/`
+  : cmsOrigin ? `${cmsOrigin}/`
+  : "";
 
 if (!fs.existsSync(pub)) {
   fs.mkdirSync(pub, { recursive: true });
@@ -20,14 +30,18 @@ if (!fs.existsSync(pub)) {
 
 let body = "";
 
+if (adminRedirectTarget) {
+  body += `# /admin -> CMS (301 redirect, not reverse-proxy on marketing domain)\n`;
+  body += `/admin\t${adminRedirectTarget}\t301!\n`;
+  body += `/admin/*\t${adminRedirectTarget}\t301!\n`;
+}
+
 if (cmsOrigin) {
-  body += `# Proxied z CMS_ORIGIN (${cmsOrigin}) — adres w przeglądarce pozostaje domeną Netlify\n`;
+  body += `# Proxy: CMS_ORIGIN (${cmsOrigin})\n`;
   body += `/api/*\t${cmsOrigin}/api/:splat\t200\n`;
-  body += `/admin\t${cmsOrigin}/admin\t200\n`;
-  body += `/admin/*\t${cmsOrigin}/admin/:splat\t200\n`;
   body += `/media/*\t${cmsOrigin}/media/:splat\t200\n`;
-  console.info("[netlify] CMS_ORIGIN:", cmsOrigin, "→ public/_redirects (proxy)");
-} else {
+  console.info("[netlify] CMS_ORIGIN:", cmsOrigin, "→ public/_redirects (api/media proxy + admin redirect)");
+} else if (!adminRedirectTarget) {
   console.warn("[netlify] CMS_ORIGIN nie ustawione — tylko SPA fallback (brak /api z produkcji)");
 }
 
