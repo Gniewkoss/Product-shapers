@@ -9,6 +9,8 @@ cms/out/
 .env
 .env.local
 .env.*.local
+.env.production
+.env.temp_copy
 
 *.log
 *.tsbuildinfo
