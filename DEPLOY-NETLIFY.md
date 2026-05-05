@@ -91,6 +91,8 @@ Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.exa
 
 `vite.config.ts` proxy: `/api`, `/media`, `/admin` → `localhost:3000`. Przy `npm run dev` zmienne Netlify nie są potrzebne.
 
+Przy **`npm run dev --prefix cms`** Payload ustawia **`serverURL`** na **`http://localhost:3000`** (nie na `PAYLOAD_PUBLIC_SERVER_URL` z produkcji). Jeśli skopiowałeś `.env` z Rendera z URL-em Netlify i wcześniej widziałeś „404” na Homepage / Marketing pages w panelu — ten podział hostów był przyczyną; po zmianie wystarczy zrestartować `next dev`.
+
 ---
 
 ## 5. Problemy z ciasteczkami / logowaniem / 404 w panelu

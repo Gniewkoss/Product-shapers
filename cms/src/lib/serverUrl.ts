@@ -6,9 +6,12 @@
  *
  * Override order:
  * 1. `PAYLOAD_SERVER_URL` — explicit canonical CMS URL (recommended on Render).
- * 2. If `PAYLOAD_USE_MARKETING_SERVER_URL=true`, use `PAYLOAD_PUBLIC_SERVER_URL` (legacy: admin proxied on marketing host).
- * 3. If both marketing URL and Render URL exist and differ → default to **Render** (direct admin on Render).
- * 4. Else `PAYLOAD_PUBLIC_SERVER_URL`, else `RENDER_EXTERNAL_URL`, else localhost.
+ * 2. **`NODE_ENV === 'development'`** → `http://localhost:${PORT}` (or `PAYLOAD_DEV_SERVER_URL`) so `.env` copied from prod (marketing URL) does not break admin on `localhost:3000`.
+ * 3. If `PAYLOAD_USE_MARKETING_SERVER_URL=true`, use `PAYLOAD_PUBLIC_SERVER_URL` (legacy: admin proxied on marketing host).
+ * 4. If both marketing URL and Render URL exist and differ → default to **Render** (direct admin on Render).
+ * 5. Else `PAYLOAD_PUBLIC_SERVER_URL`, else `RENDER_EXTERNAL_URL`, else localhost.
+ *
+ * Local prod-mode (`next start`) still uses production branch — set `PAYLOAD_SERVER_URL` if needed.
  */
 export function trimServerUrl(u: string | undefined): string {
   return (u ?? "").trim().replace(/\/$/, "");
@@ -17,6 +20,13 @@ export function trimServerUrl(u: string | undefined): string {
 export function resolvePayloadServerURL(): string {
   const explicit = trimServerUrl(process.env.PAYLOAD_SERVER_URL);
   if (explicit) return explicit;
+
+  if (process.env.NODE_ENV === "development") {
+    const devOverride = trimServerUrl(process.env.PAYLOAD_DEV_SERVER_URL);
+    if (devOverride) return devOverride;
+    const port = trimServerUrl(process.env.PORT) || "3000";
+    return `http://localhost:${port}`;
+  }
 
   const pub = trimServerUrl(process.env.PAYLOAD_PUBLIC_SERVER_URL);
   const render = trimServerUrl(process.env.RENDER_EXTERNAL_URL);
