@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import type { KnowledgeTeaserCardData } from "../lib/payload/homeFeaturedArticles";
 import { splitLines } from "../lib/payload/blockUtils";
 import { mediaUrl } from "../lib/payload/client";
-import iconArrow from "../assets/branding/arrow.svg";
+import iconArrow from "../assets/branding/arrow rightsvg.svg";
 
 export function KnowledgeTeaserCard({
   c,
@@ -22,9 +22,9 @@ export function KnowledgeTeaserCard({
       <span>{ctaLabel}</span>
       <span
         aria-hidden
-        className="inline-block size-3 shrink-0 bg-current"
-        style={{ WebkitMask: `url(${iconArrow}) center / contain no-repeat`, mask: `url(${iconArrow}) center / contain no-repeat` }}
+        className="inline-flex h-4 w-4 shrink-0 items-center justify-center"
       >
+        <img alt="" src={iconArrow} className="block h-4 w-4" />
       </span>
     </>
   );

@@ -571,9 +571,10 @@ export function HomeMain() {
                     </span>
                     <span
                       aria-hidden
-                      className="inline-block size-3 shrink-0 bg-current"
-                      style={{ WebkitMask: `url(${iconArrow}) center / contain no-repeat`, mask: `url(${iconArrow}) center / contain no-repeat` }}
-                    />
+                      className="inline-flex h-4 w-4 shrink-0 items-center justify-center"
+                    >
+                      <img alt="" src={iconArrow} className="block h-4 w-4" />
+                    </span>
                   </Link>
                 </div>
                 <div
