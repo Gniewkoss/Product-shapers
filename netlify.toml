@@ -8,13 +8,13 @@
 
 [[redirects]]
   from = "/admin"
-  to = "https://product-shapers-cms.onrender.com/admin/"
+  to = "https://product-shapers-cms.onrender.com/"
   status = 301
   force = true
 
 [[redirects]]
   from = "/admin/*"
-  to = "https://product-shapers-cms.onrender.com/admin/:splat"
+  to = "https://product-shapers-cms.onrender.com/"
   status = 301
   force = true
 

@@ -10,7 +10,7 @@ import { UsemeMain } from "./pages/UsemeMain";
 
 function AdminRedirect() {
   useEffect(() => {
-    window.location.replace("https://product-shapers-cms.onrender.com/admin/");
+    window.location.replace("https://product-shapers-cms.onrender.com/");
   }, []);
 
   return null;
@@ -28,7 +28,7 @@ function ScrollToTopOnRouteChange() {
 
 export default function App() {
   if (typeof window !== "undefined" && /^\/admin(?:\/|$)/.test(window.location.pathname)) {
-    window.location.replace("https://product-shapers-cms.onrender.com/admin/");
+    window.location.replace("https://product-shapers-cms.onrender.com/");
     return null;
   }
 
