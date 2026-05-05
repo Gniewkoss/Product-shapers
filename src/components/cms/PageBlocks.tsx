@@ -18,6 +18,10 @@ import { fourLinesPad, getBlockFields, splitLines, splitParagraphs, type Payload
 import { articleToKnowledgeCard, normalizeFeaturedArticles, type KnowledgeTeaserCardData } from "../../lib/payload/homeFeaturedArticles";
 import { isLegacyFounderSilhouetteAssetUrl, mediaUrl, uploadRefMedia } from "../../lib/payload/client";
 import { sanitizeCmsHtml } from "../../lib/sanitizeCmsHtml";
+import iconArrow from "../../assets/branding/arrow rightsvg.svg";
+import iconEcommerce from "../../assets/branding/Ecomerce.svg";
+import iconFintech from "../../assets/branding/Fintech.svg";
+import iconLinkedIn from "../../assets/branding/linkedin.svg";
 
 /** Resolve CMS / Payload media paths (relative or absolute) for `<img src>` */
 function cmsMedia(src: unknown): string {
@@ -25,14 +29,12 @@ function cmsMedia(src: unknown): string {
   return mediaUrl(raw) ?? "";
 }
 
-/** Figma asset URLs — match `HomeMain` / `ArticlesMain` for visual parity with static fallbacks */
-const imgCaseCtaArrow = "https://www.figma.com/api/mcp/asset/971bed54-9d58-4436-b682-fe002b12d53f";
-/** `HomeMain` industry pillars — Fintech / Ecommerce icons (fallback when CMS has no URL) */
-const imgIndustryPillarIcon0 = "https://www.figma.com/api/mcp/asset/57eb5300-0d15-4873-be8b-b29b2c84c025";
-const imgIndustryPillarIcon1 = "https://www.figma.com/api/mcp/asset/2a0ccd0c-8aa6-4ea5-991c-72af2fde4c6e";
+function isFigmaMcpAssetUrl(url: string): boolean {
+  return /figma\.com\/api\/mcp\/asset/i.test(url);
+}
+
 /** `UsemeMain` hero / context image fallback when `richSplit.mediaUrl` empty */
 const USEME_CONTEXT_IMAGE_FALLBACK = "https://www.figma.com/api/mcp/asset/0eba44d5-9425-4c1e-a191-f61728ae2f23";
-const imgTestimonialLinkedIn = "https://www.figma.com/api/mcp/asset/01ff3667-cd79-4f08-902b-216735c2d283";
 const METHOD_TILE_OUTER = [
   "bg-[#f9f9f9] border-[#022169] border-solid border-t-8 col-1 content-stretch flex h-auto min-h-[240px] flex-col gap-[16px] items-start justify-self-stretch pb-[68px] pt-[48px] px-[25px] relative row-1 self-start shrink-0 sm:row-auto lg:h-[276px]",
   "bg-[#f9f9f9] border-[#022169] border-solid border-t-8 col-3 content-stretch flex flex-col gap-[16px] items-start justify-self-stretch pb-[41px] pt-[48px] px-[25px] relative row-1 self-start shrink-0",
@@ -704,7 +706,10 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
               </div>
               <div className="grid w-full min-w-0 shrink-0 grid-cols-1 gap-x-[48px] gap-y-[48px] bg-white lg:grid-cols-2 lg:grid-rows-[minmax(0,auto)]">
                 {pillars.map((p, pi) => {
-                  const resolvedIcon = cmsMedia(p.iconUrl) || (pi === 0 ? imgIndustryPillarIcon0 : imgIndustryPillarIcon1);
+                  const cmsIcon = cmsMedia(p.iconUrl);
+                  const resolvedIcon =
+                    cmsIcon && !isFigmaMcpAssetUrl(cmsIcon) ? cmsIcon
+                    : (pi === 0 ? iconFintech : iconEcommerce);
                   const iconNarrow = pi === 1;
                   return (
                     <div
@@ -784,19 +789,27 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
                         href={ctaPath}
                         className="inline-flex max-w-full shrink-0 flex-wrap items-center justify-center gap-3 rounded-[18px] bg-white px-6 py-4 no-underline sm:inline-flex sm:justify-start sm:gap-4 sm:px-8 sm:py-5"
                       >
-                        <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] text-[#022169] sm:text-left sm:text-[16px]">{ctaLabel}</span>
-                        <span className="relative size-4 shrink-0">
-                          <img alt="" className="absolute inset-0 block size-full max-w-none" src={imgCaseCtaArrow} />
+                        <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] text-[#022169] sm:text-left sm:text-[16px]">
+                          {ctaLabel}
                         </span>
+                        <span
+                          aria-hidden
+                          className="inline-block size-3 shrink-0 bg-current"
+                          style={{ WebkitMask: `url(${iconArrow}) center / contain no-repeat`, mask: `url(${iconArrow}) center / contain no-repeat` }}
+                        />
                       </a>
                     : <Link
                         to={ctaPath}
                         className="inline-flex max-w-full shrink-0 flex-wrap items-center justify-center gap-3 rounded-[18px] bg-white px-6 py-4 no-underline sm:inline-flex sm:justify-start sm:gap-4 sm:px-8 sm:py-5"
                       >
-                        <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] text-[#022169] sm:text-left sm:text-[16px]">{ctaLabel}</span>
-                        <span className="relative size-4 shrink-0">
-                          <img alt="" className="absolute inset-0 block size-full max-w-none" src={imgCaseCtaArrow} />
+                        <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] text-[#022169] sm:text-left sm:text-[16px]">
+                          {ctaLabel}
                         </span>
+                        <span
+                          aria-hidden
+                          className="inline-block size-3 shrink-0 bg-current"
+                          style={{ WebkitMask: `url(${iconArrow}) center / contain no-repeat`, mask: `url(${iconArrow}) center / contain no-repeat` }}
+                        />
                       </Link>
                     }
                   </div>
@@ -932,7 +945,7 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
                                 <p className="leading-[16px] m-0">{String(it.authorName)}</p>
                               </div>
                               <div className="relative shrink-0 size-[13px]">
-                                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgTestimonialLinkedIn} />
+                                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={iconLinkedIn} />
                               </div>
                             </div>
                             <p className="m-0 font-['Satoshi:Bold',sans-serif] text-[9px] uppercase leading-[13.5px] tracking-[1.8px] text-[color:var(--light-blue,#0083fe)] break-words">

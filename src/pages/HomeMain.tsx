@@ -6,6 +6,10 @@ import { HomeKnowledgeSection } from "../components/HomeKnowledgeSection";
 import { PageBlocks } from "../components/cms/PageBlocks";
 import { HomeExpertiseAccordion } from "../components/HomeExpertiseAccordion";
 import { KonsultacjaScrollLink } from "../components/KonsultacjaScrollLink";
+import iconArrow from "../assets/branding/arrow rightsvg.svg";
+import iconEcommerce from "../assets/branding/Ecomerce.svg";
+import iconFintech from "../assets/branding/Fintech.svg";
+import iconLinkedIn from "../assets/branding/linkedin.svg";
 import { useSitePayload } from "../context/SitePayloadContext";
 import type { PayloadLayoutBlock } from "../lib/payload/blockUtils";
 import { FALLBACK_KNOWLEDGE_CARDS, articleToKnowledgeCard, normalizeFeaturedArticles } from "../lib/payload/homeFeaturedArticles";
@@ -426,7 +430,7 @@ export function HomeMain() {
                 <div className="relative w-full min-w-0 shrink-0" data-node-id="1:1198" data-name="Heading 3">
                   <div className="flex min-w-0 items-center gap-[16px]">
                     <div className="relative size-[20px] shrink-0" data-node-id="1:1199" data-name="Container">
-                      <img alt="" className="absolute inset-0 block max-w-none size-full" src={brandIcons.fintech} />
+                      <img alt="" className="absolute inset-0 block max-w-none size-full" src={iconFintech} />
                     </div>
                     <div className="min-w-0 font-['Satoshi:Bold',sans-serif] text-[24px] not-italic leading-none text-[color:var(--dark-blue,#022169)]" data-node-id="1:1201">
                       <p className="leading-[40px]">Fintech</p>
@@ -472,7 +476,7 @@ export function HomeMain() {
                 <div className="relative w-full min-w-0 shrink-0" data-node-id="1:1222" data-name="Heading 3">
                   <div className="flex min-w-0 items-center gap-[16px]">
                     <div className="relative h-[20px] w-[16px] shrink-0" data-node-id="1:1223" data-name="Container">
-                      <img alt="" className="absolute inset-0 block max-w-none size-full" src={brandIcons.ecommerce} />
+                      <img alt="" className="absolute inset-0 block max-w-none size-full" src={iconEcommerce} />
                     </div>
                     <div className="min-w-0 font-['Satoshi:Bold',sans-serif] text-[24px] not-italic leading-none text-[color:var(--dark-blue,#022169)]" data-node-id="1:1225">
                       <p className="leading-[40px]">Ecommerce</p>
@@ -565,13 +569,11 @@ export function HomeMain() {
                     <span className="min-w-0 text-center font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] text-[#022169] sm:text-left sm:text-[16px]">
                       Przeczytaj Case Study
                     </span>
-                    <span className="relative size-4 shrink-0" data-node-id="1:1255" data-name="Container">
-                      <img
-                        alt=""
-                        className="absolute inset-0 block size-full max-w-none brightness-0"
-                        src={brandIcons.arrow}
-                      />
-                    </span>
+                    <span
+                      aria-hidden
+                      className="inline-block size-3 shrink-0 bg-current"
+                      style={{ WebkitMask: `url(${iconArrow}) center / contain no-repeat`, mask: `url(${iconArrow}) center / contain no-repeat` }}
+                    />
                   </Link>
                 </div>
                 <div
@@ -860,7 +862,7 @@ export function HomeMain() {
                             <p className="leading-[16px]">Filip</p>
                           </div>
                           <div className="relative shrink-0 size-[13px]" data-node-id="1:1345" data-name="image 11">
-                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={brandIcons.linkedIn} />
+                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={iconLinkedIn} />
                           </div>
                         </div>
                         <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1346" data-name="Container">
@@ -908,7 +910,7 @@ export function HomeMain() {
                             <p className="leading-[16px]">Agnieszka</p>
                           </div>
                           <div className="relative shrink-0 size-[13px]" data-node-id="1:1359" data-name="image 11">
-                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={brandIcons.linkedIn} />
+                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={iconLinkedIn} />
                           </div>
                         </div>
                         <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1360" data-name="Container">
@@ -955,7 +957,7 @@ export function HomeMain() {
                             <p className="leading-[16px]">Marta</p>
                           </div>
                           <div className="relative shrink-0 size-[13px]" data-node-id="1:1373" data-name="image 11">
-                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={brandIcons.linkedIn} />
+                            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={iconLinkedIn} />
                           </div>
                         </div>
                         <div className="content-stretch flex flex-col items-start relative shrink-0 w-full min-w-0" data-node-id="1:1374" data-name="Container">

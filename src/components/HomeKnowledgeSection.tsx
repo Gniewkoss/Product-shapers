@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import type { KnowledgeTeaserCardData } from "../lib/payload/homeFeaturedArticles";
 import { splitLines } from "../lib/payload/blockUtils";
 import { mediaUrl } from "../lib/payload/client";
-
-const imgKnowledgeTeaserArrow = "https://www.figma.com/api/mcp/asset/95d4461c-3559-429a-9376-21f687653a48";
+import iconArrow from "../assets/branding/arrow.svg";
 
 export function KnowledgeTeaserCard({
   c,
@@ -21,8 +20,11 @@ export function KnowledgeTeaserCard({
   const ctaInner = (
     <>
       <span>{ctaLabel}</span>
-      <span className="relative inline-block size-3 shrink-0">
-        <img alt="" className="absolute inset-0 block size-full max-w-none" src={imgKnowledgeTeaserArrow} />
+      <span
+        aria-hidden
+        className="inline-block size-3 shrink-0 bg-current"
+        style={{ WebkitMask: `url(${iconArrow}) center / contain no-repeat`, mask: `url(${iconArrow}) center / contain no-repeat` }}
+      >
       </span>
     </>
   );
