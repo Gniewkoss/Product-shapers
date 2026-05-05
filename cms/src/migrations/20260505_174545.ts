@@ -1,5 +1,19 @@
-import type { MigrateUpArgs, MigrateDownArgs } from 'payload'
 import { sql } from 'drizzle-orm'
+
+/**
+ * Minimal structural type for Payload migration arguments. Avoids coupling
+ * to either `@payloadcms/db-postgres` or `@payloadcms/db-sqlite` (both export
+ * `MigrateUpArgs`/`MigrateDownArgs` from `@payloadcms/drizzle/{dialect}`),
+ * which keeps this single migration file usable regardless of which adapter
+ * is active at build time. The runtime shape of `db` differs per adapter, so
+ * we type it as `unknown` and narrow inside `exec()`.
+ */
+type MigrateArgs = {
+  db: unknown
+  payload: { db: { name: string } }
+}
+type MigrateUpArgs = MigrateArgs
+type MigrateDownArgs = MigrateArgs
 
 /**
  * Schema-recovery migration: adds upload-relation columns and one text field
