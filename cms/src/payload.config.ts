@@ -23,7 +23,14 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 const cmsRoot = path.resolve(dirname, "..");
-const envFiles = [path.join(cmsRoot, ".env"), path.join(cmsRoot, ".env.local")];
+/** When true, merge `cms/.env.production` after `.env` (e.g. `npm run password-reset`). */
+const envProductionPath = path.join(cmsRoot, ".env.production");
+const useEnvProduction = process.env.PAYLOAD_USE_ENV_PRODUCTION === "true";
+const envFiles = [
+  path.join(cmsRoot, ".env"),
+  ...(useEnvProduction && fs.existsSync(envProductionPath) ? [envProductionPath] : []),
+  path.join(cmsRoot, ".env.local"),
+];
 if (envFiles.some((f) => fs.existsSync(f))) {
   for (const key of ["DATABASE_URI", "DATABASE_ADAPTER", "SQLITE_URL"]) {
     delete process.env[key];
