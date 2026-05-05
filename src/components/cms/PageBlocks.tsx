@@ -896,7 +896,8 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
       return <FounderSpotlightBlock key={index} f={f} />;
 
     case "testimonialsHome": {
-      const items = (f.items as { quote?: string; authorName?: string; role?: string; avatarUrl?: string }[]) ?? [];
+      const items =
+        (f.items as { quote?: string; authorName?: string; role?: string; avatarUrl?: string; linkedinLink?: string }[]) ?? [];
       return (
         <div key={index} className="w-full min-w-0 bg-[#f3f3f3]">
           <div className="content-stretch mx-auto flex min-w-0 max-w-content flex-col items-start px-4 py-[96px] sm:px-6 md:px-10 lg:px-[61px] relative shrink-0 w-full">
@@ -916,6 +917,8 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
                   const qLines = splitLines(String(it.quote ?? ""));
                   const av = cmsMedia(it.avatarUrl);
                   const spanThird = ii === 2 ? "md:col-span-2 lg:col-span-1" : "";
+                  const linkedinLink = String(it.linkedinLink ?? "").trim();
+                  const hasLinkedinLink = /^https?:\/\//i.test(linkedinLink);
                   return (
                     <div
                       key={ii}
@@ -941,19 +944,39 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
                               : null}
                             </div>
                           </div>
-                          <div className="flex min-w-0 flex-1 flex-col gap-[2px] items-start">
-                            <div className="flex min-w-0 gap-[7px] items-center">
-                              <div className="min-w-0 font-['Satoshi:Bold',sans-serif] text-[16px] tracking-[1.2px] text-[#022169] break-words">
-                                <p className="leading-[16px] m-0">{String(it.authorName)}</p>
+                          {hasLinkedinLink ?
+                            <a
+                              href={linkedinLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex min-w-0 flex-1 flex-col gap-[2px] items-start no-underline"
+                            >
+                              <div className="flex min-w-0 gap-[7px] items-center">
+                                <div className="min-w-0 font-['Satoshi:Bold',sans-serif] text-[16px] tracking-[1.2px] text-[#022169] break-words">
+                                  <p className="leading-[16px] m-0">{String(it.authorName)}</p>
+                                </div>
+                                <div className="relative shrink-0 size-[13px]">
+                                  <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={iconLinkedIn} />
+                                </div>
                               </div>
-                              <div className="relative shrink-0 size-[13px]">
-                                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={iconLinkedIn} />
+                              <p className="m-0 font-['Satoshi:Bold',sans-serif] text-[9px] uppercase leading-[13.5px] tracking-[1.8px] text-[color:var(--light-blue,#0083fe)] break-words">
+                                {String(it.role)}
+                              </p>
+                            </a>
+                          : <div className="flex min-w-0 flex-1 flex-col gap-[2px] items-start">
+                              <div className="flex min-w-0 gap-[7px] items-center">
+                                <div className="min-w-0 font-['Satoshi:Bold',sans-serif] text-[16px] tracking-[1.2px] text-[#022169] break-words">
+                                  <p className="leading-[16px] m-0">{String(it.authorName)}</p>
+                                </div>
+                                <div className="relative shrink-0 size-[13px]">
+                                  <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={iconLinkedIn} />
+                                </div>
                               </div>
+                              <p className="m-0 font-['Satoshi:Bold',sans-serif] text-[9px] uppercase leading-[13.5px] tracking-[1.8px] text-[color:var(--light-blue,#0083fe)] break-words">
+                                {String(it.role)}
+                              </p>
                             </div>
-                            <p className="m-0 font-['Satoshi:Bold',sans-serif] text-[9px] uppercase leading-[13.5px] tracking-[1.8px] text-[color:var(--light-blue,#0083fe)] break-words">
-                              {String(it.role)}
-                            </p>
-                          </div>
+                          }
                         </div>
                       </div>
                     </div>

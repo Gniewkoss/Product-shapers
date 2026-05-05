@@ -336,6 +336,7 @@ export const testimonialsHomeBlock: Block = {
         { name: "quote", type: "textarea", required: true },
         { name: "authorName", type: "text", required: true },
         { name: "role", type: "text", required: true },
+        { name: "linkedinLink", type: "text", label: "LinkedIn Link" },
         { name: "avatarUrl", type: "text" },
       ],
     },

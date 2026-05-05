@@ -132,6 +132,7 @@ export const seedHomeContinuationLayout = [
             '"Polecam współpracę z Dawidem, którego głębokie zrozumienie potrzeb klientów (JTBD) i Product<>Market Fit było kluczowe. Dzięki Shape Up wdrażaliśmy innowacji w terminie - problem, z którym boryka się większość firm. To niezwykle cenny partner w skracaniu czasu od pomysłu do wdrożenia."',
           authorName: "Filip",
           role: "Product Growth @DocPlanner",
+          linkedinLink: "",
           avatarUrl: IMG_T_FILIP,
         },
         {
@@ -139,6 +140,7 @@ export const seedHomeContinuationLayout = [
             '"Współpracowałam z Dawidem przez 2 lata - to ekspert, który doskonale lokalizuje prawdziwe potrzeby klientów i przekłada je na skuteczne rozwiązania produktowe. Dzięki Shape Up projekty wdrażane są na czas. Znacząco skrócił nam czas realizacji nowych funkcjonalności, co przełożyło się na wzrost firmy. Dzięki jego podejściu udało się nam unikać typowych opóźnień..."',
           authorName: "Agnieszka",
           role: "Head of Growth @Useme",
+          linkedinLink: "",
           avatarUrl: IMG_T_AGN,
         },
         {
@@ -146,6 +148,7 @@ export const seedHomeContinuationLayout = [
             '"Współpraca z Dawidem znacząco przyczyniła się do rozwoju kultury produktowej w organizacji. Dawid skutecznie wdrożył Shape Up, w tym m.in. sześciotygodniowe cykle pracy i autonomię zespołów. Dzięki temu udało się nam uporządkować sposób pracy, ograniczyć liczbę zbędnych ceremonii i regularnie dostarczać wartość w określonym czasie."',
           authorName: "Marta",
           role: "COO @Useme",
+          linkedinLink: "",
           avatarUrl: IMG_T_MARTA,
         },
       ],

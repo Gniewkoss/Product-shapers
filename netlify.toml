@@ -6,6 +6,18 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[[redirects]]
+  from = "/admin"
+  to = "https://product-shapers-cms.onrender.com/admin/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/admin/*"
+  to = "https://product-shapers-cms.onrender.com/admin/:splat"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/assets/*"
   [headers.values]

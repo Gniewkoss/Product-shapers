@@ -703,6 +703,7 @@ export interface SitePage {
                   quote: string;
                   authorName: string;
                   role: string;
+                  linkedinLink?: string | null;
                   avatarUrl?: string | null;
                   id?: string | null;
                 }[]
@@ -1371,6 +1372,7 @@ export interface SitePagesSelect<T extends boolean = true> {
                     quote?: T;
                     authorName?: T;
                     role?: T;
+                    linkedinLink?: T;
                     avatarUrl?: T;
                     id?: T;
                   };
@@ -1930,6 +1932,7 @@ export interface Homepage {
                   quote: string;
                   authorName: string;
                   role: string;
+                  linkedinLink?: string | null;
                   avatarUrl?: string | null;
                   id?: string | null;
                 }[]
@@ -2312,6 +2315,7 @@ export interface Homepage {
                   quote: string;
                   authorName: string;
                   role: string;
+                  linkedinLink?: string | null;
                   avatarUrl?: string | null;
                   id?: string | null;
                 }[]
@@ -2852,6 +2856,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     quote?: T;
                     authorName?: T;
                     role?: T;
+                    linkedinLink?: T;
                     avatarUrl?: T;
                     id?: T;
                   };
@@ -3218,6 +3223,7 @@ export interface HomepageSelect<T extends boolean = true> {
                     quote?: T;
                     authorName?: T;
                     role?: T;
+                    linkedinLink?: T;
                     avatarUrl?: T;
                     id?: T;
                   };

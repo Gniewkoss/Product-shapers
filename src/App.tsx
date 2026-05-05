@@ -8,6 +8,14 @@ import { HiringPage } from "./pages/HiringPage";
 import { SzkoleniaMain } from "./pages/SzkoleniaMain";
 import { UsemeMain } from "./pages/UsemeMain";
 
+function AdminRedirect() {
+  useEffect(() => {
+    window.location.replace("https://product-shapers-cms.onrender.com/admin/");
+  }, []);
+
+  return null;
+}
+
 function ScrollToTopOnRouteChange() {
   const { pathname } = useLocation();
 
@@ -31,6 +39,7 @@ export default function App() {
           <Route path="artykuly" element={<ArticlesMain />} />
           <Route path="artykuly/:slug" element={<ArticlePage />} />
         </Route>
+        <Route path="admin" element={<AdminRedirect />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
