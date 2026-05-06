@@ -5,7 +5,7 @@
  * - `/api/*`, `/media/*` → proxy do CMS_ORIGIN (200), jeśli ustawione.
  *
  * CMS_ORIGIN=https://twoj-backend.onrender.com (bez końcowego /).
- * Opcjonalnie ADMIN_REDIRECT_URL — pełny URL panelu (domyślnie `${CMS_ORIGIN}/admin`).
+ * Opcjonalnie ADMIN_REDIRECT_URL — URL panelu. Jeśli podasz sam host CMS, skrypt dopnie `/admin`.
  * Bez CMS_ORIGIN — opcjonalnie tylko ADMIN_REDIRECT_URL dla /admin; zawsze SPA fallback na końcu.
  */
 import fs from "fs";
@@ -19,10 +19,16 @@ const outFile = path.join(pub, "_redirects");
 
 const cmsOrigin = (process.env.CMS_ORIGIN ?? "").trim().replace(/\/$/, "");
 const adminRedirectRaw = (process.env.ADMIN_REDIRECT_URL ?? "").trim().replace(/\/$/, "");
-const adminRedirectBase =
-  adminRedirectRaw ? adminRedirectRaw
-  : cmsOrigin ? `${cmsOrigin}/admin`
-  : "";
+
+function normalizeAdminBase(url) {
+  if (!url) return "";
+  if (/\/admin(?:\/|$)/.test(url)) return url;
+  return `${url}/admin`;
+}
+
+const adminRedirectBase = normalizeAdminBase(
+  adminRedirectRaw ? adminRedirectRaw : cmsOrigin,
+);
 
 if (!fs.existsSync(pub)) {
   fs.mkdirSync(pub, { recursive: true });

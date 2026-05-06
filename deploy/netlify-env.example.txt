@@ -1,5 +1,7 @@
 # Netlify (marketing / frontend) — Site configuration → Environment variables
 # CMS_ORIGIN = publiczny URL serwisu Web Payload na Renderze („Copy URL” z dashboardu), BEZ końcowego /
 # (jedna witryna Netlify; CMS działa na Renderze — patrz DEPLOY-NETLIFY.md)
+# ADMIN_REDIRECT_URL (opcjonalnie) = URL panelu admin; jeśli bez /admin, skrypt dopnie ten segment automatycznie.
 
 CMS_ORIGIN=https://product-shapers-cms-xxxx.onrender.com
+# ADMIN_REDIRECT_URL=https://product-shapers-cms-xxxx.onrender.com/admin

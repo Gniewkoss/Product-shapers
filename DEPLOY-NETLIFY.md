@@ -83,6 +83,7 @@ Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.exa
 | Zmienna | Opis |
 |---------|------|
 | `CMS_ORIGIN` | Pełny URL serwisu CMS na Render **bez** `/`, np. `https://product-shapers-cms-xxxx.onrender.com` |
+| `ADMIN_REDIRECT_URL` | Opcjonalnie jawny URL panelu admin. Możesz podać host CMS (`https://...onrender.com`) lub pełne `.../admin` — generator dopnie `/admin`, jeśli brakuje |
 
 **Build:** `npm run build:netlify` — generuje `public/_redirects` i buduje Vite.
 
