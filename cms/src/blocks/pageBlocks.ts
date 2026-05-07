@@ -157,8 +157,10 @@ export const szkoleniaWhyShapeUpBlock: Block = {
       name: "accentTileImage",
       type: "upload",
       relationTo: "media",
+      label: "Zdjęcie w zielonym kafelku (prawy dolny)",
       admin: {
-        description: "Obraz w prawym dolnym kafelku (zamiast zielonego pola). Opcjonalny — bez pliku zostaje układ demonstracyjny.",
+        description:
+          "Wgraj zdjęcie, które pojawi się w zielonym kafelku z zaokrąglonym górnym rogiem. Bez pliku wyświetla się sam zielony box (placeholder).",
       },
     },
   ],

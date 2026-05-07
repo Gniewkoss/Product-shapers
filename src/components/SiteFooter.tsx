@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useSitePayload } from "../context/SitePayloadContext";
-import { imgLogoLockup } from "../figma/brandAssets";
+import logo from "../assets/branding/logo.svg";
 
 const footerColumns = [
   {
@@ -153,7 +153,7 @@ export function SiteFooter() {
                 <img
                   alt="Product Shapers Consulting"
                   className="block h-full w-full max-w-none object-contain object-left brightness-0 invert"
-                  src={imgLogoLockup}
+                  src={logo}
                   width={205}
                   height={50}
                   decoding="async"

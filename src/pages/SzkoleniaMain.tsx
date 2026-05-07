@@ -3,6 +3,7 @@ import { type SzkoleniaWhyShapeUpProps, SzkoleniaWhyShapeUpFidelity } from "../c
 import { useSitePayload } from "../context/SitePayloadContext";
 import { fourLinesPad, getBlockFields, splitLines, type PayloadLayoutBlock } from "../lib/payload/blockUtils";
 import { uploadRefMedia } from "../lib/payload/client";
+import dataNarrativesIcon from "../assets/branding/data-narratives.png";
 
 const WHY_SHAPE_UP_FALLBACK: SzkoleniaWhyShapeUpProps = {
   titleLine1: "Dlaczego",
@@ -52,7 +53,6 @@ function whyShapeUpPropsFromLayout(layout: PayloadLayoutBlock[] | undefined): Sz
   };
 }
 
-const imgContainer = "https://www.figma.com/api/mcp/asset/f3b460a1-e46e-48d6-8719-40d762e6f75d";
 function SzkoleniaMainFallback({
   faqItems,
   layout,
@@ -268,8 +268,14 @@ function SzkoleniaMainFallback({
                 </div>
               </div>
               <div className="content-stretch flex flex-col items-start pt-[32px] relative shrink-0 w-full" data-node-id="1:206" data-name="Margin">
-                <div className="h-[25.5px] relative shrink-0 w-full" data-node-id="1:207" data-name="Container">
-                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgContainer} />
+                <div className="relative h-[32px] w-full shrink-0" data-node-id="1:207" data-name="Container">
+                  <img
+                    alt=""
+                    aria-hidden
+                    className="block h-full w-auto object-contain object-left"
+                    src={dataNarrativesIcon}
+                    decoding="async"
+                  />
                 </div>
               </div>
             </div>
