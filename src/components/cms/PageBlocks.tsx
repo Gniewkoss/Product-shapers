@@ -562,6 +562,9 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
       const dTop = (f.darkCardTop as Record<string, unknown>) ?? {};
       const dBot = (f.darkCardBottom as Record<string, unknown>) ?? {};
       const stat = (f.statCell as Record<string, unknown>) ?? {};
+      const lightAvatarUrl = cmsMediaEither(light.avatarUrl, light.avatar);
+      const darkTopAvatarUrl = cmsMediaEither(dTop.avatarUrl, dTop.avatar);
+      const darkBottomAvatarUrl = cmsMediaEither(dBot.avatarUrl, dBot.avatar);
       return (
         <UsemeBentoFidelity
           key={index}
@@ -569,10 +572,18 @@ function renderOneBlock(block: PayloadLayoutBlock, index: number): ReactNode {
           lightInitials={String(light.avatarInitials ?? "MP")}
           lightName={String(light.authorName ?? "")}
           lightRole={String(light.role ?? "")}
+          lightAvatarUrl={lightAvatarUrl || undefined}
+          lightLinkedinLink={light.linkedinLink ? String(light.linkedinLink) : undefined}
           darkTopName={dTop.authorName ? String(dTop.authorName) : undefined}
           darkTopRole={dTop.role ? String(dTop.role) : undefined}
+          darkTopInitials={dTop.avatarInitials ? String(dTop.avatarInitials) : undefined}
+          darkTopAvatarUrl={darkTopAvatarUrl || undefined}
+          darkTopLinkedinLink={dTop.linkedinLink ? String(dTop.linkedinLink) : undefined}
           darkBottomName={dBot.authorName ? String(dBot.authorName) : undefined}
           darkBottomRole={dBot.role ? String(dBot.role) : undefined}
+          darkBottomInitials={dBot.avatarInitials ? String(dBot.avatarInitials) : undefined}
+          darkBottomAvatarUrl={darkBottomAvatarUrl || undefined}
+          darkBottomLinkedinLink={dBot.linkedinLink ? String(dBot.linkedinLink) : undefined}
           darkTopLines={splitLines(String(dTop.quote ?? ""))}
           darkBottomLines={splitLines(String(dBot.quote ?? ""))}
           statValue={String(stat.value ?? "")}

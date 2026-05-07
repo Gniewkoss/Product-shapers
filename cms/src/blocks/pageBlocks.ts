@@ -438,6 +438,14 @@ export const usemeBentoResultsBlock: Block = {
         { name: "authorName", type: "text", required: true },
         { name: "role", type: "text", required: true },
         { name: "avatarInitials", type: "text" },
+        { name: "linkedinLink", type: "text", label: "LinkedIn Link" },
+        { name: "avatarUrl", type: "text" },
+        {
+          name: "avatar",
+          type: "upload",
+          relationTo: "media",
+          admin: { description: "Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione." },
+        },
       ],
     },
     {
@@ -447,6 +455,15 @@ export const usemeBentoResultsBlock: Block = {
         { name: "quote", type: "textarea", required: true },
         { name: "authorName", type: "text", required: true },
         { name: "role", type: "text", required: true },
+        { name: "avatarInitials", type: "text" },
+        { name: "linkedinLink", type: "text", label: "LinkedIn Link" },
+        { name: "avatarUrl", type: "text" },
+        {
+          name: "avatar",
+          type: "upload",
+          relationTo: "media",
+          admin: { description: "Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione." },
+        },
       ],
     },
     {
@@ -456,6 +473,15 @@ export const usemeBentoResultsBlock: Block = {
         { name: "quote", type: "textarea", required: true },
         { name: "authorName", type: "text", required: true },
         { name: "role", type: "text", required: true },
+        { name: "avatarInitials", type: "text" },
+        { name: "linkedinLink", type: "text", label: "LinkedIn Link" },
+        { name: "avatarUrl", type: "text" },
+        {
+          name: "avatar",
+          type: "upload",
+          relationTo: "media",
+          admin: { description: "Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione." },
+        },
       ],
     },
     {

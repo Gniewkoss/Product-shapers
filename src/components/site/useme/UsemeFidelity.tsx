@@ -442,10 +442,18 @@ export function UsemeBentoFidelity({
   lightInitials,
   lightName,
   lightRole,
+  lightAvatarUrl,
+  lightLinkedinLink,
   darkTopName,
   darkTopRole,
+  darkTopInitials,
+  darkTopAvatarUrl,
+  darkTopLinkedinLink,
   darkBottomName,
   darkBottomRole,
+  darkBottomInitials,
+  darkBottomAvatarUrl,
+  darkBottomLinkedinLink,
   darkTopLines,
   darkBottomLines,
   statValue,
@@ -455,10 +463,18 @@ export function UsemeBentoFidelity({
   lightInitials: string;
   lightName: string;
   lightRole: string;
+  lightAvatarUrl?: string;
+  lightLinkedinLink?: string;
   darkTopName?: string;
   darkTopRole?: string;
+  darkTopInitials?: string;
+  darkTopAvatarUrl?: string;
+  darkTopLinkedinLink?: string;
   darkBottomName?: string;
   darkBottomRole?: string;
+  darkBottomInitials?: string;
+  darkBottomAvatarUrl?: string;
+  darkBottomLinkedinLink?: string;
   darkTopLines: string[];
   darkBottomLines: string[];
   statValue: string;
@@ -468,6 +484,12 @@ export function UsemeBentoFidelity({
   const dTopRole = darkTopRole ?? lightRole;
   const dBottomName = darkBottomName ?? darkTopName ?? lightName;
   const dBottomRole = darkBottomRole ?? darkTopRole ?? lightRole;
+  const dTopInitials = darkTopInitials ?? lightInitials;
+  const dBottomInitials = darkBottomInitials ?? darkTopInitials ?? lightInitials;
+  const isHttpUrl = (s?: string) => /^https?:\/\//i.test((s ?? "").trim());
+  const lightHasLink = isHttpUrl(lightLinkedinLink);
+  const darkTopHasLink = isHttpUrl(darkTopLinkedinLink);
+  const darkBottomHasLink = isHttpUrl(darkBottomLinkedinLink);
   return (
     <div
       className="bg-[#eee] content-stretch flex w-full shrink-0 flex-col items-center px-4 sm:px-6 md:px-10 lg:px-[61px] py-[96px] relative"
@@ -500,35 +522,62 @@ export function UsemeBentoFidelity({
             <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex flex-col items-start relative size-full">
               <div className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full" data-node-id="1:620" data-name="Container">
                 <div
-                  className="bg-[rgba(2,33,105,0.05)] border border-[rgba(2,33,105,0.1)] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[40px]"
+                  className="bg-[rgba(2,33,105,0.05)] border border-[rgba(2,33,105,0.1)] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[40px] overflow-hidden"
                   data-node-id="1:621"
                   data-name="Overlay+Border"
                 >
-                  <div
-                    className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[12px] text-center w-[15.86px]"
-                    data-node-id="1:622"
+                  {lightAvatarUrl ?
+                    <img
+                      alt={lightName}
+                      className="absolute inset-0 size-full object-cover pointer-events-none"
+                      src={lightAvatarUrl}
+                    />
+                  : <div
+                      className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[12px] text-center w-[15.86px]"
+                      data-node-id="1:622"
+                    >
+                      <p className="leading-[16px]">{lightInitials}</p>
+                    </div>
+                  }
+                </div>
+                {lightHasLink ?
+                  <a
+                    href={lightLinkedinLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-[166px] no-underline"
+                    aria-label={`LinkedIn: ${lightName}`}
                   >
-                    <p className="leading-[16px]">{lightInitials}</p>
-                  </div>
-                </div>
-                <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-[166px]" data-node-id="1:623" data-name="Container">
-                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:624" data-name="Container">
-                    <div
-                      className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] w-full"
-                      data-node-id="1:625"
-                    >
-                      <p className="leading-[16px]">{lightName}</p>
+                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                      <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] w-full">
+                        <p className="leading-[16px]">{lightName}</p>
+                      </div>
+                    </div>
+                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                      <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase w-[105.83px]">
+                        <p className="leading-[13.5px]">{lightRole}</p>
+                      </div>
+                    </div>
+                  </a>
+                : <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 w-[166px]" data-node-id="1:623" data-name="Container">
+                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:624" data-name="Container">
+                      <div
+                        className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#022169] text-[16px] tracking-[1.2px] w-full"
+                        data-node-id="1:625"
+                      >
+                        <p className="leading-[16px]">{lightName}</p>
+                      </div>
+                    </div>
+                    <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:626" data-name="Container">
+                      <div
+                        className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase w-[105.83px]"
+                        data-node-id="1:627"
+                      >
+                        <p className="leading-[13.5px]">{lightRole}</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:626" data-name="Container">
-                    <div
-                      className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--light-blue,#0083fe)] tracking-[1.8px] uppercase w-[105.83px]"
-                      data-node-id="1:627"
-                    >
-                      <p className="leading-[13.5px]">{lightRole}</p>
-                    </div>
-                  </div>
-                </div>
+                }
               </div>
             </div>
           </div>
@@ -555,35 +604,62 @@ export function UsemeBentoFidelity({
           <div className="content-stretch flex flex-col min-h-[40px] items-start relative shrink-0 w-full min-w-0" data-node-id="1:632" data-name="Footer">
             <div className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full" data-node-id="1:633" data-name="Container">
               <div
-                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[40px]"
+                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[40px] overflow-hidden"
                 data-node-id="1:634"
                 data-name="Overlay+Border"
               >
-                <div
-                  className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-center text-white w-[15.86px]"
-                  data-node-id="1:635"
+                {darkTopAvatarUrl ?
+                  <img
+                    alt={dTopName}
+                    className="absolute inset-0 size-full object-cover pointer-events-none"
+                    src={darkTopAvatarUrl}
+                  />
+                : <div
+                    className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-center text-white w-[15.86px]"
+                    data-node-id="1:635"
+                  >
+                    <p className="leading-[16px]">{dTopInitials}</p>
+                  </div>
+                }
+              </div>
+              {darkTopHasLink ?
+                <a
+                  href={darkTopLinkedinLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 min-w-0 flex-1 no-underline"
+                  aria-label={`LinkedIn: ${dTopName}`}
                 >
-                  <p className="leading-[16px]">MP</p>
-                </div>
-              </div>
-              <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 min-w-0 flex-1" data-node-id="1:636" data-name="Container">
-                <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:637" data-name="Container">
-                  <div
-                    className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white tracking-[1.2px] w-full"
-                    data-node-id="1:638"
-                  >
-                    <p className="leading-[16px]">{dTopName}</p>
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white tracking-[1.2px] w-full">
+                      <p className="leading-[16px]">{dTopName}</p>
+                    </div>
+                  </div>
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--green,#82ffba)] tracking-[1.8px] uppercase w-[105.83px]">
+                      <p className="leading-[13.5px]">{dTopRole}</p>
+                    </div>
+                  </div>
+                </a>
+              : <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 min-w-0 flex-1" data-node-id="1:636" data-name="Container">
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:637" data-name="Container">
+                    <div
+                      className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white tracking-[1.2px] w-full"
+                      data-node-id="1:638"
+                    >
+                      <p className="leading-[16px]">{dTopName}</p>
+                    </div>
+                  </div>
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:639" data-name="Container">
+                    <div
+                      className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--green,#82ffba)] tracking-[1.8px] uppercase w-[105.83px]"
+                      data-node-id="1:640"
+                    >
+                      <p className="leading-[13.5px]">{dTopRole}</p>
+                    </div>
                   </div>
                 </div>
-                <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:639" data-name="Container">
-                  <div
-                    className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--green,#82ffba)] tracking-[1.8px] uppercase w-[105.83px]"
-                    data-node-id="1:640"
-                  >
-                    <p className="leading-[13.5px]">{dTopRole}</p>
-                  </div>
-                </div>
-              </div>
+              }
             </div>
           </div>
         </div>
@@ -609,35 +685,62 @@ export function UsemeBentoFidelity({
           <div className="content-stretch flex flex-col min-h-[40px] items-start relative shrink-0 w-full min-w-0" data-node-id="1:645" data-name="Footer">
             <div className="content-stretch flex gap-[16px] items-center relative shrink-0 w-full" data-node-id="1:646" data-name="Container">
               <div
-                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[40px]"
+                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] border-solid content-stretch flex items-center justify-center p-px relative rounded-[12px] shrink-0 size-[40px] overflow-hidden"
                 data-node-id="1:647"
                 data-name="Overlay+Border"
               >
-                <div
-                  className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-center text-white w-[15.86px]"
-                  data-node-id="1:648"
+                {darkBottomAvatarUrl ?
+                  <img
+                    alt={dBottomName}
+                    className="absolute inset-0 size-full object-cover pointer-events-none"
+                    src={darkBottomAvatarUrl}
+                  />
+                : <div
+                    className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[16px] justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-center text-white w-[15.86px]"
+                    data-node-id="1:648"
+                  >
+                    <p className="leading-[16px]">{dBottomInitials}</p>
+                  </div>
+                }
+              </div>
+              {darkBottomHasLink ?
+                <a
+                  href={darkBottomLinkedinLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 min-w-0 flex-1 no-underline"
+                  aria-label={`LinkedIn: ${dBottomName}`}
                 >
-                  <p className="leading-[16px]">MP</p>
-                </div>
-              </div>
-              <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 min-w-0 flex-1" data-node-id="1:649" data-name="Container">
-                <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:650" data-name="Container">
-                  <div
-                    className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white tracking-[1.2px] w-full"
-                    data-node-id="1:651"
-                  >
-                    <p className="leading-[16px]">{dBottomName}</p>
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white tracking-[1.2px] w-full">
+                      <p className="leading-[16px]">{dBottomName}</p>
+                    </div>
+                  </div>
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
+                    <div className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--green,#82ffba)] tracking-[1.8px] uppercase w-[105.83px]">
+                      <p className="leading-[13.5px]">{dBottomRole}</p>
+                    </div>
+                  </div>
+                </a>
+              : <div className="content-stretch flex flex-col gap-[2px] items-start relative shrink-0 min-w-0 flex-1" data-node-id="1:649" data-name="Container">
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:650" data-name="Container">
+                    <div
+                      className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white tracking-[1.2px] w-full"
+                      data-node-id="1:651"
+                    >
+                      <p className="leading-[16px]">{dBottomName}</p>
+                    </div>
+                  </div>
+                  <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:652" data-name="Container">
+                    <div
+                      className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--green,#82ffba)] tracking-[1.8px] uppercase w-[105.83px]"
+                      data-node-id="1:653"
+                    >
+                      <p className="leading-[13.5px]">{dBottomRole}</p>
+                    </div>
                   </div>
                 </div>
-                <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="1:652" data-name="Container">
-                  <div
-                    className="flex flex-col font-['Satoshi:Bold',sans-serif] h-[14px] justify-center leading-[0] not-italic relative shrink-0 text-[9px] text-[color:var(--green,#82ffba)] tracking-[1.8px] uppercase w-[105.83px]"
-                    data-node-id="1:653"
-                  >
-                    <p className="leading-[13.5px]">{dBottomRole}</p>
-                  </div>
-                </div>
-              </div>
+              }
             </div>
           </div>
         </div>
