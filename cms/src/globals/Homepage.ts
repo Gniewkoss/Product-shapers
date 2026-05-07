@@ -11,7 +11,7 @@ export const Homepage: GlobalConfig = {
     update: ({ req: { user } }) => Boolean(user),
   },
   hooks: {
-    afterChange: [async () => postRevalidate({ global: "homepage" })],
+    afterChange: [async ({ req }) => postRevalidate(req.payload, { global: "homepage" })],
   },
   fields: [
     {

@@ -13,7 +13,7 @@ export function isAbortError(e: unknown): boolean {
 
 async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   const url = `${payloadApiPrefix()}${path.startsWith("/") ? path : `/${path}`}`;
-  const res = await fetch(url, { cache: "no-store", signal });
+  const res = await fetch(url, { cache: "no-store", credentials: "omit", signal });
   if (!res.ok) {
     throw new Error(`Payload ${res.status} ${res.statusText}: ${url}`);
   }
@@ -133,7 +133,11 @@ export async function getPublishedArticles(depth = 2, limit = 200, signal?: Abor
 }
 
 export async function getArticleBySlug(slug: string, depth = 2, signal?: AbortSignal): Promise<Article | null> {
-  const where = encodeURIComponent(JSON.stringify({ slug: { equals: slug } }));
+  const where = encodeURIComponent(
+    JSON.stringify({
+      and: [{ slug: { equals: slug } }, { status: { equals: "published" } }],
+    }),
+  );
   try {
     const json = await fetchJson<unknown>(`/articles?limit=1&depth=${depth}&where=${where}`, signal);
     const docs = collectionDocs<Article>(json);

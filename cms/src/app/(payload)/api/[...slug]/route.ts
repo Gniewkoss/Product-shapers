@@ -9,6 +9,9 @@ import {
   REST_PUT,
 } from "@payloadcms/next/routes";
 
+/** Published REST reads must not be cached as “anonymous CDN” or ISR snapshots — guests need live published docs. */
+export const dynamic = "force-dynamic";
+
 export const GET = REST_GET(config);
 export const POST = REST_POST(config);
 export const DELETE = REST_DELETE(config);

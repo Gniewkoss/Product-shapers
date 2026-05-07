@@ -10,7 +10,7 @@ export const Navigation: GlobalConfig = {
     update: ({ req: { user } }) => Boolean(user),
   },
   hooks: {
-    afterChange: [async () => postRevalidate({ global: "navigation" })],
+    afterChange: [async ({ req }) => postRevalidate(req.payload, { global: "navigation" })],
   },
   fields: [
     {

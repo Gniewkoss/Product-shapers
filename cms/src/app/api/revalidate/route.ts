@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getPayload } from "payload";
+
+import config from "@payload-config";
 
 import { bumpContentVersion } from "../../../lib/contentVersion";
+
+export const dynamic = "force-dynamic";
 
 /**
  * Authenticated webhook-style endpoint (CDN purge, CI). Hooks bump via `postRevalidate` directly;
@@ -18,7 +23,8 @@ export async function POST(req: NextRequest) {
     /* body optional */
   }
 
-  const version = bumpContentVersion();
+  const payload = await getPayload({ config });
+  const version = await bumpContentVersion(payload);
 
   return NextResponse.json({ revalidated: true, version });
 }

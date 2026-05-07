@@ -35,7 +35,7 @@ const defaultState: SitePayloadState = {
   error: null,
 };
 
-const CACHE_KEY = "psc_cms_v1";
+const CACHE_KEY = "psc_cms_v2";
 /** CMS nie odpowiada → bez tego UI zostaje w loading na zawsze (fetch bez timeoutu). */
 const CMS_BOOT_TIMEOUT_MS = 35_000;
 
@@ -140,7 +140,7 @@ export function SitePayloadProvider({ children }: { children: ReactNode }) {
         const ctrl = new AbortController();
         const tid = window.setTimeout(() => ctrl.abort(), 10_000);
         try {
-          const res = await fetch(url, { cache: "no-store", signal: ctrl.signal });
+          const res = await fetch(url, { cache: "no-store", credentials: "omit", signal: ctrl.signal });
           if (!res.ok || cancelled) return;
           const data = (await res.json()) as { version?: unknown };
           const version = typeof data.version === "number" ? data.version : 0;

@@ -10,7 +10,7 @@ export const Footer: GlobalConfig = {
     update: ({ req: { user } }) => Boolean(user),
   },
   hooks: {
-    afterChange: [async () => postRevalidate({ global: "footer" })],
+    afterChange: [async ({ req }) => postRevalidate(req.payload, { global: "footer" })],
   },
   fields: [
     { name: "companyName", type: "text" },

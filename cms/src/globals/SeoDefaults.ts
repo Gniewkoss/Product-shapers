@@ -10,7 +10,7 @@ export const SeoDefaults: GlobalConfig = {
     update: ({ req: { user } }) => Boolean(user),
   },
   hooks: {
-    afterChange: [async () => postRevalidate({ global: "seo-defaults" })],
+    afterChange: [async ({ req }) => postRevalidate(req.payload, { global: "seo-defaults" })],
   },
   fields: [
     { name: "siteName", type: "text" },

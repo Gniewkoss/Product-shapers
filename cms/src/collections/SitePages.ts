@@ -16,10 +16,10 @@ export const SitePages: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      async ({ doc }) => {
+      async ({ doc, req }) => {
         const routeKey =
           doc && typeof doc === "object" && "routeKey" in doc ? String((doc as { routeKey?: string }).routeKey) : "";
-        if (routeKey) await postRevalidate({ collection: "site-pages", slug: routeKey });
+        if (routeKey) await postRevalidate(req.payload, { collection: "site-pages", slug: routeKey });
       },
     ],
   },

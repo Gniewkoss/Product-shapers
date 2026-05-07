@@ -15,9 +15,12 @@ export const Articles: CollectionConfig = {
   admin: { useAsTitle: "title", defaultColumns: ["title", "slug", "status", "publishedAt"] },
   hooks: {
     afterChange: [
-      async ({ doc }) => {
+      async ({ doc, req }) => {
         if (doc && typeof doc === "object" && "slug" in doc) {
-          await postRevalidate({ collection: "articles", slug: String((doc as { slug?: string }).slug) });
+          await postRevalidate(req.payload, {
+            collection: "articles",
+            slug: String((doc as { slug?: string }).slug),
+          });
         }
       },
     ],
