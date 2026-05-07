@@ -1,5 +1,6 @@
 /** Local brand SVGs (Vite resolves to hashed asset URLs). */
 import iconArrow from "../assets/branding/arrow.svg";
+import iconArrowDark from "../assets/branding/arrow rightsvg.svg";
 import iconPlus from "../assets/branding/+.svg";
 import iconCyrkiel from "../assets/branding/Cyrkiel.svg";
 import iconEcommerce from "../assets/branding/Ecomerce.svg";
@@ -16,6 +17,7 @@ import iconStepByStep from "../assets/branding/stepbystep.svg";
 
 export const brandIcons = {
   arrow: iconArrow,
+  arrowDark: iconArrowDark,
   plus: iconPlus,
   cyrkiel: iconCyrkiel,
   ecommerce: iconEcommerce,

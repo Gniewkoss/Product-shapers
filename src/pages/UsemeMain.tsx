@@ -5,7 +5,7 @@ const imgFinancialTechnologyInterface = "https://www.figma.com/api/mcp/asset/0eb
 function UsemeMainFallback() {
   return (
     <div className="content-stretch relative size-full flex flex-col items-center bg-[#f9f9f9] pb-[3.66px]" data-node-id="1:515" data-name="Useme(Desktop) - Brand Strict">
-      <div className="content-stretch flex flex-col items-center pt-[110px] relative shrink-0 w-full" data-node-id="1:516" data-name="Main">
+      <div className="flex flex-col items-center pt-[80px] relative w-full md:pt-[100px]">
         <div className="w-full min-w-0 bg-white">
         <div className="relative mx-auto flex w-full min-w-0 max-w-content flex-col items-start shrink-0 bg-white px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:px-[61px] lg:py-[96px]" data-node-id="1:517" data-name="Hero Section">
           <div className="relative mx-auto grid w-full grid-cols-[repeat(12,minmax(0,1fr))] grid-rows-[auto] gap-x-8 gap-y-8 shrink-0">

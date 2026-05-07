@@ -2,14 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
+/* ─────────────────────────────────────────────
+   Design tokens
+   ───────────────────────────────────────────── */
+:root {
+  --color-navy: #000f3d;
+  --color-dark-blue: #022169;
+  --color-blue: #032796;
+  --color-light-blue: #0083fe;
+  --color-green: #7dfab6;
+  --color-text: #444651;
+  --color-muted: #757682;
+  --color-border: rgba(197, 197, 210, 0.3);
+
+  --shadow-card: 0 1px 3px rgba(2, 33, 105, 0.06), 0 4px 16px rgba(2, 33, 105, 0.08);
+  --shadow-card-hover: 0 4px 6px rgba(2, 33, 105, 0.06), 0 16px 40px rgba(2, 33, 105, 0.14);
+  --shadow-nav: 0 1px 0 rgba(0, 0, 0, 0.06), 0 4px 16px rgba(2, 33, 105, 0.04);
+
+  /* Aliases kept for legacy inline styles */
+  --dark-blue: var(--color-dark-blue);
+  --light-blue: var(--color-light-blue);
+  --font: var(--color-navy);
+  --white: #fff;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  [data-accordion-height] {
-    transition-duration: 0.01ms !important;
-  }
+/* ─────────────────────────────────────────────
+   Base resets
+   ───────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 #root {
@@ -26,6 +47,9 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* ─────────────────────────────────────────────
+   Cursor semantics
+   ───────────────────────────────────────────── */
 @layer base {
   a[href],
   button:not(:disabled),
@@ -37,17 +61,16 @@ body {
   summary {
     cursor: pointer;
   }
+
   :disabled,
   [aria-disabled="true"] {
     cursor: not-allowed;
   }
 }
 
-/*
-  Primary: Satoshi (headings, nav, UI, anything with Figma [Satoshi:*] in class or .font-sans).
-  Secondary: Erode (body copy in <p>, matching Figma Erode:Regular / Erode:Medium).
-  Both fonts on Fontshare include Latin Extended (Polish diacritics) when the source is UTF-8.
-*/
+/* ─────────────────────────────────────────────
+   Typography — Satoshi (sans) + Erode (serif)
+   ───────────────────────────────────────────── */
 #root,
 #root * {
   font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif;
@@ -57,33 +80,131 @@ body {
   font-family: "Erode", Georgia, ui-serif, serif;
 }
 
-#root p[class*="Satoshi"],
-#root p [class*="Satoshi"] {
-  font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif !important;
-}
-
-#root [class*="Satoshi"] p,
+/* Override serif back to sans when explicitly requested */
 #root p.font-sans,
-#root .font-sans {
+#root .font-sans,
+#root .font-sans p {
   font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif !important;
 }
 
-/* Explicit Satoshi role classes from export (weight via utility) */
+/* Figma export pattern: <p> with Satoshi class, or <p> inside a Satoshi-classed parent */
+#root p[class*="Satoshi"],
+#root p [class*="Satoshi"],
+#root [class*="Satoshi"] p {
+  font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Figma export weight helpers */
 .font-\[\'Satoshi\:Bold\'\,sans-serif\] {
   font-weight: 700 !important;
+  font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif !important;
 }
 .font-\[\'Satoshi\:Medium\'\,sans-serif\] {
   font-weight: 500 !important;
+  font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif !important;
+}
+.font-\[\'Erode\:Regular\'\,serif\] {
+  font-weight: 400 !important;
+  font-family: "Erode", Georgia, ui-serif, serif !important;
 }
 
+/* ─────────────────────────────────────────────
+   Reduced motion
+   ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  [data-accordion-height] {
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-slide-down,
+  .animate-scale-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Scroll reveal
+   ───────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Staggered children */
+.reveal-stagger > *:nth-child(1) { transition-delay: 0ms; }
+.reveal-stagger > *:nth-child(2) { transition-delay: 80ms; }
+.reveal-stagger > *:nth-child(3) { transition-delay: 160ms; }
+.reveal-stagger > *:nth-child(4) { transition-delay: 240ms; }
+
+/* ─────────────────────────────────────────────
+   Section spacing utility
+   ───────────────────────────────────────────── */
+@layer utilities {
+  .section-py {
+    padding-top: clamp(3.5rem, 8vw, 6rem);
+    padding-bottom: clamp(3.5rem, 8vw, 6rem);
+  }
+
+  .section-px {
+    padding-left: clamp(1rem, 4vw, 3.8125rem);
+    padding-right: clamp(1rem, 4vw, 3.8125rem);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Mobile nav transition helper
+   ───────────────────────────────────────────── */
+.mobile-menu-enter {
+  animation: slide-down 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Components
+   ───────────────────────────────────────────── */
 @layer components {
-  /* Articles listing: 1-col mobile → 2-col tablet → 12-col bento desktop */
+
+  /* ── Article grid ── */
   .article-cycle-grid {
     display: grid;
     grid-template-columns: repeat(1, minmax(0, 1fr));
     grid-auto-flow: dense;
-    gap: 24px;
+    gap: 20px;
     align-items: stretch;
+  }
+
+  @media (min-width: 640px) {
+    .article-cycle-grid {
+      gap: 24px;
+    }
   }
 
   @media (min-width: 768px) {
@@ -95,55 +216,57 @@ body {
   @media (min-width: 1024px) {
     .article-cycle-grid {
       grid-template-columns: repeat(12, minmax(0, 1fr));
-      gap: 32px;
+      gap: 28px;
     }
   }
 
+  /* ── Article card ── */
   .article-card {
     height: 100%;
     min-width: 0;
-    border-radius: 0;
-    border: 1px solid #d9dbe3;
+    border-radius: 12px;
+    border: 1px solid #e2e5ee;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     transition:
-      transform 200ms ease,
-      box-shadow 200ms ease;
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .article-card {
-      animation: article-card-enter 0.35s ease-out both;
+      animation: article-card-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
   }
 
   .article-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 28px rgba(2, 33, 105, 0.14);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
   }
 
   .article-card--light {
-    background: #f3f3f3;
-    border-color: #d9dbe3;
+    background: #fafafa;
+    border-color: #e2e5ee;
   }
 
   .article-card--dark {
-    background: #000f3d;
-    border-color: #022169;
+    background: var(--color-navy);
+    border-color: var(--color-dark-blue);
     color: #fff;
   }
 
   .article-card--accent {
-    background: #82ffba;
+    background: var(--color-green);
     border-color: #66e8ae;
-    color: #000f3d;
+    color: var(--color-navy);
   }
 
   .article-card__media-wrap {
     order: 0;
     width: 100%;
     flex-shrink: 0;
+    overflow: hidden;
   }
 
   .article-card__media {
@@ -152,26 +275,32 @@ body {
     object-fit: cover;
     display: block;
     vertical-align: middle;
+    transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .article-card:hover .article-card__media {
+    transform: scale(1.03);
   }
 
   .article-card__media--placeholder {
-    background: #c5c5d2;
-    min-height: 12rem;
+    background: #d1d5e0;
+    min-height: 11rem;
   }
 
   .article-card__body {
     order: 1;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     padding: 20px;
     flex: 1 1 auto;
     min-height: 0;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
     .article-card__body {
       padding: 24px;
+      gap: 12px;
     }
   }
 
@@ -179,33 +308,35 @@ body {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 12px 16px;
+    gap: 10px 14px;
     font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 1.2px;
+    text-transform: uppercase;
   }
 
   .article-card__category {
     border: 1px solid currentColor;
-    padding: 4px 12px;
+    padding: 3px 10px;
+    border-radius: 4px;
   }
 
   .article-card--light .article-card__reading,
   .article-card--accent .article-card__reading {
-    color: #444651;
+    color: var(--color-muted);
   }
 
   .article-card--dark .article-card__reading {
-    color: #d6e3ff;
+    color: #b8cce8;
   }
 
   .article-card__title {
     margin: 0;
     font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
-    font-size: clamp(1.25rem, 2.2vw, 2rem);
-    line-height: 1.15;
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    line-height: 1.2;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -224,8 +355,8 @@ body {
 
   .article-card__excerpt {
     margin: 0;
-    font-size: clamp(0.95rem, 1.1vw, 1.125rem);
-    line-height: 1.45;
+    font-size: clamp(0.875rem, 1vw, 1.0625rem);
+    line-height: 1.55;
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
@@ -234,43 +365,44 @@ body {
 
   .article-card--light .article-card__excerpt,
   .article-card--accent .article-card__excerpt {
-    color: #444651;
+    color: var(--color-text);
   }
 
   .article-card--dark .article-card__excerpt {
-    color: #d6e3ff;
+    color: #b8cce8;
   }
 
   .article-card__cta {
     margin-top: auto;
-    padding-top: 8px;
+    padding-top: 10px;
     font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
-    font-size: 16px;
-    letter-spacing: 1.2px;
+    font-size: 14px;
+    letter-spacing: 1px;
     text-decoration: none;
     color: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 180ms ease;
+  }
+
+  .article-card__cta:hover {
+    gap: 10px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .article-card--light .article-card__cta,
   .article-card--accent .article-card__cta {
-    color: #022169;
+    color: var(--color-dark-blue);
   }
 
   .article-card--dark .article-card__cta {
     color: #fff;
   }
 
-  .article-card__cta:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  /**
-   * Article detail: stacked on small screens; desktop uses grid so the related column shares
-   * the article row height (sticky needs a tall containing block). Avoid overflow-x clip on layout
-   * ancestors — it breaks position:sticky in several engines.
-   */
+  /* ── Article layout (detail page) ── */
   .article-layout {
     display: flex;
     flex-direction: column;
@@ -307,7 +439,6 @@ body {
   }
 
   @media (min-width: 1024px) {
-    /* Match fixed TOC offset: article shell pt-[110px] + NavBar clearance (1.5rem) */
     .sidebar-related {
       position: -webkit-sticky;
       position: sticky;
@@ -319,13 +450,12 @@ body {
     }
   }
 
-  /* Tablet: related links in a horizontal scroller below the article */
   @media (min-width: 768px) and (max-width: 1023px) {
     .sidebar-related-cards {
       display: flex;
       flex-direction: row;
       flex-wrap: nowrap;
-      gap: 1.5rem;
+      gap: 1.25rem;
       overflow-x: auto;
       width: 100%;
       align-items: flex-start;
@@ -342,21 +472,18 @@ body {
     .sidebar-related-cards {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.25rem;
       overflow: visible;
       width: 100%;
     }
   }
 
-  /**
-   * CMS `htmlSnippet`: content is sanitized (no inline styles/classes from Payload).
-   * Typography and widths are defined here only — matches homepage/article body scale.
-   */
+  /* ── CMS HTML snippet ── */
   .cms-html-snippet {
     min-width: 0;
-    color: #444651;
-    font-size: 22px;
-    line-height: 27.5px;
+    color: var(--color-text);
+    font-size: clamp(1.0625rem, 2vw, 1.375rem);
+    line-height: 1.6;
   }
 
   .cms-html-snippet > * {
@@ -365,11 +492,11 @@ body {
 
   .cms-html-snippet :where(p, li) {
     font-family: "Erode", Georgia, ui-serif, serif;
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.85rem;
   }
 
   .cms-html-snippet :where(li) {
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.4rem;
   }
 
   .cms-html-snippet :where(p:last-child, li:last-child) {
@@ -380,19 +507,19 @@ body {
     margin: 0 0 1rem;
     font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.15;
-    color: #000f3d;
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    line-height: 1.1;
+    color: var(--color-navy);
     max-width: 872px;
   }
 
   .cms-html-snippet :where(h3) {
-    margin: 1.25rem 0 0.75rem;
+    margin: 1.5rem 0 0.75rem;
     font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 2.5vw, 1.625rem);
     line-height: 1.25;
-    color: #000f3d;
+    color: var(--color-navy);
     max-width: 872px;
   }
 
@@ -402,7 +529,7 @@ body {
     font-weight: 700;
     font-size: 1.25rem;
     line-height: 1.3;
-    color: #022169;
+    color: var(--color-dark-blue);
     max-width: 872px;
   }
 
@@ -413,34 +540,98 @@ body {
   }
 
   .cms-html-snippet :where(blockquote) {
-    margin: 1rem 0;
+    margin: 1.5rem 0;
     padding-left: 1.5rem;
-    border-left: 4px solid var(--dark-blue, #022169);
+    border-left: 3px solid var(--color-dark-blue);
     font-family: "Erode", Georgia, ui-serif, serif;
     font-style: italic;
-    color: #444651;
+    color: var(--color-text);
     max-width: 672px;
   }
 
   .cms-html-snippet :where(a) {
-    color: var(--light-blue, #0083fe);
+    color: var(--color-light-blue);
     text-decoration: underline;
     text-underline-offset: 3px;
     font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
-    font-size: 16px;
-    letter-spacing: 0.02em;
+    font-size: inherit;
+    letter-spacing: 0.01em;
   }
 
   .cms-html-snippet :where(a:hover) {
-    color: #022169;
+    color: var(--color-dark-blue);
+  }
+
+  /* ── Method/Process cards ── */
+  .method-card {
+    background: #fafafa;
+    border-top: 3px solid var(--color-dark-blue);
+    border-radius: 0 0 10px 10px;
+    padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 3vw, 1.75rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: box-shadow 220ms ease, transform 220ms ease;
+  }
+
+  .method-card:hover {
+    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+  }
+
+  /* ── Premium button base ── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 14px;
+    background: var(--color-dark-blue);
+    color: #fff;
+    font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    letter-spacing: 0.05em;
+    padding: 0.875rem 1.75rem;
+    text-decoration: none;
+    transition:
+      background 180ms ease,
+      transform 150ms ease,
+      box-shadow 180ms ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-primary:hover {
+    background: #031d56;
+    box-shadow: 0 4px 16px rgba(2, 33, 105, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   }
 }
 
+/* ─────────────────────────────────────────────
+   Keyframes
+   ───────────────────────────────────────────── */
 @keyframes article-card-enter {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
   }
   to {
     opacity: 1;

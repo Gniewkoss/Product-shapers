@@ -1,79 +1,70 @@
 import { Link } from "react-router-dom";
 
 import type { KnowledgeTeaserCardData } from "../lib/payload/homeFeaturedArticles";
-import { splitLines } from "../lib/payload/blockUtils";
 import { mediaUrl } from "../lib/payload/client";
 import iconArrow from "../assets/branding/arrow rightsvg.svg";
 
-export function KnowledgeTeaserCard({
-  c,
-  href,
-}: {
-  c: KnowledgeTeaserCardData;
-  href: string;
-}) {
+export function KnowledgeTeaserCard({ c, href }: { c: KnowledgeTeaserCardData; href: string }) {
   const teaserImgSrc = c.imageUrl ? mediaUrl(c.imageUrl) ?? c.imageUrl : undefined;
   const ctaLabel = c.ctaLabel ?? "Dowiedz się więcej";
-  const linkClass =
-    "inline-flex gap-4 items-center no-underline font-['Satoshi:Bold',sans-serif] text-[16px] leading-4 tracking-[1.2px] text-[color:var(--dark-blue,#022169)]";
+
+  const ctaClass =
+    "inline-flex items-center gap-2.5 font-sans font-bold text-[14px] tracking-[0.05em] text-[#022169] no-underline transition-all duration-150 hover:gap-4";
 
   const ctaInner = (
     <>
       <span>{ctaLabel}</span>
-      <span
-        aria-hidden
-        className="inline-flex h-4 w-4 shrink-0 items-center justify-center"
-      >
-        <img alt="" src={iconArrow} className="block h-4 w-4" />
-      </span>
+      <img alt="" src={iconArrow} className="h-4 w-4 shrink-0" />
     </>
   );
 
   const ctaRow =
-    href.startsWith("http") ?
-      <a href={href} className={linkClass}>
+    href.startsWith("http") ? (
+      <a href={href} className={ctaClass}>
         {ctaInner}
       </a>
-    : <Link to={href} className={linkClass}>
+    ) : (
+      <Link to={href} className={ctaClass}>
         {ctaInner}
-      </Link>;
+      </Link>
+    );
 
   return (
-    <article className="flex h-full min-h-0 w-full min-w-0 flex-1 flex-col bg-white">
-      <div className="relative h-[240px] w-full min-w-0 shrink-0 overflow-hidden bg-[#e8edf5]">
-        {teaserImgSrc ?
-          <img alt="" src={teaserImgSrc} className="h-full w-full min-w-0 object-cover object-center" loading="lazy" decoding="async" />
-        : <div
-            className="box-border flex h-full w-full min-w-0 items-center justify-center bg-[linear-gradient(145deg,#dfe7f2_0%,#eef2f8_45%,#e2e9f4_100%)]"
+    <article className="group flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[12px] border border-[#e2e5ee] bg-white transition-shadow duration-200 hover:shadow-[var(--shadow-card-hover)]">
+      <div className="relative w-full overflow-hidden bg-[#eef0f6]" style={{ aspectRatio: "16/9" }}>
+        {teaserImgSrc ? (
+          <img
+            alt=""
+            src={teaserImgSrc}
+            className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div
+            className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#dfe7f2] to-[#eef2f8]"
             aria-hidden
           >
-            <span className="font-['Satoshi:Bold',sans-serif] text-[11px] uppercase tracking-[1.5px] text-[#022169]/30">
+            <span className="font-sans font-bold text-[11px] uppercase tracking-[1.5px] text-[#022169]/25">
               Grafika artykułu
             </span>
           </div>
-        }
+        )}
       </div>
 
-      {/* auto | 1fr | auto — CTA zawsze przy dolnej krawędzi karty niezależnie od długości leadu */}
-      <div className="grid min-h-0 w-full min-w-0 flex-1 grid-rows-[auto_minmax(0,1fr)_auto] px-10 pb-10 pt-10 sm:px-12 sm:pb-12 sm:pt-12">
-        <header className="flex flex-col gap-4">
-          {c.categoryLabel ?
-            <p className="m-0 font-['Satoshi:Bold',sans-serif] text-[12px] tracking-[1.2px] leading-4 text-[color:var(--light-blue,#0083fe)]">
-              {String(c.categoryLabel)}
-            </p>
-          : null}
-          <h3 className="m-0 font-['Satoshi:Bold',sans-serif] text-[24px] font-bold leading-[1.35] text-[#022169] break-words">
-            {String(c.title)}
-          </h3>
-        </header>
-
-        <div className="min-h-0 pt-4">
-          <p className="m-0 text-[20px] leading-[25px] text-[#444651] line-clamp-6 [overflow-wrap:anywhere]">
-            {String(c.excerpt ?? "")}
+      <div className="flex flex-1 flex-col gap-4 p-6 sm:p-8">
+        {c.categoryLabel && (
+          <p className="m-0 font-sans font-bold text-[12px] uppercase tracking-[0.08em] text-[#0083fe]">
+            {String(c.categoryLabel)}
           </p>
-        </div>
-
-        <div className="pt-8">{ctaRow}</div>
+        )}
+        <h3 className="m-0 font-sans font-bold text-[clamp(1.125rem,1.8vw,1.375rem)] leading-[1.25] text-[#022169]">
+          {String(c.title)}
+        </h3>
+        <p className="m-0 flex-1 font-serif text-[15px] leading-[1.65] text-[#444651] line-clamp-4">
+          {String(c.excerpt ?? "")}
+        </p>
+        <div className="pt-2">{ctaRow}</div>
       </div>
     </article>
   );
@@ -87,56 +78,38 @@ type HomeKnowledgeSectionProps = {
 };
 
 export function HomeKnowledgeSection({ eyebrow, heading, subtitle, cards }: HomeKnowledgeSectionProps) {
-  const subtitleLines = subtitle ? splitLines(String(subtitle)) : [];
   return (
     <div className="w-full min-w-0 bg-white">
-      <div className="content-stretch mx-auto flex min-w-0 max-w-content flex-col items-start px-4 sm:px-6 md:px-10 lg:px-[61px] py-[91px] relative shrink-0 w-full">
-        <div className="content-stretch flex flex-col gap-[80px] items-start max-w-[1536px] relative shrink-0 w-full">
-          <div className="content-stretch flex flex-col gap-[24px] items-start relative shrink-0 w-full">
-            {eyebrow ?
-              <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-                <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-[color:var(--light-blue,#0083fe)] tracking-[1.2px] w-full">
-                  <p className="leading-[16px]">{eyebrow}</p>
-                </div>
-              </div>
-            : null}
-            <div className="content-stretch flex flex-col items-start relative shrink-0 w-full">
-              <div className="flex flex-col font-['Satoshi:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#000f3d] text-[48px] w-full">
-                <p className="leading-[60px]">{heading}</p>
-              </div>
-            </div>
-            {subtitleLines.length > 0 ?
-              <div className="content-stretch flex flex-col items-start pb-[16.625px] pt-[7.375px] relative shrink-0 w-full">
-                <div className="flex flex-col justify-center leading-[0] not-italic relative shrink-0 text-[#444651] text-[22px] w-full">
-                  {subtitleLines.map((line, li) => (
-                    <p key={li} className={`leading-[27.5px] ${li < subtitleLines.length - 1 ? "mb-0" : ""}`}>
-                      {line}
-                    </p>
-                  ))}
-                </div>
-              </div>
-            : null}
-          </div>
-          <div
-            className={`grid w-full min-w-0 shrink-0 gap-px border border-solid border-[#e2e8f0] bg-[#e2e8f0] p-px ${
-              cards.length === 3 ?
-                "grid-cols-1 md:grid-cols-[repeat(3,minmax(0,1fr))]"
-              : "grid-cols-1 sm:grid-cols-[repeat(2,minmax(0,1fr))] lg:grid-cols-[repeat(3,minmax(0,1fr))]"
-            } items-stretch`}
-          >
-            {cards.map((c, ci) => {
-              const rawHref = c.href ? String(c.href) : "/artykuly";
-              const href = rawHref.startsWith("http") ? rawHref : rawHref;
-              return (
-                <div
-                  key={ci}
-                  className="flex min-h-[28rem] w-full min-w-0 flex-col bg-white md:min-h-[32rem] lg:min-h-[34rem]"
-                >
-                  <KnowledgeTeaserCard c={c} href={href} />
-                </div>
-              );
-            })}
-          </div>
+      <div className="mx-auto flex w-full min-w-0 max-w-content flex-col gap-14 px-4 py-16 sm:px-6 md:px-10 lg:px-[61px] lg:py-24">
+        <div className="flex flex-col gap-4">
+          {eyebrow && (
+            <p className="m-0 font-sans font-bold text-[14px] uppercase tracking-[0.08em] text-[#0083fe]">
+              {eyebrow}
+            </p>
+          )}
+          <h2 className="m-0 font-sans font-bold text-[clamp(2rem,4vw,3rem)] leading-[1.1] text-[#000f3d]">
+            {heading}
+          </h2>
+          {subtitle && (
+            <p className="m-0 max-w-[600px] font-serif text-[clamp(1rem,1.6vw,1.25rem)] leading-[1.65] text-[#444651]">
+              {subtitle}
+            </p>
+          )}
+        </div>
+
+        <div
+          className={`grid w-full gap-6 ${
+            cards.length === 3
+              ? "grid-cols-1 md:grid-cols-3"
+              : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          }`}
+        >
+          {cards.map((c, ci) => {
+            const rawHref = c.href ? String(c.href) : "/artykuly";
+            return (
+              <KnowledgeTeaserCard key={ci} c={c} href={rawHref} />
+            );
+          })}
         </div>
       </div>
     </div>

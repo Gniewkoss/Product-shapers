@@ -17,12 +17,16 @@ export function ArticleSectionBody({ section }: { section: ArticleSection }) {
     );
   }
 
-  const blocks = section.content.trim().split(/\n\n+/);
+  const blocks = section.content
+    .trim()
+    .split(/\n\n+/)
+    .map((block) => block.trim())
+    .filter((b) => b.length > 0);
 
   return (
     <div className="article-section-body article-section-body--plain">
       {blocks.map((block, i) => {
-        const b = block.trim();
+        const b = block;
         if (b.startsWith("### ")) {
           return (
             <h3 key={i} className="mb-2 font-sans text-[22px] font-bold text-[#000f3d]">

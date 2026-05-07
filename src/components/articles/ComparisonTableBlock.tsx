@@ -15,7 +15,7 @@ export function ComparisonTableBlock({ title, columns, rows }: ComparisonTableBl
 
   return (
     <div
-      className="article-comparison-table not-prose mt-10 w-full min-w-0"
+      className="article-comparison-table not-prose mt-10 mb-12 w-full min-w-0"
       data-block="comparison-table"
     >
       {title ?

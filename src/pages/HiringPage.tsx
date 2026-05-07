@@ -4,7 +4,7 @@ function HiringPageFallback() {
   return (
     <div className="w-full min-w-0">
       <div
-        className="mx-auto flex w-full min-w-0 max-w-content flex-col items-start px-4 pb-24 pt-[110px] sm:px-6 md:px-10 lg:px-[61px]"
+        className="mx-auto flex w-full min-w-0 max-w-content flex-col items-start px-4 pb-24 pt-[80px] sm:px-6 md:px-10 md:pt-[100px] lg:px-[61px]"
         data-name="Hiring (Desktop) - Brand Strict"
       >
         <section
@@ -34,12 +34,12 @@ function HiringPageFallback() {
               <p className="font-sans text-[12px] font-bold uppercase leading-4 tracking-[1.2px] text-[#757682]">Nasz rekord wydajności</p>
               <div className="mt-6 space-y-6">
                 <div>
-                  <p className="font-['Satoshi:Bold',sans-serif] text-[40px] font-bold leading-none text-[#000f3d]">94%</p>
+                  <p className="font-sans font-bold text-[40px] leading-none text-[#000f3d]">94%</p>
                   <p className="mt-1 font-serif text-[13px] leading-5 text-[#444651]">Retencja klientów po konsultacjach</p>
                 </div>
                 <div>
-                  <p className="font-['Satoshi:Bold',sans-serif] text-[40px] font-bold leading-none text-[#000f3d]">€12M+</p>
-                  <p className="mt-1 font-serif text-[13px] leading-5 text-[#444651]">Retencja klientów po konsultacjach</p>
+                  <p className="font-sans font-bold text-[40px] leading-none text-[#000f3d]">€12M+</p>
+                  <p className="mt-1 font-serif text-[13px] leading-5 text-[#444651]">Łączny przychód klientów w trakcie współpracy</p>
                 </div>
               </div>
             </aside>

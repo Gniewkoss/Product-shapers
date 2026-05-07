@@ -62,7 +62,7 @@ function SzkoleniaMainFallback({
 }) {
   return (
     <div className="content-stretch relative size-full flex flex-col items-start bg-[#f9f9f9] pb-[3.66px]" data-node-id="1:126" data-name="Szkolenia (Desktop) - Brand Strict">
-      <div className="content-stretch flex flex-col items-start pt-[110px] relative shrink-0 w-full max-md:pt-[96px]" data-node-id="1:127" data-name="Main">
+      <div className="flex flex-col items-start pt-[80px] relative w-full md:pt-[100px]">
         <div className="w-full min-w-0 bg-white">
         <div className="relative mx-auto w-full min-w-0 max-w-content shrink-0 bg-white px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:px-[61px] lg:py-[96px]" data-node-id="1:128" data-name="Hero Section">
           <div className="relative grid w-full grid-cols-[repeat(12,minmax(0,1fr))] grid-rows-[minmax(0,auto)] gap-x-8 gap-y-8 lg:grid-rows-[auto]">

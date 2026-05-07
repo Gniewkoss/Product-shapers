@@ -1,21 +1,22 @@
 import { useState, type FormEvent } from "react";
 
-const fieldLabel = "font-['Satoshi:Bold',sans-serif] text-[#444651] text-[16px] tracking-[1.2px] leading-[16px]";
+const fieldLabel = "font-sans font-bold text-[13px] uppercase tracking-[0.06em] text-[#555]";
 
 const inputBase = [
-  "w-full min-h-0 rounded-[6px] border border-[#e6ebf1] bg-[#f8fafc] px-3",
-  "font-['Satoshi:Bold',sans-serif] text-[16px] tracking-[1.2px] text-[#1b1b1b] placeholder:text-[#94a3b8]/80",
-  "outline-none transition-[border-color,box-shadow] duration-200 ease-out",
-  "hover:border-[#c5cad4]",
-  "focus:border-[#0083fe] focus:shadow-[0_0_0_3px_rgba(0,131,254,0.12)]",
+  "w-full min-h-0 rounded-[10px] border border-[#e2e5ee] bg-[#fafbfd] px-4",
+  "font-sans text-[15px] text-[#1b1b1b] placeholder:text-[#a0aab8]",
+  "outline-none transition-[border-color,box-shadow] duration-150 ease-out",
+  "hover:border-[#b8bec9]",
+  "focus:border-[#0083fe] focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,131,254,0.12)]",
   "disabled:cursor-not-allowed disabled:opacity-50",
 ].join(" ");
 
 const submitBase = [
-  "mt-2 inline-flex w-full items-center justify-center rounded-[18px] bg-[#022169] px-10 py-5",
-  "text-[16px] font-['Satoshi:Bold',sans-serif] font-bold tracking-[1.2px] text-white",
-  "shadow-sm transition-[transform,box-shadow,background-color] duration-200 ease-out",
-  "hover:bg-[#031d56] active:scale-[0.99]",
+  "mt-1 inline-flex w-full items-center justify-center rounded-[12px] bg-[#022169] px-10 py-4",
+  "text-[15px] font-sans font-bold tracking-[0.05em] text-white",
+  "transition-all duration-150 ease-out",
+  "hover:bg-[#031d56] hover:shadow-[0_4px_16px_rgba(2,33,105,0.25)] hover:-translate-y-px",
+  "active:translate-y-0 active:shadow-none",
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0083fe]",
   "disabled:cursor-not-allowed disabled:opacity-60",
 ].join(" ");

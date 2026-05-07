@@ -221,31 +221,31 @@ export function ArticlesMain() {
   );
 
   return (
-    <div className="content-stretch relative size-full flex flex-col items-start bg-white pb-[3.66px]" data-name="Articles(Desktop) - Brand Strict">
-      <div className="content-stretch relative flex w-full shrink-0 flex-col items-start pt-[110px]" data-name="Main">
-        <div className="w-full min-w-0 bg-white">
-          <div className="relative mx-auto w-full min-w-0 max-w-content bg-white px-4 py-12 sm:px-6 sm:py-16 md:px-10 lg:px-[61px] lg:py-[96px]" data-name="Hero Section">
-            <div className="relative grid w-full shrink-0 grid-cols-[repeat(12,minmax(0,1fr))] gap-x-8 gap-y-8">
-              <div className="col-[1/span_12] flex min-h-0 min-w-0 flex-col items-start gap-6 border-l-4 border-[var(--dark-blue,#022169)] pl-8 pr-0 sm:pl-8 lg:col-[1/span_8] lg:max-w-[872px]">
-                <div className="w-full font-['Satoshi:Bold',sans-serif] text-[16px] tracking-[1.2px] text-[#005bb3]">
-                  <p className="leading-[16px]">Artykuły i analizy</p>
-                </div>
-                <div className="w-full max-w-[872px] font-['Satoshi:Bold',sans-serif] text-[40px] leading-tight text-[#000f3d] md:text-[64px] md:leading-[1.1] md:tracking-tight">
-                  <p className="mb-0 leading-[1.1]">Merytoryczny</p>
-                  <p className="leading-[1.1]">Content.</p>
-                </div>
-                <div className="w-full max-w-[672px] pt-[7px] text-[22px] text-[#444651]">
-                  <p className="leading-[27.5px]">Głębokie nurkowanie w procesy produktowe, architekturę zespołów i matematykę biznesu. Bez ogólników, tylko konkretne modele.</p>
-                </div>
-              </div>
+    <div className="relative w-full min-w-0 bg-white">
+      <div className="relative flex w-full flex-col items-start pt-[80px] sm:pt-[88px]">
+
+        {/* Hero */}
+        <div className="w-full min-w-0 border-b border-[rgba(197,197,210,0.25)] bg-white">
+          <div className="mx-auto w-full min-w-0 max-w-content px-4 py-14 sm:px-6 sm:py-20 md:px-10 lg:px-[61px] lg:py-24">
+            <div className="flex min-h-0 min-w-0 max-w-[820px] flex-col items-start gap-5 border-l-[3px] border-[#022169] pl-7 sm:pl-8">
+              <p className="m-0 font-sans font-bold text-[14px] uppercase tracking-[0.08em] text-[#0083fe]">
+                Artykuły i analizy
+              </p>
+              <h1 className="m-0 font-sans font-bold text-[clamp(2.25rem,7vw,4.5rem)] leading-[1.08] text-[#000f3d]">
+                Merytoryczny Content.
+              </h1>
+              <p className="m-0 max-w-[600px] font-serif text-[clamp(1rem,1.7vw,1.25rem)] leading-[1.65] text-[#444651]">
+                Głębokie nurkowanie w procesy produktowe, architekturę zespołów i matematykę biznesu. Bez ogólników, tylko konkretne modele.
+              </p>
             </div>
           </div>
         </div>
 
-        <section className="relative mx-auto flex w-full min-w-0 max-w-content shrink-0 flex-col items-start gap-8 bg-white px-4 pb-[192px] pt-[96px] sm:px-6 md:px-10 lg:px-[61px]">
-          <div className="w-full border-b border-[rgba(197,197,210,0.2)] pb-4">
+        {/* Filter + grid */}
+        <section className="mx-auto flex w-full min-w-0 max-w-content flex-col items-start gap-8 bg-white px-4 pb-24 pt-10 sm:px-6 sm:pb-28 md:px-10 lg:px-[61px]">
+          <div className="w-full border-b border-[rgba(197,197,210,0.25)] pb-3">
             <div
-              className="-mx-1 flex w-full max-w-full flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-8 sm:gap-y-3 md:max-w-[640px]"
+              className="flex w-full flex-wrap items-center gap-x-1 gap-y-1"
               role="tablist"
               aria-label="Filtr kategorii artykułów"
             >
@@ -258,10 +258,10 @@ export function ArticlesMain() {
                     role="tab"
                     aria-selected={active}
                     onClick={() => setActiveFilter(value)}
-                    className={`inline-flex min-h-[44px] items-center rounded-md border-0 bg-transparent px-2 py-2 font-['Satoshi:Bold',sans-serif] text-[15px] tracking-[1.2px] transition-colors duration-200 sm:text-[16px] ${
+                    className={`inline-flex min-h-[40px] items-center rounded-[8px] px-3 py-2 font-sans font-bold text-[14px] tracking-[0.04em] transition-colors duration-150 sm:text-[15px] ${
                       active
-                        ? "text-[#022169] underline decoration-solid [text-decoration-skip-ink:none]"
-                        : "text-black"
+                        ? "bg-[#022169]/[0.07] text-[#022169]"
+                        : "text-[#444] hover:bg-black/[0.04] hover:text-[#022169]"
                     }`}
                   >
                     {label}
@@ -271,13 +271,9 @@ export function ArticlesMain() {
             </div>
           </div>
 
-          <div className="article-cycle-grid w-full" data-filter={activeFilter}>
+          <div className="article-cycle-grid w-full">
             {visibleArticles.map((article, index) => (
-              <ArticleCard
-                key={article.slug}
-                article={article}
-                colSpan={spans[index]!}
-              />
+              <ArticleCard key={article.slug} article={article} colSpan={spans[index]!} />
             ))}
           </div>
         </section>

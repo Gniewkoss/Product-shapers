@@ -255,7 +255,7 @@ export function ArticlePage() {
 
   return (
     <div className="relative flex w-full min-w-0 flex-col bg-white" data-name="Article page shell">
-      <div className="relative flex w-full flex-col pt-[110px]">
+      <div className="relative flex w-full flex-col pt-[80px] md:pt-[100px]">
         <div
           className="relative mx-auto flex w-full min-w-0 max-w-content flex-col items-start px-4 pt-12 pb-24 sm:px-6 sm:pt-16 sm:pb-24 md:px-10 lg:px-[61px] lg:pt-[96px] lg:pb-24"
           data-name="Article(Desktop) - Brand Strict"
