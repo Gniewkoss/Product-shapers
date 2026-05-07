@@ -12,7 +12,7 @@ import iconLinkedIn from "../assets/branding/linkedin.svg";
 import { useSitePayload } from "../context/SitePayloadContext";
 import type { PayloadLayoutBlock } from "../lib/payload/blockUtils";
 import { FALLBACK_KNOWLEDGE_CARDS, articleToKnowledgeCard, normalizeFeaturedArticles } from "../lib/payload/homeFeaturedArticles";
-import { mediaUrl, resolveCommunityBackgroundUrls, uploadRefMedia } from "../lib/payload/client";
+import { resolveCommunityBackgroundUrls, uploadRefMedia } from "../lib/payload/client";
 import { brandIcons } from "../lib/brandIcons";
 
 const imgImage8 = "https://www.figma.com/api/mcp/asset/2717548e-54bd-4e3e-a05e-c1d097f5fa07";
@@ -34,13 +34,6 @@ export function HomeMain() {
   const heroCtaLabel = homepage?.heroCtaLabel ?? "Umów się na 30' spotkanie";
   const heroCtaPath = homepage?.heroCtaPath ?? "/#konsultacja";
   const heroCtaIsKonsultacja = heroCtaPath.includes("konsultacja");
-  const heroImageUrl =
-    mediaUrl(
-      typeof homepage?.heroImage === "object" && homepage.heroImage && "url" in homepage.heroImage ?
-        String((homepage.heroImage as { url?: string }).url)
-      : undefined,
-    ) ?? undefined;
-
   const founderPortraitResolved = uploadRefMedia(
     typeof homepage?.founderPortrait === "object" && homepage.founderPortrait ? homepage.founderPortrait : null,
   );
@@ -102,61 +95,77 @@ export function HomeMain() {
       <div className="flex flex-col items-stretch pt-[80px] sm:pt-[88px]">
 
         {/* ─────────────────────────── HERO ─────────────────────────── */}
-        <section className="relative overflow-hidden bg-white">
-          {/* Decorative background */}
+        <section className="relative bg-[#000f3d]">
+          {/* Background: dot grid + radial glows */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-            <div className="absolute right-[-15%] top-[-20%] h-[560px] w-[560px] rounded-full bg-[radial-gradient(circle,rgba(0,131,254,0.07)_0%,transparent_65%)]" />
-            <div className="absolute left-[-8%] bottom-[-10%] h-[360px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(2,33,105,0.04)_0%,transparent_70%)]" />
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#c9c9c9]/40 to-transparent" />
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)",
+                backgroundSize: "28px 28px",
+              }}
+            />
+            <div className="absolute right-[-10%] top-[-25%] h-[700px] w-[700px] rounded-full bg-[radial-gradient(circle,rgba(0,131,254,0.18)_0%,transparent_65%)]" />
+            <div className="absolute bottom-[-20%] left-[-5%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(125,250,182,0.09)_0%,transparent_70%)]" />
           </div>
 
-          <div className="relative mx-auto flex w-full min-w-0 max-w-content flex-col items-start gap-10 px-4 py-14 sm:px-6 sm:py-20 md:px-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:px-[61px] lg:py-[100px]">
+          <div className="relative mx-auto flex w-full min-w-0 max-w-content flex-col items-start px-4 pb-20 pt-14 sm:px-6 sm:pb-24 sm:pt-20 md:px-10 lg:px-[61px] lg:pb-[110px] lg:pt-[96px]">
 
-            {/* Text block */}
-            <div className="flex w-full min-w-0 max-w-[660px] flex-col items-start gap-6">
-              <h1 className="m-0 font-sans font-bold text-[clamp(2.25rem,6.5vw,5rem)] leading-[1.07] text-balance text-[#000f3d]">
+            {/* ── Copy ── */}
+            <div className="flex w-full flex-col items-start gap-6">
+              {/* Eyebrow badge */}
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.06] px-4 py-[7px]">
+                <span className="h-[7px] w-[7px] shrink-0 animate-pulse rounded-full bg-[#7dfab6]" />
+                <span className="font-sans text-[11px] font-bold uppercase tracking-[0.12em] text-white/50">
+                  Product Strategy Consulting
+                </span>
+              </div>
+
+              {/* H1 */}
+              <h1 className="m-0 max-w-[820px] text-balance font-sans font-bold text-[clamp(2.75rem,8.5vw,6rem)] leading-[1.03] text-white">
                 {heroHeadlinePrefix}{" "}
-                <span className="bg-clip-text bg-gradient-to-r from-[#0083fe] to-[#032796] text-transparent">
+                <span className="bg-gradient-to-r from-[#7dfab6] via-[#4bf5c7] to-[#0083fe] bg-clip-text text-transparent">
                   {heroHeadlineAccent}
                 </span>
               </h1>
 
-              <p className="m-0 max-w-[580px] font-serif text-[clamp(1.0625rem,1.8vw,1.375rem)] leading-[1.6] text-[#444651]">
+              {/* Subline */}
+              <p className="m-0 max-w-[600px] font-serif text-[clamp(1.0625rem,2vw,1.3125rem)] leading-[1.68] text-white/60">
                 {heroSubLines.join(" ")}
               </p>
 
-              {heroCtaIsKonsultacja ? (
-                <KonsultacjaScrollLink className="btn-primary mt-2 gap-3 px-7 py-4 text-[15px] lg:text-[16px]">
-                  <span className="font-sans font-bold tracking-[0.05em]">{heroCtaLabel}</span>
-                  <img alt="" className="block h-4 w-4 shrink-0" src={brandIcons.arrow} />
-                </KonsultacjaScrollLink>
-              ) : (
-                <Link to={heroCtaPath} className="btn-primary mt-2 gap-3 px-7 py-4 text-[15px] lg:text-[16px]">
-                  <span className="font-sans font-bold tracking-[0.05em]">{heroCtaLabel}</span>
-                  <img alt="" className="block h-4 w-4 shrink-0" src={brandIcons.arrow} />
-                </Link>
-              )}
-            </div>
+              {/* CTA row */}
+              <div className="mt-2 flex flex-wrap items-center gap-4">
+                {heroCtaIsKonsultacja ? (
+                  <KonsultacjaScrollLink className="btn-primary gap-3 px-7 py-[15px] text-[15px]">
+                    <span className="font-sans font-bold tracking-[0.05em]">{heroCtaLabel}</span>
+                    <img alt="" className="block h-4 w-4 shrink-0" src={brandIcons.arrow} />
+                  </KonsultacjaScrollLink>
+                ) : (
+                  <Link to={heroCtaPath} className="btn-primary gap-3 px-7 py-[15px] text-[15px]">
+                    <span className="font-sans font-bold tracking-[0.05em]">{heroCtaLabel}</span>
+                    <img alt="" className="block h-4 w-4 shrink-0" src={brandIcons.arrow} />
+                  </Link>
+                )}
+                <span className="font-sans text-[13px] text-white/35">Bezpłatna, 30-minutowa rozmowa</span>
+              </div>
 
-            {/* Founder portrait */}
-            <div className="w-full shrink-0 lg:w-[340px]">
-              <div
-                className={`relative mx-auto w-full max-w-[360px] overflow-hidden lg:mx-0 lg:max-w-none ${
-                  heroImageUrl ? "" : "bg-gradient-to-br from-[#e2e6f0] to-[#c5cad4]"
-                }`}
-                style={{ aspectRatio: "4/5", borderRadius: "clamp(16px,6vw,48px) clamp(16px,6vw,48px) clamp(16px,6vw,48px) 4px" }}
-              >
-                {heroImageUrl ? (
-                  <img
-                    alt={founderPortraitAlt}
-                    src={heroImageUrl}
-                    className="absolute inset-0 h-full w-full object-cover object-center"
-                    loading="eager"
-                    decoding="async"
-                  />
-                ) : null}
+              {/* Stats row */}
+              <div className="mt-6 flex w-full flex-wrap items-start gap-x-10 gap-y-6 border-t border-white/[0.07] pt-8">
+                {[
+                  { value: "50+", label: "firm wdrożonych" },
+                  { value: "+40%", label: "wzrost velocity" },
+                  { value: "3×", label: "szybciej na rynek" },
+                  { value: "100%", label: "focus na efektach" },
+                ].map(({ value, label }) => (
+                  <div key={value} className="flex flex-col items-start gap-1">
+                    <span className="font-sans text-[2rem] font-bold leading-none text-white">{value}</span>
+                    <span className="font-sans text-[12px] text-white/40">{label}</span>
+                  </div>
+                ))}
               </div>
             </div>
+
           </div>
         </section>
 
