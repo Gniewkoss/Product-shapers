@@ -15,7 +15,17 @@ async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   const url = `${payloadApiPrefix()}${path.startsWith("/") ? path : `/${path}`}`;
   const res = await fetch(url, { cache: "no-store", credentials: "omit", signal });
   if (!res.ok) {
-    throw new Error(`Payload ${res.status} ${res.statusText}: ${url}`);
+    /* Surface body text for 5xx so the dev console shows the actual Payload/SQL message
+     * (e.g. "Failed query … no such column: light_card_linkedin_link") instead of a
+     * silently-swallowed null. The body is bounded (Payload returns ~1 KB JSON). */
+    let bodyHint = "";
+    try {
+      const text = await res.text();
+      if (text) bodyHint = ` — ${text.slice(0, 800)}`;
+    } catch {
+      /* ignore body read failures (already failed request) */
+    }
+    throw new Error(`Payload ${res.status} ${res.statusText}: ${url}${bodyHint}`);
   }
   return res.json() as Promise<T>;
 }
@@ -79,12 +89,22 @@ export function resolveCommunityBackgroundUrls(homepage: Homepage | null | undef
   return legacy.length > 0 ? legacy : undefined;
 }
 
+/** Log non-abort fetch failures so a Payload 5xx (e.g. SQL drift after a missed migration)
+ * is visible in the browser console instead of silently degrading the page to fallback copy. */
+function logPayloadFetchError(scope: string, e: unknown): void {
+  if (isAbortError(e)) return;
+  const message = e instanceof Error ? e.message : String(e);
+  // eslint-disable-next-line no-console
+  console.error(`[payload] ${scope} failed:`, message);
+}
+
 export async function getGlobalHomepage(depth = 2, signal?: AbortSignal): Promise<Homepage | null> {
   try {
     const json = await fetchJson<unknown>(`/globals/homepage?depth=${depth}`, signal);
     return unwrapDoc<Homepage>(json);
   } catch (e) {
     if (isAbortError(e)) throw e;
+    logPayloadFetchError("getGlobalHomepage", e);
     return null;
   }
 }
@@ -95,6 +115,7 @@ export async function getGlobalNavigation(depth = 1, signal?: AbortSignal): Prom
     return unwrapDoc<Navigation>(json);
   } catch (e) {
     if (isAbortError(e)) throw e;
+    logPayloadFetchError("getGlobalNavigation", e);
     return null;
   }
 }
@@ -105,6 +126,7 @@ export async function getGlobalFooter(depth = 1, signal?: AbortSignal): Promise<
     return unwrapDoc<Footer>(json);
   } catch (e) {
     if (isAbortError(e)) throw e;
+    logPayloadFetchError("getGlobalFooter", e);
     return null;
   }
 }
@@ -115,6 +137,7 @@ export async function getSitePages(depth = 3, signal?: AbortSignal): Promise<Sit
     return collectionDocs<SitePage>(json);
   } catch (e) {
     if (isAbortError(e)) throw e;
+    logPayloadFetchError("getSitePages", e);
     return [];
   }
 }
@@ -128,6 +151,7 @@ export async function getPublishedArticles(depth = 2, limit = 200, signal?: Abor
     return collectionDocs<Article>(json);
   } catch (e) {
     if (isAbortError(e)) throw e;
+    logPayloadFetchError("getPublishedArticles", e);
     return [];
   }
 }
@@ -144,6 +168,7 @@ export async function getArticleBySlug(slug: string, depth = 2, signal?: AbortSi
     return docs[0] ?? null;
   } catch (e) {
     if (isAbortError(e)) throw e;
+    logPayloadFetchError("getArticleBySlug", e);
     return null;
   }
 }

@@ -576,16 +576,36 @@ export interface SitePage {
               authorName: string;
               role: string;
               avatarInitials?: string | null;
+              linkedinLink?: string | null;
+              avatarUrl?: string | null;
+              /**
+               * Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione.
+               */
+              avatar?: (number | null) | Media;
             };
             darkCardTop: {
               quote: string;
               authorName: string;
               role: string;
+              avatarInitials?: string | null;
+              linkedinLink?: string | null;
+              avatarUrl?: string | null;
+              /**
+               * Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione.
+               */
+              avatar?: (number | null) | Media;
             };
             darkCardBottom: {
               quote: string;
               authorName: string;
               role: string;
+              avatarInitials?: string | null;
+              linkedinLink?: string | null;
+              avatarUrl?: string | null;
+              /**
+               * Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione.
+               */
+              avatar?: (number | null) | Media;
             };
             statCell: {
               value: string;
@@ -782,7 +802,7 @@ export interface SitePage {
             darkCardTitle: string;
             darkCardBody: string;
             /**
-             * Obraz w prawym dolnym kafelku (zamiast zielonego pola). Opcjonalny — bez pliku zostaje układ demonstracyjny.
+             * Wgraj zdjęcie, które pojawi się w zielonym kafelku z zaokrąglonym górnym rogiem. Bez pliku wyświetla się sam zielony box (placeholder).
              */
             accentTileImage?: (number | null) | Media;
             id?: string | null;
@@ -1251,6 +1271,9 @@ export interface SitePagesSelect<T extends boolean = true> {
                     authorName?: T;
                     role?: T;
                     avatarInitials?: T;
+                    linkedinLink?: T;
+                    avatarUrl?: T;
+                    avatar?: T;
                   };
               darkCardTop?:
                 | T
@@ -1258,6 +1281,10 @@ export interface SitePagesSelect<T extends boolean = true> {
                     quote?: T;
                     authorName?: T;
                     role?: T;
+                    avatarInitials?: T;
+                    linkedinLink?: T;
+                    avatarUrl?: T;
+                    avatar?: T;
                   };
               darkCardBottom?:
                 | T
@@ -1265,6 +1292,10 @@ export interface SitePagesSelect<T extends boolean = true> {
                     quote?: T;
                     authorName?: T;
                     role?: T;
+                    avatarInitials?: T;
+                    linkedinLink?: T;
+                    avatarUrl?: T;
+                    avatar?: T;
                   };
               statCell?:
                 | T
@@ -1840,16 +1871,36 @@ export interface Homepage {
               authorName: string;
               role: string;
               avatarInitials?: string | null;
+              linkedinLink?: string | null;
+              avatarUrl?: string | null;
+              /**
+               * Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione.
+               */
+              avatar?: (number | null) | Media;
             };
             darkCardTop: {
               quote: string;
               authorName: string;
               role: string;
+              avatarInitials?: string | null;
+              linkedinLink?: string | null;
+              avatarUrl?: string | null;
+              /**
+               * Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione.
+               */
+              avatar?: (number | null) | Media;
             };
             darkCardBottom: {
               quote: string;
               authorName: string;
               role: string;
+              avatarInitials?: string | null;
+              linkedinLink?: string | null;
+              avatarUrl?: string | null;
+              /**
+               * Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione.
+               */
+              avatar?: (number | null) | Media;
             };
             statCell: {
               value: string;
@@ -2046,7 +2097,7 @@ export interface Homepage {
             darkCardTitle: string;
             darkCardBody: string;
             /**
-             * Obraz w prawym dolnym kafelku (zamiast zielonego pola). Opcjonalny — bez pliku zostaje układ demonstracyjny.
+             * Wgraj zdjęcie, które pojawi się w zielonym kafelku z zaokrąglonym górnym rogiem. Bez pliku wyświetla się sam zielony box (placeholder).
              */
             accentTileImage?: (number | null) | Media;
             id?: string | null;
@@ -2251,16 +2302,36 @@ export interface Homepage {
               authorName: string;
               role: string;
               avatarInitials?: string | null;
+              linkedinLink?: string | null;
+              avatarUrl?: string | null;
+              /**
+               * Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione.
+               */
+              avatar?: (number | null) | Media;
             };
             darkCardTop: {
               quote: string;
               authorName: string;
               role: string;
+              avatarInitials?: string | null;
+              linkedinLink?: string | null;
+              avatarUrl?: string | null;
+              /**
+               * Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione.
+               */
+              avatar?: (number | null) | Media;
             };
             darkCardBottom: {
               quote: string;
               authorName: string;
               role: string;
+              avatarInitials?: string | null;
+              linkedinLink?: string | null;
+              avatarUrl?: string | null;
+              /**
+               * Avatar file (png/jpg/webp). Pokazane zamiast inicjałów, gdy ustawione.
+               */
+              avatar?: (number | null) | Media;
             };
             statCell: {
               value: string;
@@ -2457,7 +2528,7 @@ export interface Homepage {
             darkCardTitle: string;
             darkCardBody: string;
             /**
-             * Obraz w prawym dolnym kafelku (zamiast zielonego pola). Opcjonalny — bez pliku zostaje układ demonstracyjny.
+             * Wgraj zdjęcie, które pojawi się w zielonym kafelku z zaokrąglonym górnym rogiem. Bez pliku wyświetla się sam zielony box (placeholder).
              */
             accentTileImage?: (number | null) | Media;
             id?: string | null;
@@ -2834,6 +2905,9 @@ export interface HomepageSelect<T extends boolean = true> {
                     authorName?: T;
                     role?: T;
                     avatarInitials?: T;
+                    linkedinLink?: T;
+                    avatarUrl?: T;
+                    avatar?: T;
                   };
               darkCardTop?:
                 | T
@@ -2841,6 +2915,10 @@ export interface HomepageSelect<T extends boolean = true> {
                     quote?: T;
                     authorName?: T;
                     role?: T;
+                    avatarInitials?: T;
+                    linkedinLink?: T;
+                    avatarUrl?: T;
+                    avatar?: T;
                   };
               darkCardBottom?:
                 | T
@@ -2848,6 +2926,10 @@ export interface HomepageSelect<T extends boolean = true> {
                     quote?: T;
                     authorName?: T;
                     role?: T;
+                    avatarInitials?: T;
+                    linkedinLink?: T;
+                    avatarUrl?: T;
+                    avatar?: T;
                   };
               statCell?:
                 | T
@@ -3208,6 +3290,9 @@ export interface HomepageSelect<T extends boolean = true> {
                     authorName?: T;
                     role?: T;
                     avatarInitials?: T;
+                    linkedinLink?: T;
+                    avatarUrl?: T;
+                    avatar?: T;
                   };
               darkCardTop?:
                 | T
@@ -3215,6 +3300,10 @@ export interface HomepageSelect<T extends boolean = true> {
                     quote?: T;
                     authorName?: T;
                     role?: T;
+                    avatarInitials?: T;
+                    linkedinLink?: T;
+                    avatarUrl?: T;
+                    avatar?: T;
                   };
               darkCardBottom?:
                 | T
@@ -3222,6 +3311,10 @@ export interface HomepageSelect<T extends boolean = true> {
                     quote?: T;
                     authorName?: T;
                     role?: T;
+                    avatarInitials?: T;
+                    linkedinLink?: T;
+                    avatarUrl?: T;
+                    avatar?: T;
                   };
               statCell?:
                 | T
