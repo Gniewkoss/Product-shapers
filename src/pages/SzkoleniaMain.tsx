@@ -87,13 +87,9 @@ function SzkoleniaMainFallback({
         </div>
         <div className="w-full min-w-0 shrink-0 bg-white" data-node-id="1:136" data-name="Section - Program Modules (Bento Grid)">
           <div className="content-stretch relative mx-auto flex w-full min-w-0 max-w-content flex-col items-start gap-[64px] px-4 pb-[96px] pt-[96px] sm:px-6 md:px-10 lg:px-[61px]">
-          <div className="content-stretch flex font-['Satoshi:Bold',sans-serif] items-baseline justify-between leading-[0] not-italic relative shrink-0 w-full whitespace-nowrap" data-node-id="1:137" data-name="Paragraph">
-            <div className="flex flex-col justify-center relative shrink-0 text-[#000f3d] text-[36px]" data-node-id="1:138">
-              <p className="leading-[40px]">Struktura programu</p>
-            </div>
-            <div className="flex flex-col justify-center relative shrink-0 text-[#757682] text-[16px] tracking-[1.2px]" data-node-id="1:139">
-              <p className="leading-[16px]">06 MODUŁÓW / 12 TYGODNI</p>
-            </div>
+          <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-x-6">
+            <p className="font-sans text-[26px] sm:text-[36px] font-bold leading-tight text-[#000f3d]">Struktura programu</p>
+            <p className="font-sans text-[12px] sm:text-[16px] font-bold uppercase tracking-[1.2px] text-[#757682] sm:shrink-0">06 MODUŁÓW / 12 TYGODNI</p>
           </div>
           <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 relative shrink-0" data-node-id="1:140" data-name="Container">
             <div className="bg-[#f3f3f3] content-stretch flex flex-col items-start justify-between min-h-[400px] p-8 lg:p-[48px] relative" data-node-id="1:141" data-name="Module 1">
