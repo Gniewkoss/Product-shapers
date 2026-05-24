@@ -39,6 +39,43 @@ const CACHE_KEY = "psc_cms_v2";
 /** CMS nie odpowiada → bez tego UI zostaje w loading na zawsze (fetch bez timeoutu). */
 const CMS_BOOT_TIMEOUT_MS = 35_000;
 
+/** Mapuje raw JSON z /cms-data.json (generowany przy budowaniu Netlify) na CacheShape. */
+function parseBuildTimeData(raw: Record<string, unknown>): CacheShape {
+  const globalDoc = (v: unknown) => {
+    if (!v || typeof v !== "object") return null;
+    const o = v as Record<string, unknown>;
+    return ("doc" in o && o.doc && typeof o.doc === "object" ? o.doc : o) as unknown;
+  };
+  const docs = (v: unknown): unknown[] => {
+    if (!v || typeof v !== "object") return [];
+    const o = v as Record<string, unknown>;
+    return Array.isArray(o.docs) ? o.docs : [];
+  };
+  const sitePagesByRoute: Partial<Record<RouteKey, SitePage>> = {};
+  for (const p of docs(raw.sitePages) as SitePage[]) {
+    if (p.routeKey) sitePagesByRoute[p.routeKey] = p;
+  }
+  return {
+    homepage: globalDoc(raw.homepage) as Homepage | null,
+    navigation: globalDoc(raw.navigation) as Navigation | null,
+    footer: globalDoc(raw.footer) as Footer | null,
+    sitePagesByRoute,
+    articles: docs(raw.articles) as Article[],
+  };
+}
+
+/** Pobiera dane wygenerowane przy build-time z CDN Netlify (~100ms, bez zależności od Render). */
+async function loadBuildTimeData(): Promise<CacheShape | null> {
+  try {
+    const res = await fetch("/cms-data.json", { cache: "no-store" });
+    if (!res.ok) return null;
+    const raw = (await res.json()) as Record<string, unknown>;
+    return parseBuildTimeData(raw);
+  } catch {
+    return null;
+  }
+}
+
 type CacheShape = Pick<SitePayloadState, "homepage" | "navigation" | "footer" | "sitePagesByRoute" | "articles">;
 
 function readCache(): CacheShape | null {
@@ -115,7 +152,8 @@ export function SitePayloadProvider({ children }: { children: ReactNode }) {
         setState((prev) => ({
           ...prev,
           loading: false,
-          error: errorMsg,
+          // Nie pokazuj błędu jeśli mamy dane z build-time lub localStorage — Render może być uśpiony
+          error: prev.homepage === null ? errorMsg : null,
         }));
       }
     }
@@ -163,7 +201,18 @@ export function SitePayloadProvider({ children }: { children: ReactNode }) {
     }
 
     void (async () => {
+      // 1. Dane build-time z CDN Netlify — instant (~100ms), brak zależności od Render.
+      //    Jeśli Render śpi, użytkownik zobaczy aktualne dane zamiast nieskończonego loadera.
+      const buildData = await loadBuildTimeData();
+      if (!cancelled && buildData) {
+        writeCache(buildData);
+        setState((prev) => ({ ...prev, ...buildData, loading: false, error: null }));
+      }
+
+      // 2. Live fetch z CMS — nadpisuje build-time danymi na żywo jeśli Render jest aktywny.
       await loadPayloadWithBootTimeout();
+
+      // 3. Polling content-version w tle.
       if (!cancelled) await tickContentVersion();
     })();
 

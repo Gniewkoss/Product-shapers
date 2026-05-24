@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path 'c:\\\\Users\\\\gniew\\\\OneDrive\\\\Obrazy\\\\Dokumenty\\\\Product Shapers Consulting\\\\src\\\\assets\\\\branding')",
+      "Bash(Select-Object -ExpandProperty Name)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

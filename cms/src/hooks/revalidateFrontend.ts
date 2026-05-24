@@ -2,6 +2,7 @@ import type { Payload } from "payload";
 
 import { bumpContentVersion } from "../lib/contentVersion";
 import { resolvePayloadServerURL } from "../lib/serverUrl";
+import { triggerNetlifyBuild } from "./triggerNetlifyBuild";
 
 export type RevalidateBody = {
   collection?: string;
@@ -15,6 +16,7 @@ export type RevalidateBody = {
  */
 export async function postRevalidate(payload: Payload, body: RevalidateBody) {
   await bumpContentVersion(payload);
+  void triggerNetlifyBuild();
 
   const base = resolvePayloadServerURL();
   const url = process.env.REVALIDATE_URL || `${base.replace(/\/$/, "")}/api/revalidate`;

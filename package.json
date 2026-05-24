@@ -8,7 +8,7 @@
     "dev:cms": "npm run dev --prefix cms",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev --prefix cms\"",
     "build": "tsc -b && vite build",
-    "build:netlify": "node scripts/generate-netlify-redirects.mjs && npm run build",
+    "build:netlify": "node scripts/generate-netlify-redirects.mjs && node scripts/fetch-cms-data.mjs && npm run build",
     "preview": "vite preview",
     "figma:pull-szkolenia-benefit-icon": "node scripts/fetch-figma-node-png.mjs"
   },

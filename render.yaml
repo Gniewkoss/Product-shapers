@@ -50,3 +50,8 @@ services:
       # bootstrapie (DEPLOY-NETLIFY.md) trzymamy false i jedziemy migracjami.
       - key: PAYLOAD_DATABASE_PUSH
         value: "false"
+      # Netlify Build Hook — po zapisie treści CMS triggeruje rebuild frontendu.
+      # Pobierz URL z panelu Netlify: Site settings → Build & deploy → Build hooks → Add build hook.
+      # Bez tej zmiennej CMS działa normalnie, ale frontend nie przebudowuje się automatycznie.
+      - key: NETLIFY_BUILD_HOOK_URL
+        sync: false
