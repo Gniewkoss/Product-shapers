@@ -28,6 +28,16 @@ const nextConfig: NextConfig = {
       ".js": [".ts", ".tsx", ".js", ".jsx"],
       ".mjs": [".mts", ".mjs"],
     };
+    /**
+     * Hardkodowany alias na payload.config — tsconfig.paths działa lokalnie i w większości setupów,
+     * ale build na Render (Next 16.2.2 + Node 20.20.2 + webpack + Linux) go nie łapał i wywalał
+     * `Module not found: Can't resolve '@payload-config'` we wszystkich (payload)/**  routach.
+     * Explicit alias eliminuje zależność od tsconfig paths resolver Next.js.
+     */
+    webpackConfig.resolve.alias = {
+      ...(webpackConfig.resolve.alias || {}),
+      "@payload-config": path.resolve(dirname, "./src/payload.config.ts"),
+    };
     return webpackConfig;
   },
   turbopack: {
