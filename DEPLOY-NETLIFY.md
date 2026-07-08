@@ -50,7 +50,7 @@ Szablon zmiennych CMS: [`cms/.env.production.example`](./cms/.env.production.exa
 ### Render — na co uważać
 
 - **Cold start**: na darmowym planie usługa może zasnąć — pierwsze żądanie bywa wolniejsze.
-- **Pliki `cms/media/`** na dysku kontenera mogą **zginąć przy redeploy**; na dłuższą produkcję: [Persistent Disk](https://render.com/docs/disks) pod katalog uploadów albo **S3** (zmienne w [`cms/.env.production.example`](./cms/.env.production.example)).
+- **Pliki `cms/media/`** — na Free plan Rendera dysk kontenera jest **ephemeral** i uploady giną przy redeployu / wybudzeniu z uśpienia. Rozwiązania: (a) **Cloudflare R2** (zalecane, free do 10 GB + zero egress) — ustaw `S3_BUCKET` + `S3_ACCESS_KEY_ID` + `S3_SECRET_ACCESS_KEY` + `S3_ENDPOINT` + `S3_REGION=auto` w Environment serwisu, plugin `@payloadcms/storage-s3` włącza się automatycznie (patrz [`cms/.env.production.example`](./cms/.env.production.example) i `s3Plugins()` w [`cms/src/payload.config.ts`](./cms/src/payload.config.ts)); (b) upgrade planu na `starter+` i dodać [Persistent Disk](https://render.com/docs/disks) pod `cms/media` (~$7.25/mo łącznie).
 - Jeśli blueprint odrzuci `plan: free` dla Postgresa w regionie, edytuj [`render.yaml`](./render.yaml) (np. `basic-256mb`).
 - **Build** na Renderze używa tymczasowego SQLite (jak [`cms/Dockerfile`](./cms/Dockerfile) / [`render.yaml`](./render.yaml) `buildCommand`) — nie wymaga żywego Postgresa podczas `next build`. **Start** używa `DATABASE_URI` z bazy.
 - **`db:bootstrap` z laptopa:** użyj **External Database URL** z pełnym hostname oraz **`sslmode=require`** w URI (patrz checklista pkt 7).

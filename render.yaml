@@ -3,8 +3,11 @@
 #
 # Uwagi:
 # - Po utworzeniu z blueprintu Render poprosi o wartości zmiennych sync:false (URL Twojej strony Netlify).
-# - Pliki uploadów domyślnie są na dysku ephemeral — przy większej liczbie mediów dodaj Persistent Disk
-#   na mount np. …/cms/media (ścieżka robocza serwisu = rootDir cms).
+# - Free plan nie ma Persistent Disk — kontener Rendera jest ephemeral i uploady giną przy redeployu.
+#   Dla trwałości mediów użyj S3-compatible storage (Cloudflare R2 zalecane, free do 10 GB, zero egress):
+#   ustaw w Environment serwisu S3_BUCKET + S3_ACCESS_KEY_ID + S3_SECRET_ACCESS_KEY + S3_ENDPOINT
+#   + S3_REGION=auto (patrz cms/.env.production.example). Plugin s3Storage włącza się automatycznie.
+#   Alternatywa: upgrade planu web na `starter` + dodać sekcję `disk` (min. 1 GB, $0.25/mo).
 # - Jeśli plan `free` dla Postgres nie jest dostępny w regionie, zmień na np. basic-256mb.
 
 databases:
