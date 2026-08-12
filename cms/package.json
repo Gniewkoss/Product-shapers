@@ -19,6 +19,7 @@
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run ./src/seed/index.ts",
     "db:bootstrap": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_DATABASE_PUSH=true payload run ./src/seed/index.ts",
     "migrate:sqlite-anchor-id": "node scripts/migrateArticleSectionAnchorId.js",
+    "audit:media": "node scripts/audit-r2-media.mjs",
     "import:api": "cross-env NODE_OPTIONS=--no-deprecation payload run ./src/seed/importCmsPayloadViaApi.ts",
     "password-reset": "cross-env PAYLOAD_USE_ENV_PRODUCTION=true NODE_OPTIONS=--no-deprecation payload run ./src/scripts/password-reset.ts"
   },
