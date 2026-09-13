@@ -7,10 +7,11 @@ cms/.next/
 cms/out/
 
 .env
-.env.local
-.env.*.local
-.env.production
-.env.temp_copy
+.env.*
+!.env.example
+cms/.env
+cms/.env.*
+!cms/.env.example
 
 *.log
 *.tsbuildinfo
