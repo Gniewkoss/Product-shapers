@@ -75,7 +75,7 @@ Environment variables (names only; never commit values):
 ## Deployment
 
 - VPS: [DEPLOY-VPS.md](./DEPLOY-VPS.md) — nginx or Caddy, systemd, `scripts/deploy-on-server.sh`.
-- Netlify + Render: [DEPLOY-NETLIFY.md](./DEPLOY-NETLIFY.md), `render.yaml`. Netlify build: `npm run build:netlify`.
+- Netlify + Render: [DEPLOY-NETLIFY.md](./DEPLOY-NETLIFY.md), `render.yaml`. Netlify build: `npm run build:netlify`. Production CMS in repo: `https://product-shapers-cms.onrender.com`.
 
 ## Status
 
